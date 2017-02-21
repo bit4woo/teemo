@@ -95,7 +95,7 @@ Thanks for their sharing.
 
 
 ##相关思维导图
-![](http://i.imgur.com/N5FcqLx.png)
+![](http://i.imgur.com/QUtznlK.png)
 
 ##免责声明
 
