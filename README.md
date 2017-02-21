@@ -50,7 +50,7 @@
 
 ``python teemo.py -d example.com``
 
-* 使用代理地址:
+* 使用代理地址（默认会使用config.py中的设置）:
 
 ``python teemo.py -d example.com -x "http://127.0.0.1:9999"``
 
@@ -58,7 +58,7 @@
 
 ``python teemo.py -b -d example.com``
 
-* 将结果保存到指定文件(默认会跟进config.py中的设置保存到以域名命名的文件中):
+* 将结果保存到指定文件(默认会根据config.py中的设置保存到以域名命名的文件中):
 
 ``python teemo.py -d example.com -o result.txt``
 
