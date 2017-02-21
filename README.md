@@ -1,6 +1,6 @@
 ##About teemo 
 
-域名收集及爆破工具
+域名收集及枚举工具
 
 提莫(teemo)是个侦察兵，域名的收集如同渗透和漏洞挖掘的侦察，故命名为提莫（Teemo）！
 
@@ -36,7 +36,7 @@
 - threatminer
 - Pgpsearch
 
-利用暴力破解
+利用枚举
 
 - subbrute [https://github.com/TheRook/subbrute](https://github.com/TheRook/subbrute)
 
@@ -54,7 +54,7 @@
 
 ``python teemo.py -d example.com -x "http://127.0.0.1:9999"``
 
-* 启用爆破模式:
+* 启用枚举模式:
 
 ``python teemo.py -b -d example.com``
 
@@ -89,12 +89,7 @@ Thanks for their sharing.
 
 缺点：
 
-1. 初始版本，bug很多。但后续会持续更新改进。
-
-##change log
-
-
-
+1. 初始版本，bug很多。但后续会持续更新改进。欢迎提bug。
 
 
 ##相关思维导图
