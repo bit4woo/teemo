@@ -17,8 +17,8 @@
 - yandex （可能被block,替代方案xml.yandex.com）
 - dogpile
 - exaland (可能被block)
-- ask  （需要代理）
-- googleCSE (需要API)
+- ask    （需要代理）
+- googleCSE (需要API key)
 
 利用第三方站点：
 
@@ -41,6 +41,8 @@
 - subbrute [https://github.com/TheRook/subbrute](https://github.com/TheRook/subbrute)
 
 ##基本使用
+
+运行环境：python 2.7.*
 
 * 查看帮助:
 
@@ -85,7 +87,7 @@ Thanks for their sharing.
 1. 使用的搜索引擎和第三方站点更全面，经过实际测试，发现收集的域名会更多。
 1. 添加了代理的支持，像google，ask等可以通过指定代理地址去访问，个人使用google较多，所以这个对我很重要。
 2. 使用搜索引擎的模块，会收集邮箱地址。
-3. 支持多线程，速度比初始版本更快。
+3. 支持多线程，速度比初始的单线程版本更快。
 
 缺点：
 
@@ -93,4 +95,9 @@ Thanks for their sharing.
 
 
 ##相关思维导图
-![](http://i.imgur.com/FEPVijM.png)
+![](http://i.imgur.com/N5FcqLx.png)
+
+##免责声明
+
+作者公开该工具代码，出于技术分享的目的，请不要用于非法用途。
+任何使用该工具及代码，或者修改后的工具及代码，造成的任何问题，与本作者无关，特此声明！！！

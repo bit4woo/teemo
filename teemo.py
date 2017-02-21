@@ -51,7 +51,6 @@ else:
     R = '\033[91m' #red
     W = '\033[0m'  #white
 version = 'beta version'
-
 def banner():
     print """%s
 
@@ -185,6 +184,8 @@ def main():
 
     #Print the Banner
     banner()
+    waring = "[!] legal disclaimer: Usage of Teemo for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program"
+    print waring
     print B+"[-] Enumerating subdomains now for %s"% domain+W
 
     '''
