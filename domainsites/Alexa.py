@@ -6,6 +6,7 @@ import re
 import time
 import logging
 from lib.common import http_request_get, http_request_post, is_domain
+from lib.myparser import parser
 
 class Alexa(object):
     """docstring for Alexa"""
@@ -32,11 +33,17 @@ class Alexa(object):
 
         url = 'http://alexa.chinaz.com/?domain={0}'.format(self.domain)
         r = http_request_get(url).content
+        rawres = parser(r, self.domain)
+        result = rawres.hostnames()
+        for sub in result:
+            self.subset.append(sub)
+        '''
         subs = re.compile(r'(?<="\>\r\n<li>).*?(?=</li>)')
         result = subs.findall(r)
         for sub in result:
             if is_domain(sub):
                 self.subset.append(sub)
+        '''
 
     def fetch_alexa_cn(self):
         """get subdomains from alexa.cn"""

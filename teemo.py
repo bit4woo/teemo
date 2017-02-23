@@ -14,7 +14,7 @@ from config import GoogleCSE_API_Key,proxies
 import datetime
 
 
-from searchengine.searchimpl import baidu_search, ask_search, bing_search, dogpile_search, exalead_search, google_search, yandex_search, yahoo_search
+from searchengine.searchimpl import baidu_search,so_search, ask_search, bing_search, dogpile_search, exalead_search, google_search, yandex_search, yahoo_search
 
 from domainsites.Alexa import Alexa
 from domainsites.Chaxunla import Chaxunla
@@ -30,6 +30,10 @@ from domainsites.ThreatCrowd import ThreatCrowd
 from domainsites.Threatminer import Threatminer
 
 
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 
 #In case you cannot install some of the required development packages, there's also an option to disable the SSL warning:
 try:
@@ -41,16 +45,33 @@ except:
 #Check if we are running this on windows platform
 is_windows = sys.platform.startswith('win')
 
-#Console Colors
+# Console Colors
 if is_windows:
-    G = Y = B = R = W = G = Y = B = R = W = '' #use no terminal colors on windows
+    # Windows deserve coloring too :D
+    G = '\033[92m'  # green
+    Y = '\033[93m'  # yellow
+    B = '\033[94m'  # blue
+    R = '\033[91m'  # red
+    W = '\033[0m'   # white
+    try:
+        import win_unicode_console , colorama
+        win_unicode_console.enable()
+        colorama.init()
+        #Now the unicode will work ^_^
+    except:
+        print("[!] Error: Coloring libraries not installed ,no coloring will be used [Check the readme]")
+        G = Y = B = R = W = G = Y = B = R = W = ''
+
+
 else:
-    G = '\033[92m' #green
-    Y = '\033[93m' #yellow
-    B = '\033[94m' #blue
-    R = '\033[91m' #red
-    W = '\033[0m'  #white
-version = 'beta version'
+    G = '\033[92m'  # green
+    Y = '\033[93m'  # yellow
+    B = '\033[94m'  # blue
+    R = '\033[91m'  # red
+    W = '\033[0m'   # white
+
+version = 'V 0.1'
+
 def banner():
     print """%s
 
@@ -87,7 +108,7 @@ def parse_args():
     parser.add_argument('-x', '--proxy', help='The http proxy to visit google')
     return parser.parse_args()
 
-def write_file(filename, subdomains):
+def write_file(filename, subdomains): #如何保证中文也争取
     #saving subdomains results to output file
     print "%s[-] Saving results to file: %s%s%s%s"%(Y,W,R,filename,W)
     with open(str(filename), 'wb') as f:
@@ -156,14 +177,16 @@ def main():
 
     if not savefile:
         now = datetime.datetime.now()
-        timestr = now.strftime("%Y-%m-%d-%H-%M")
+        timestr = now.strftime("-%Y-%m-%d-%H-%M")
         savefile = domain+timestr+".txt"
 
     if args.proxy != None:
         proxy = args.proxy
         proxy = {args.proxy.split(":")[0]: proxy}
-    else:
+    elif proxies != None:  #config.py
         proxy = proxies
+    else:
+        proxy = {}
 
     #Check Verbosity
     #global verbose
@@ -198,12 +221,12 @@ def main():
     Threadlist = []
     q_domains = queue.Queue() #to recevie return values
     q_emails = queue.Queue()
-    for engine in [Alexa,Chaxunla,CrtSearch,DNSdumpster,Googlect,Ilink,Netcraft,PassiveDNS,Pgpsearch,Sitedossier,ThreatCrowd,Threatminer]:
+    for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer]:
         #print callsites_thread(engine,domain,proxy)
-        t = threading.Thread(target=callsites_thread,args=(engine, domain, q_domains, q_emails, proxy))
+        t = threading.Thread(target=callsites_thread, args=(engine, domain, q_domains, q_emails, proxy))
         Threadlist.append(t)
-    for engine in [baidu_search, ask_search, bing_search, dogpile_search, exalead_search, google_search, yandex_search, yahoo_search]:
-        t = threading.Thread(target=callengines_thread,args=(engine, domain, q_domains, q_emails, proxy, 500))
+    for engine in [baidu_search, so_search, ask_search, bing_search, dogpile_search, exalead_search, google_search, yandex_search, yahoo_search]:
+        t = threading.Thread(target=callengines_thread, args=(engine, domain, q_domains, q_emails, proxy, 500))
         Threadlist.append(t)
     #for t in Threadlist:
     #    print t

@@ -135,9 +135,19 @@ class parser:
     def hostnames(self):
         self.genericClean()
         reg_hosts = re.compile('[a-zA-Z0-9.-]*\.' + self.word)
+        #reg_hosts = re.compile('(?i)^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}'+self.word)
         self.temp = reg_hosts.findall(self.results)
         hostnames = self.unique()
         return hostnames
+
+    def smilarhostnames(self):
+        self.genericClean()
+        #reg_hosts = re.compile('[a-zA-Z0-9.-]*\.' + self.word)
+        reg_hosts = re.compile('(?i)^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}'+self.word.split('.')[-2])
+        self.temp = reg_hosts.findall(self.results)
+        smilarhostnames = self.unique()
+        return smilarhostnames
+
 
     def set(self):
         reg_sets = re.compile('>[a-zA-Z0-9]*</a></font>')

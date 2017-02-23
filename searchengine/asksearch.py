@@ -31,7 +31,7 @@ class search_ask():
         '''
 
         try:
-            urly = "http://{0}/web?q=%40{1}&pu=100&page={2}".format(self.server,self.word,self.counter)
+            urly = "http://{0}/web?q={1}&pu=100&page={2}".format(self.server,self.word,self.counter)
         except Exception, e:
             print e
         try:
@@ -60,7 +60,7 @@ class search_ask():
             self.do_search()
             more = self.check_next()
             if more == "1":
-                self.counter += 100
+                self.counter += 1
             else:
                 break
     def get_emails(self):
