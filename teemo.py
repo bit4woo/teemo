@@ -4,7 +4,7 @@ __author__ = 'bit4'
 
 import os
 import argparse
-import queue
+from multiprocessing import Queue
 import socket
 from lib.common import *
 from subbrute import subbrute
@@ -219,8 +219,8 @@ def main():
     '''
 
     Threadlist = []
-    q_domains = queue.Queue() #to recevie return values
-    q_emails = queue.Queue()
+    q_domains = Queue() #to recevie return values
+    q_emails = Queue()
     for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer]:
         #print callsites_thread(engine,domain,proxy)
         t = threading.Thread(target=callsites_thread, args=(engine, domain, q_domains, q_emails, proxy))
