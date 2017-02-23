@@ -47,13 +47,6 @@ allow_random_useragent = False
 # 是否允许随机X-Forwarded-For
 allow_random_x_forward = False
 
-# 代理配置
-proxies = {
-    # "http": "http://user:pass@10.10.1.10:3128/",
-    # "https": "http://10.10.1.10:1080",
-    # "http": "http://127.0.0.1:8118", # TOR 洋葱路由器
-}
-
 # 随机HTTP头
 USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20",

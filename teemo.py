@@ -10,7 +10,7 @@ from lib.common import *
 from subbrute import subbrute
 import threading
 
-from config import GoogleCSE_API_Key,proxies
+from config import GoogleCSE_API_Key,default_proxies
 import datetime
 
 
@@ -183,8 +183,8 @@ def main():
     if args.proxy != None:
         proxy = args.proxy
         proxy = {args.proxy.split(":")[0]: proxy}
-    elif proxies != None:  #config.py
-        proxy = proxies
+    elif default_proxies != None:  #config.py
+        proxy = default_proxies
     else:
         proxy = {}
 
@@ -246,8 +246,8 @@ def main():
         print G+"[-] Starting bruteforce module now using subDomainsBrute.."+W
         record_type = False
         path_to_file = os.path.dirname(os.path.realpath(__file__))
-        subs = os.path.join(path_to_file, 'dict', 'names.txt')
-        resolvers = os.path.join(path_to_file, 'resolvers.txt')
+        subs = os.path.join(path_to_file, 'subbrute', 'names.txt')
+        resolvers = os.path.join(path_to_file, 'subbrute', 'resolvers.txt')
         process_count = 10
         output = False
         json_output = False
