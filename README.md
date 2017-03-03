@@ -95,24 +95,23 @@ Thanks for their sharing.
 
 ##To Do
 
-- 随机请求参数，减小被block几率
 - 接入打码平台
 - 域名有效性判断，端口扫描并记录--json格式（｛domain:{ip：127.0.0.1，ports:{80,443},cdn:{yes or no,具体是谁}}｝domain）
 - 泛解析，dns轮询相关
 - 优化config.py
 - 模糊匹配，例如包含"qq"的所有域名，比如qqimg.com
 - 搜索引擎模块，使用google hacking 搜索
-- 优化正则表达式，去除以“-”开头的非法域名
 
-
-## change log
-
-v0.1
+##Done
 
 - 添加多线程支持。
 - 添加www.so.com 360搜索引擎
 - 修复ask页面参数不正确问题
 - 优化代理参数设置
+- 优化正则表达式，去除以“-”开头的非法域名
+- 随机请求参数，减小被block几率
+- 优化搜索引擎部分参数配置
+- 修复dnsdumpter访问出错问题
 
 
 ##相关思维导图
