@@ -62,7 +62,7 @@ class dogpile_search(search):
     def __init__(self, key_word=None, limit=None, proxy=None):
         self.base_url = "http://www.dogpile.com/search/web?q={query}&qsi={page_no}"
         self.engine_name = "dogpile"
-        self.counter_step = 50
+        self.counter_step = 10
         search.__init__(self, self.base_url, self.engine_name, key_word, limit, proxy)
         self.proxy = None
     def check_response_errors(self, resp):
@@ -92,9 +92,9 @@ class exalead_search(search):
 
 class google_search(search):
     def __init__(self, key_word=None, limit=None, proxy=None):
-        self.base_url = "http://www.google.com/search?num=100&q={query}&start={page_no}&hl=en&meta="
+        self.base_url = "https://google.com/search?q={query}&btnG=Search&hl=en-US&biw=&bih=&gbv=1&start={page_no}&filter=0"
         self.engine_name = "google"
-        self.counter_step = 50
+        self.counter_step = 10
         search.__init__(self, self.base_url, self.engine_name, key_word, limit, proxy)
         
     def check_response_errors(self, resp):
@@ -115,11 +115,12 @@ class yahoo_search(search):
         search.__init__(self, self.base_url, self.engine_name, key_word, limit, self.proxy)
         
     def check_response_errors(self, resp):
-        if 'Our systems have detected unusual traffic' in resp:
+        if resp is None:
+            pass
+        elif 'Our systems have detected unusual traffic' in resp:
             print "[!] Error: Google probably now is blocking our requests"
-            print "[~] Finished the Google Enumeration ..."
             return True
-        return False # baidu will not block our requset
+        return False #
 
 class yandex_search(search):
     def __init__(self, key_word=None, limit=None, proxy=None):
@@ -130,9 +131,10 @@ class yandex_search(search):
         search.__init__(self, self.base_url, self.engine_name, key_word, limit, self.proxy)
         
     def check_response_errors(self, resp):
-        if "temporarily block your access" in resp:
+        if resp is None:
+            pass
+        elif "temporarily block your access" in resp:
             print "[!] Error: Yandex probably now is blocking our requests"
-            print "[~] Finished the Yandex Enumeration ..."
             return True
         return False
     def check_next(self):
@@ -162,6 +164,9 @@ def callengines_thread(engine,key_word,limit=1000,proxy=None):
     final_emails = []
     x = engine(key_word, limit, proxy)
     domain, email = x.run()
+    if "2f" or "2F" in domain:
+        print domain
+        print engine
     print domain,email
     final_domains.extend(domain)
     final_emails.extend(email)

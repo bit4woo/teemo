@@ -15,6 +15,9 @@ from domainsites.Sitedossier import Sitedossier
 from domainsites.ThreatCrowd import ThreatCrowd
 from domainsites.Threatminer import Threatminer
 import threading
+from multiprocessing import Queue
+
+
 def callsites(key_word,proxy=None):
     final_domains = []
     final_emails = []
@@ -26,14 +29,12 @@ def callsites(key_word,proxy=None):
     return list(set(final_domains))
 
 
-def callsites_thread(engine,key_word,proxy=None, q=None):
-    final_domains = []
+def callsites_thread(engine,key_word, q, proxy=None,):
     enum = engine(key_word,proxy)
     domain = enum.run()
-    final_domains.extend(domain)
     #final_emails.extend(email)
-    q.extend(list(set(final_domains)))
-    return list(set(final_domains))
+    for item in list(set(domain)):
+        q.put(item)
 
 if __name__ == "__main__":
     proxy = {
@@ -42,9 +43,10 @@ if __name__ == "__main__":
     }
     #print callsites("meizu.com",proxy="http://127.0.0.1:9999")
     Threadlist = []
+    q = Queue()
     for engine in [Alexa,Chaxunla,CrtSearch,DNSdumpster,Googlect,Ilink,Netcraft,PassiveDNS,Pgpsearch,Sitedossier,ThreatCrowd,Threatminer]:
-        print callsites_thread(engine,"meizu.com",proxy)
-        t = threading.Thread(target=callsites_thread,args=(engine,"meizu.com",proxy))
+        #print callsites_thread(engine,"meizu.com",proxy)
+        t = threading.Thread(target=callsites_thread,args=(engine,"meizu.com",q,proxy))
         Threadlist.append(t)
     for t in Threadlist:
         print t
@@ -52,3 +54,4 @@ if __name__ == "__main__":
         t.start()
     for p in Threadlist:
         t.join()
+    print q

@@ -42,10 +42,10 @@ allow_redirects = True
 allow_http_session = True
 
 # 是否允许随机User-Agent
-allow_random_useragent = False
+allow_random_useragent = True
 
 # 是否允许随机X-Forwarded-For
-allow_random_x_forward = False
+allow_random_x_forward = True
 
 # 随机HTTP头
 USER_AGENTS = [
@@ -66,6 +66,7 @@ USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20",
     "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52",
+    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0",
 ]
 
 # 随机生成User-Agent
@@ -87,5 +88,4 @@ headers = {
     'User-Agent': random_useragent(allow_random_useragent),
     'X_FORWARDED_FOR': random_x_forwarded_for(allow_random_x_forward),
     'Referer' : 'http://www.baidu.com',
-    'Cookie': "",
 }

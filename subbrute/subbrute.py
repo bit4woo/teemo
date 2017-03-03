@@ -419,7 +419,7 @@ def print_target(target, record_type = None, subdomains = "names.txt", resolve_l
                 print result
             subdomains_list.append(result)
 
-    return  list(set(subdomains_list))
+    return  set(subdomains_list)
 
 def run(target, record_type = None, subdomains = "names.txt", resolve_list = "resolvers.txt", process_count = 16):
     subdomains = check_open(subdomains)

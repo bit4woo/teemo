@@ -70,7 +70,7 @@ else:
     R = '\033[91m'  # red
     W = '\033[0m'   # white
 
-version = 'V 0.1'
+version = 'V 0.2'
 
 def banner():
     print """%s
@@ -108,7 +108,7 @@ def parse_args():
     parser.add_argument('-x', '--proxy', help='The http proxy to visit google')
     return parser.parse_args()
 
-def write_file(filename, subdomains): #如何保证中文也争取
+def write_file(filename, subdomains):
     #saving subdomains results to output file
     print "%s[-] Saving results to file: %s%s%s%s"%(Y,W,R,filename,W)
     with open(str(filename), 'wb') as f:
@@ -243,7 +243,7 @@ def main():
 
 
     if enable_bruteforce:
-        print G+"[-] Starting bruteforce module now using subDomainsBrute.."+W
+        print G+"[-] Starting bruteforce module now using subbrute.."+W
         record_type = False
         path_to_file = os.path.dirname(os.path.realpath(__file__))
         subs = os.path.join(path_to_file, 'subbrute', 'names.txt')

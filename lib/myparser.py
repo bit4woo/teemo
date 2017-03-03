@@ -1,5 +1,6 @@
 import string
 import re
+import urllib
 
 
 class parser:
@@ -14,12 +15,24 @@ class parser:
         self.results = re.sub('<b>', '', self.results)
         self.results = re.sub('</b>', '', self.results)
         self.results = re.sub('</em>', '', self.results)
-        self.results = re.sub('%2f', ' ', self.results)
-        self.results = re.sub('%3a', ' ', self.results)
+        #self.results = re.sub('%2f', ' ', self.results)
+        #self.results = re.sub('%3a', ' ', self.results)
         self.results = re.sub('<strong>', '', self.results)
         self.results = re.sub('</strong>', '', self.results)
         self.results = re.sub('<wbr>','',self.results)
         self.results = re.sub('</wbr>','',self.results)
+
+        i= 3
+        while True:
+            self.results = urllib.unquote(self.results)
+            if "%25" in self.results and i>0:
+                self.results = urllib.unquote(self.results)
+                i -= 1
+                continue
+            else:
+                self.results = urllib.unquote(self.results)
+                i -= 1
+                break
 
 
         for e in ('>', ':', '=', '<', '/', '\\', ';', '&', '%3A', '%3D', '%3C'):
@@ -39,7 +52,7 @@ class parser:
         reg_emails = re.compile(
             # Local part is required, charset is flexible
            # https://tools.ietf.org/html/rfc6531 (removed * and () as they provide FP mostly )
-            '[a-zA-Z0-9.\-_+#~!$&\',;=:]+' +
+            '[a-zA-Z0-9.\-_+#~!$&,;=:]+' +
             '@' +
             '[a-zA-Z0-9.-]*' +
             self.word)
@@ -134,8 +147,8 @@ class parser:
 
     def hostnames(self):
         self.genericClean()
-        reg_hosts = re.compile('[a-zA-Z0-9.-]*\.' + self.word)
-        #reg_hosts = re.compile('(?i)^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}'+self.word)
+        reg_hosts = re.compile('[a-zA-Z0-9]'+'[a-zA-Z0-9.-]*\.' + self.word)
+        #reg_hosts = re.compile('[a-zA-Z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}'+self.word)
         self.temp = reg_hosts.findall(self.results)
         hostnames = self.unique()
         return hostnames

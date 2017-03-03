@@ -24,11 +24,7 @@ class Googlect(multiprocessing.Process):
         self.engine_name = "GoogleCT"
         self.timeout = 25
         self.print_banner()
-        self.proxy = {}
-        if proxy !=None:
-            self.proxy["http"] = proxy
-            self.proxy["https"] = proxy
-        return
+        self.proxy = proxy
 
     def print_banner(self):
         print "[-] Searching now in %s.." %(self.engine_name)
@@ -107,5 +103,6 @@ class Googlect(multiprocessing.Process):
             self.random_sleep()
 
 if __name__ == "__main__":
+    proxy = {"https":"https://127.0.0.1:9999"}
     x = Googlect("meizu.com","https://127.0.0.1:9999")
     print x.run()

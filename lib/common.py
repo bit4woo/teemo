@@ -41,7 +41,7 @@ def http_request_get(url, body_content_workflow=False, allow_redirects=allow_red
         # return empty requests object
         return __requests__.models.Response()
 
-def http_request_post(url, payload, body_content_workflow=False, allow_redirects=allow_redirects, custom_cookie=""):
+def http_request_post(url, payload, body_content_workflow=False, allow_redirects=allow_redirects, custom_cookie="", proxies = None):
     """ payload = {'key1': 'value1', 'key2': 'value2'} """
     try:
         if custom_cookie:

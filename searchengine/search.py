@@ -2,6 +2,8 @@ from lib import myparser
 import time
 import requests
 import random
+import urllib
+import config
 
 class search(object):
     def __init__(self, base_url, engine_name, key_word, limit=1000, proxy=None):
@@ -13,24 +15,20 @@ class search(object):
         self.counter_step = 10 #10 or 50
         self.limit = int(limit) #100*
 
-        #self.session = requests.Session()
-        self.timeout = 5
+        self.session = requests.Session()
+        self.timeout = 10
         self.base_url = base_url #"http://www.baidu.com/s?wd=%40{query}&pn={page_no}"
         self.engine_name = engine_name
         self.key_word = key_word
         self.proxy = proxy
+        self.url = ""
 
     def do_search(self):
-        headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0',
-                   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                   'Accept-Language': 'en-GB,en;q=0.5',
-                   'Accept-Encoding': 'gzip, deflate',
-                   'Connection': 'keep-alive'
-                   }
-        url =  self.base_url.format(query=self.key_word, page_no=self.counter)
+        headers = config.headers  #use random headers
+        self.url =  self.base_url.format(query=self.key_word, page_no=self.counter)
         #resp = requests.get(url, headers=headers, timeout=self.timeout, proxies=self.proxy)
         try:
-            resp = requests.get(url, headers=headers, timeout=self.timeout, proxies=self.proxy)
+            resp = self.session.get(self.url, headers=headers, timeout=self.timeout, proxies=self.proxy)
         except Exception as e:
             print e
             return None
@@ -57,14 +55,24 @@ class search(object):
                 break
             else:
                 self.total_results += self.result
-                time.sleep(random.randint(1, 3))
+                time.sleep(random.randint(3, 7))
                 #print "\tSearching " + str(self.counter) + " results in "+self.engine_name
                 more = self.check_next()
                 if more == "1":
                     self.counter += self.counter_step
                 else:
                     break
-
+        i = 3
+        while True:
+            self.total_results = urllib.unquote(self.total_results)
+            if "%25" in self.total_results and i>0:
+                self.total_results = urllib.unquote(self.total_results)
+                i -= 1
+                continue
+            else:
+                self.total_results = urllib.unquote(self.total_results)
+                i -= 1
+                break
     def get_emails(self):
         rawres = myparser.parser(self.total_results, self.key_word)
         return rawres.emails()
