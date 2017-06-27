@@ -1,3 +1,7 @@
+# !/usr/bin/env python
+# -*- coding:utf-8 -*-
+__author__ = 'bit4'
+__github__ = 'https://github.com/bit4woo'
 import string
 import httplib
 import sys

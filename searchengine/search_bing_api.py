@@ -1,3 +1,7 @@
+# !/usr/bin/env python
+# -*- coding:utf-8 -*-
+__author__ = 'bit4'
+__github__ = 'https://github.com/bit4woo'
 import httplib
 import sys
 import myparser
@@ -5,7 +9,7 @@ import time
 from config import *
 
 
-class search_bing:
+class search_bing_api:
 
     def __init__(self, word, limit, start):
         self.word = word.replace(' ', '%20')
@@ -50,7 +54,7 @@ class search_bing:
                 self.counter += 50
             print "\tSearching " + str(self.counter) + " results..."
         else:
-            print "Please insert your API key in the discovery/bingsearch.py"
+            print "Please insert your API key in the discovery"
             sys.exit()
 
 

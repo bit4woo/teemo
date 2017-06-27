@@ -1,3 +1,7 @@
+# !/usr/bin/env python
+# -*- coding:utf-8 -*-
+__author__ = 'bit4'
+__github__ = 'https://github.com/bit4woo'
 import string
 import httplib
 import sys
@@ -6,53 +10,39 @@ import re
 import time
 
 
-class search_exalead:
+class search_yandex:
 
     def __init__(self, word, limit, start):
         self.word = word
-        self.files = "pdf"
         self.results = ""
         self.totalresults = ""
-        self.server = "www.exalead.com"
-        self.hostname = "www.exalead.com"
-        self.userAgent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/4.0"
+        self.server = "yandex.com"
+        self.hostname = "yandex.com"
+        self.userAgent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
         self.limit = limit
         self.counter = start
 
     def do_search(self):
         h = httplib.HTTP(self.server)
-        h.putrequest('GET', "/search/web/results/?q=%40" + self.word +
-                     "&elements_per_page=50&start_index=" + str(self.counter))
+        h.putrequest('GET', "/search?text=%40" + self.word +
+                     "&numdoc=50&lr=" + str(self.counter))
         h.putheader('Host', self.hostname)
-        h.putheader(
-            'Referer',
-            "http://" +
-            self.hostname +
-            "/search/web/results/?q=%40" +
-            self.word)
         h.putheader('User-agent', self.userAgent)
         h.endheaders()
         returncode, returnmsg, headers = h.getreply()
         self.results = h.getfile().read()
-        print self.results
         self.totalresults += self.results
+        print self.results
 
-    def do_search_files(self, files):
+    def do_search_files(self, files):  # TODO
         h = httplib.HTTP(self.server)
-        h.putrequest(
-            'GET',
-            "search/web/results/?q=" +
-            self.word +
-            "filetype:" +
-            self.files +
-            "&elements_per_page=50&start_index=" +
-            self.counter)
+        h.putrequest('GET', "/search?text=%40" + self.word +
+                     "&numdoc=50&lr=" + str(self.counter))
         h.putheader('Host', self.hostname)
         h.putheader('User-agent', self.userAgent)
         h.endheaders()
         returncode, returnmsg, headers = h.getreply()
         self.results = h.getfile().read()
-        print self.results
         self.totalresults += self.results
 
     def check_next(self):
@@ -81,23 +71,20 @@ class search_exalead:
         while self.counter <= self.limit:
             self.do_search()
             self.counter += 50
-            print "\tSearching " + str(self.counter) + " results..."
+            print "Searching " + str(self.counter) + " results..."
 
     def process_files(self, files):
         while self.counter < self.limit:
             self.do_search_files(files)
-            time.sleep(1)
-            more = self.check_next()
-            if more == "1":
-                self.counter += 50
-            else:
-                break
+            time.sleep(0.3)
+            self.counter += 50
+
 
 if __name__ == "__main__":
-        print "[-] Searching in exalead:"
-        search = search_exalead("meizu.com", 100, 0)
+        print "[-] Searching in Bing:"
+        search = search_yandex("meizu.com", '10', 0)
         search.process()
         all_emails = search.get_emails()
         all_hosts = search.get_hostnames()
         print all_emails
-        print all_hosts  # blocked
+        print all_hosts # ip will be blocked  use https://xml.yandex.com/

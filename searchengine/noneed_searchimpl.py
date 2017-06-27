@@ -1,6 +1,6 @@
 __author__ = 'bit4'
 #coding:utf-8
-from search import search
+from noneed_search import search
 import re
 import multiprocessing
 import threading

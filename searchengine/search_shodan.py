@@ -1,6 +1,11 @@
+# !/usr/bin/env python
+# -*- coding:utf-8 -*-
+__author__ = 'bit4'
+__github__ = 'https://github.com/bit4woo'
 import sys
 
 from SearchEngine.shodan import WebAPI
+from config import *
 
 
 class search_shodan():

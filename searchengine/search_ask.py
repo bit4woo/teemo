@@ -1,0 +1,86 @@
+# !/usr/bin/env python
+# -*- coding:utf-8 -*-
+__author__ = 'bit4'
+__github__ = 'https://github.com/bit4woo'
+from lib import myparser
+import re
+import requests
+import config
+
+
+#核心方法之一，没有请求限制，只是需要代理
+class search_ask():
+
+    def __init__(self, word, limit, useragent, proxy):
+        self.word = word.replace(' ', '%20')
+        self.results = "" #本页搜索结果
+        self.totalresults = "" #所有搜索结果
+        self.server = "www.ask.com"
+        self.headers = {
+            'User-Agent': useragent}
+        self.quantity = "100" #useless
+        self.limit = int(limit)  #item number?
+        self.counter = 0 #page number  ---> page 参数
+        self.proxies = proxy
+
+    def do_search(self):
+        try:
+            url = "http://{0}/web?q={1}&pu=100&page={2}".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
+        except Exception, e:
+            print e
+        try:
+            r = requests.get(url, headers = self.headers, proxies = self.proxies)
+            #如果不指定header， agent的值将如下 ：  User-Agent: python-requests/2.18.1  这对有请求限制的搜索引擎很关键，比如google
+            #采用随机user agent的话，
+            self.results = r.content
+            self.totalresults += self.results
+        except Exception,e:
+            print e
+
+    def check_next(self):
+        renext = re.compile('>Next<') #<li class="PartialWebPagination-next">Next</li>
+        nextres = renext.findall(self.results)
+        if nextres != []:
+            nexty = "1"
+        else:
+            nexty = "0"
+        return nexty
+
+    def get_people(self):
+        rawres = myparser.parser(self.totalresults, self.word)
+        return rawres.people_jigsaw()
+
+    def process(self):
+        while (self.counter < self.limit/100): #limit = item number; counter= page number ... 100 items per page
+            self.do_search()
+            more = self.check_next()
+            if more == "1":
+                self.counter += 1
+            else:
+                break
+    def get_emails(self):
+        rawres = myparser.parser(self.totalresults, self.word)
+        return rawres.emails()
+
+    def get_hostnames(self):
+        rawres = myparser.parser(self.totalresults, self.word)
+        return rawres.hostnames()
+
+def ask(keyword, limit, useragent, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function
+    search = search_ask(keyword, limit, useragent, proxy)
+    search.process()
+    print search.get_emails()
+    return search.get_emails(), search.get_hostnames()
+
+
+
+
+if __name__ == "__main__":
+    proxy = {"http":"http://127.0.0.1:8080"}
+    useragent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
+    search = search_ask("meizu.com", '1000',useragent, proxy)
+    search.process()
+    emails = search.get_emails()
+    hosts = search.get_hostnames()
+    print emails
+    print hosts #test successed

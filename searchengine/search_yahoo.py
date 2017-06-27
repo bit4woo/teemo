@@ -1,16 +1,20 @@
+# !/usr/bin/env python
+# -*- coding:utf-8 -*-
+__author__ = 'bit4'
+__github__ = 'https://github.com/bit4woo'
 import httplib
 from lib import myparser
 import time
 import sys
 
 
-class search_dogpile:
+class search_yahoo:
 
     def __init__(self, word, limit):
         self.word = word
         self.total_results = ""
-        self.server = "www.dogpile.com"
-        self.hostname = "www.dogpile.com"
+        self.server = "search.yahoo.com"
+        self.hostname = "search.yahoo.com"
         self.userAgent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
         self.limit = limit
         self.counter = 0
@@ -18,9 +22,8 @@ class search_dogpile:
     def do_search(self):
         h = httplib.HTTP(self.server)
 
-        # Dogpile is hardcoded to return 10 results
-        h.putrequest('GET', "/search/web?qsi=" + str(self.counter)
-                     + "&q=\"%40" + self.word + "\"")
+        h.putrequest('GET', "/search?p=\"%40" + self.word
+                     + "\"&b=" + str(self.counter) + "&pz=10")
         h.putheader('Host', self.hostname)
         h.putheader('User-agent', self.userAgent)
         h.endheaders()
@@ -44,18 +47,12 @@ class search_dogpile:
         rawres = myparser.parser(self.total_results, self.word)
         return rawres.hostnames()
 
-def dogpile(keyword, limit, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function
-    search = search_dogpile(keyword, limit)
-    search.process()
-    print search.get_emails()
-    return search.get_emails(), search.get_hostnames()
-
 
 if __name__ == "__main__":
-        print "[-] Searching in dogpilesearch:"
-        search = search_dogpile("meizu.com", '100')
+        print "[-] Searching in yahoo:"
+        search = search_yahoo("meizu.com", '100')
         search.process()
         all_emails = search.get_emails()
         all_hosts = search.get_hostnames()
         print all_emails
-        print all_hosts  # test pass
+        print all_hosts  # test passed

@@ -4,11 +4,16 @@
 import sys
 import random
 
-GoogleCSE_API_Key = ""
+Google_CSE_API_Key = ""
+
+
 
 default_proxies = {
     "http": "http://127.0.0.1:9999/",
     "https": "http://127.0.0.1:9999/",
+}
+use_proxy_in_default = {
+    'ask','baidu','bing','bing_api',''
 }
 
 default_ports = [21,22,443,3389,1433,8080]

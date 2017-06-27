@@ -10,16 +10,19 @@
 
 利用搜索引擎：
 
-- baidu
-- so.com (360搜索)
+- https://www.baidu.com/
+- https://www.so.com/
 - google (需要代理，可能被block)
-- bing  （使用cn.bing.com）
+- http://cn.bing.com/  （使用cn.bing.com）
 - yahoo
-- yandex （可能被block,替代方案xml.yandex.com）
-- dogpile
+- https://yandex.com/ （可能被block,替代方案xml.yandex.com）
+- http://www.dogpile.com/
 - exaland (可能被block)
 - ask    （需要代理）
 - googleCSE (需要API key)
+- zoomeye.org
+- shodan.io
+- fofa.so
 
 利用第三方站点：
 

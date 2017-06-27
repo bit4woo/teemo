@@ -1,7 +1,7 @@
+# !/usr/bin/env python
+# -*- coding:utf-8 -*-
 __author__ = 'bit4'
-#wydomain
-# encoding: utf-8
-
+__github__ = 'https://github.com/bit4woo'
 import re
 import time
 import logging

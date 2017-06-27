@@ -1,5 +1,7 @@
+# !/usr/bin/env python
+# -*- coding:utf-8 -*-
 __author__ = 'bit4'
-#coding:utf-8
+__github__ = 'https://github.com/bit4woo'
 
 #from wydomain
 from domainsites.Alexa import Alexa

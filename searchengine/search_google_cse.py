@@ -1,3 +1,7 @@
+# !/usr/bin/env python
+# -*- coding:utf-8 -*-
+__author__ = 'bit4'
+__github__ = 'https://github.com/bit4woo'
 import string
 import httplib
 import sys
@@ -103,5 +107,5 @@ class search_googleCSE:
 
 
 if __name__ == "__main__":
-    x = search_googleCSE("meizu.coms")
+    x = search_googleCSE("meizu.com")
     print x.run()
