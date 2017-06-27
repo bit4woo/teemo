@@ -9,16 +9,17 @@
 
 
 利用搜索引擎：
-
+- http://www.ask.com/  （无请求限制，需要代理）
 - https://www.baidu.com/
+- http://cn.bing.com/  （使用cn.bing.com）
+- https://api.cognitive.microsoft.com （尚未完成）
+- http://www.dogpile.com/ （无需代理）
+- https://duckduckgo.com （尚未完成）
 - https://www.so.com/
 - google (需要代理，可能被block)
-- http://cn.bing.com/  （使用cn.bing.com）
 - yahoo
 - https://yandex.com/ （可能被block,替代方案xml.yandex.com）
-- http://www.dogpile.com/
 - exaland (可能被block)
-- ask    （需要代理）
 - googleCSE (需要API key)
 - zoomeye.org
 - shodan.io

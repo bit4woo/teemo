@@ -2,37 +2,46 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-import httplib
+import requests
 import sys
-import myparser
+from lib import myparser
 import time
-from config import *
+import config
+
+
+#https://azure.microsoft.com/zh-cn/try/cognitive-services/my-apis/
+#https://api.cognitive.microsoft.com/bing/v5.0/search
+
+#https://docs.microsoft.com/en-us/azure/cognitive-services/bing-web-search/quick-start
+
+#https://api.cognitive.microsoft.com/bing/v5.0/search[?q][&count][&offset][&mkt][&safesearch]
+#https://dev.cognitive.microsoft.com/docs/services/56b43eeccf5ff8098cef3807/operations/56b4447dcf5ff8098cef380d
 
 
 class search_bing_api:
 
-    def __init__(self, word, limit, start):
+    def __init__(self, word, limit, useragent, proxy=None):
         self.word = word.replace(' ', '%20')
         self.results = ""
         self.totalresults = ""
-        self.apiserver = "api.search.live.net"
-        self.hostname = "www.bing.com"
-        self.userAgent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
-        self.quantity = "50"
+        self.server = "api.cognitive.microsoft.com"
+        self.headers = {'User-Agent': useragent,"Ocp-Apim-Subscription-Key":config.Bing_API_Key,}
         self.limit = int(limit)
-        self.bingApi = bing_API_key
-        self.counter = start
+        self.bingApikey = config.Bing_API_Key
+        self.counter = 0
+        self.proxies = proxy
 
-    def do_search_api(self):
-        h = httplib.HTTP(self.apiserver)
-        h.putrequest('GET', "/xml.aspx?Appid=" + self.bingApi + "&query=%40" +
-                     self.word + "&sources=web&web.count=40&web.offset=" + str(self.counter))
-        h.putheader('Host', "api.search.live.net")
-        h.putheader('User-agent', self.userAgent)
-        h.endheaders()
-        returncode, returnmsg, headers = h.getreply()
-        self.results = h.getfile().read()
-        self.totalresults += self.results
+    def do_search(self):
+        try:
+            url = "https://api.cognitive.microsoft.com/bing/v5.0/search?q={0}&mkt=en-us".format(self.word,self.counter)# 这里的pn参数是条目数
+        except Exception, e:
+            print e
+        try:
+            r = requests.get(url, headers = self.headers, proxies = self.proxies)
+            self.results = r.content
+            self.totalresults += self.results
+        except Exception,e:
+            print e
 
     def get_emails(self):
         rawres = myparser.parser(self.totalresults, self.word)
@@ -46,22 +55,28 @@ class search_bing_api:
         rawres = myparser.parser(self.totalresults, self.word)
         return rawres.hostnames_all()
 
-    def process(self, bingApi):
-        if self.bingApi != "":
+    def process(self):
+        if self.bingApikey != "":
             while (self.counter < self.limit):
-                self.do_search_api()
+                self.do_search()
                 time.sleep(0.3)
                 self.counter += 50
             print "\tSearching " + str(self.counter) + " results..."
         else:
-            print "Please insert your API key in the discovery"
+            print "Please insert your API key in the config.py"
             sys.exit()
-
+def bing_API(keyword, limit, useragent, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function
+    search = search_bing_api(keyword, limit, useragent, proxy)
+    search.process()
+    print search.get_emails()
+    return search.get_emails(), search.get_hostnames()
 
 if __name__ == "__main__":
-        print "[-] Searching in Bing:"
-        search = search_bing("meizu.com", '100', 0)
-        search.process('yes')
+        print "[-] Searching in Bing API:"
+        useragent = "Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
+        proxy = {"http": "http://127.0.0.1:8080"}
+        search = search_bing_api("meizu.com", '100', useragent, proxy)
+        search.process()
         all_emails = search.get_emails()
         all_hosts = search.get_hostnames()
         print all_emails

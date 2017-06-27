@@ -3,38 +3,33 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 import httplib
-import sys
 from lib import myparser
 import time
-from config import *
-
+import requests
 
 class search_bing:
 
-    def __init__(self, word, limit):
+    def __init__(self, word, limit, useragent, proxy=None):
         self.word = word.replace(' ', '%20')
         self.results = ""
         self.totalresults = ""
         self.server = "cn.bing.com"
-        self.hostname = "cn.bing.com"
-        self.userAgent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
-        self.quantity = "50"
         self.limit = int(limit)
         self.counter = 0
+        self.headers = {"Cookie":"SRCHHPGUSR=ADLT=DEMOTE&NRSLT=50","Accept-Language":"'en-us,en","User-Agent":useragent}
+        self.proxies = proxy
 
     def do_search(self):
-        h = httplib.HTTP(self.server)
-        h.putrequest('GET', "/search?q=%40" + self.word +
-                     "&count=50&first=" + str(self.counter))
-        h.putheader('Host', self.hostname)
-        h.putheader('Cookie', 'SRCHHPGUSR=ADLT=DEMOTE&NRSLT=50')
-        h.putheader('Accept-Language', 'en-us,en')
-        h.putheader('User-agent', self.userAgent)
-        h.endheaders()
-        returncode, returnmsg, headers = h.getreply()
-        self.results = h.getfile().read()
-        #print self.results
-        self.totalresults += self.results
+        try:
+            url = "http://{0}/search?q={1}&count=50&first={2}".format(self.server,self.word,self.counter)# 这里的pn参数是条目数
+        except Exception, e:
+            print e
+        try:
+            r = requests.get(url, headers = self.headers, proxies = self.proxies)
+            self.results = r.content
+            self.totalresults += self.results
+        except Exception,e:
+            print e
 
     def do_search_vhost(self):
         h = httplib.HTTP(self.server)
@@ -66,21 +61,22 @@ class search_bing:
     def process(self):
         while (self.counter < self.limit):
             self.do_search()
-            self.do_search_vhost()
+            #self.do_search_vhost()
             time.sleep(1)
             self.counter += 50
             print "\tSearching " + str(self.counter) + " results..."
 
 
-def bing(keyword, limit, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function
-    search = search_bing(keyword, limit)
+def bing(keyword, limit, useragent, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function
+    search = search_bing(keyword, limit, useragent)
     search.process()
     print search.get_emails()
     return search.get_emails(), search.get_hostnames()
 
 if __name__ == "__main__":
         print "[-] Searching in Bing:"
-        search = search_bing("meizu.com", '10')
+        useragent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
+        search = search_bing("meizu.com", '10', useragent)
         search.process()
         all_emails = search.get_emails()
         all_hosts = search.get_hostnames()
