@@ -4,17 +4,19 @@
 
 提莫(teemo)是个侦察兵，域名的收集如同渗透和漏洞挖掘的侦察，故命名为提莫（Teemo）！
 
+![logo_Teemo](logo_Teemo.jpg)
+
 
 该工具主要有三大模块：
 
 
 利用搜索引擎：
-- http://www.ask.com/  （无请求限制，需要代理）
-- https://www.baidu.com/
+- http://www.ask.com/（无请求限制，需要代理）
+- https://www.baidu.com/（无请求限制，不需要代理）
 - http://cn.bing.com/  （使用cn.bing.com）
 - https://api.cognitive.microsoft.com （尚未完成）
 - http://www.dogpile.com/ （无需代理）
-- https://duckduckgo.com （尚未完成）
+- https://duckduckgo.com （尚未完成，页面控制）
 - https://www.so.com/
 - google (需要代理，可能被block)
 - yahoo
@@ -76,7 +78,7 @@
 ##参考
 
 参考以下优秀的工具修改而来:
- 
+
 - [https://github.com/ring04h/wydomain](https://github.com/ring04h/wydomain) 
 - [https://github.com/aboul3la/Sublist3r](https://github.com/aboul3la/Sublist3r)
 - [https://github.com/laramies/theHarvester](https://github.com/laramies/theHarvester)
@@ -90,8 +92,8 @@ Thanks for their sharing.
 优点：
 
 1. 使用的搜索引擎和第三方站点更全面，经过实际测试，发现收集的域名会更多。
-1. 添加了代理的支持，像google，ask等可以通过指定代理地址去访问，个人使用google较多，所以这个对我很重要。
-2. 使用搜索引擎的模块，会收集邮箱地址。
+2. 添加了代理的支持，像google，ask等可以通过指定代理地址去访问，个人使用google较多，所以这个对我很重要。
+3. 使用搜索引擎的模块，会收集邮箱地址。
 
 缺点：
 
@@ -119,7 +121,7 @@ Thanks for their sharing.
 
 
 ##相关思维导图
-![](http://i.imgur.com/QUtznlK.png)
+![xmind_Teemo](xmind_Teemo.png)
 
 ##免责声明
 
