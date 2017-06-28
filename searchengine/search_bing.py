@@ -10,6 +10,7 @@ import requests
 class search_bing:
 
     def __init__(self, word, limit, useragent, proxy=None):
+        self.engine_ename = "Bing"
         self.word = word.replace(' ', '%20')
         self.results = ""
         self.totalresults = ""
@@ -65,7 +66,12 @@ class search_bing:
             time.sleep(1)
             self.counter += 50
             print "\tSearching " + str(self.counter) + " results..."
-
+    def run(self): # define this function,use for threading, define here or define in child-class both should be OK
+        self.process()
+        self.d = self.get_hostnames()
+        self.e = self.get_emails()
+        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        return self.d, self.e
 
 def bing(keyword, limit, useragent, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function
     search = search_bing(keyword, limit, useragent)

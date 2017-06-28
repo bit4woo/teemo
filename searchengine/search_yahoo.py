@@ -2,34 +2,34 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-import httplib
+import requests
 from lib import myparser
 import time
-import sys
-
 
 class search_yahoo:
 
-    def __init__(self, word, limit):
+    def __init__(self, word, limit, useragent, proxy=None):
+        self.engine_name = "Yahoo"
         self.word = word
         self.total_results = ""
         self.server = "search.yahoo.com"
         self.hostname = "search.yahoo.com"
-        self.userAgent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
-        self.limit = limit
+        self.headers = {'User-agent':useragent}
+        self.limit = int(limit)
+        self.proxies = proxy
         self.counter = 0
 
     def do_search(self):
-        h = httplib.HTTP(self.server)
-
-        h.putrequest('GET', "/search?p=\"%40" + self.word
-                     + "\"&b=" + str(self.counter) + "&pz=10")
-        h.putheader('Host', self.hostname)
-        h.putheader('User-agent', self.userAgent)
-        h.endheaders()
-        returncode, returnmsg, headers = h.getreply()
-
-        self.total_results += h.getfile().read()
+        try:
+            url = "http://{0}/search?q={1}&b={2}&pz=10".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
+        except Exception, e:
+            print e
+        try:
+            r = requests.get(url, headers = self.headers, proxies = self.proxies)
+            self.results = r.content
+            self.total_results += self.results
+        except Exception,e:
+            print e
 
     def process(self):
         while self.counter <= self.limit and self.counter <= 1000:
@@ -46,11 +46,17 @@ class search_yahoo:
     def get_hostnames(self):
         rawres = myparser.parser(self.total_results, self.word)
         return rawres.hostnames()
-
+    def run(self): # define this function,use for threading, define here or define in child-class both should be OK
+        self.process()
+        self.d = self.get_hostnames()
+        self.e = self.get_emails()
+        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        return self.d, self.e
 
 if __name__ == "__main__":
         print "[-] Searching in yahoo:"
-        search = search_yahoo("meizu.com", '100')
+        useragent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
+        search = search_yahoo("meizu.com", '100', useragent)
         search.process()
         all_emails = search.get_emails()
         all_hosts = search.get_hostnames()

@@ -21,13 +21,18 @@ import config
 class search_bing_api:
 
     def __init__(self, word, limit, useragent, proxy=None):
+        self.engine_name = "BingAPI"
         self.word = word.replace(' ', '%20')
         self.results = ""
         self.totalresults = ""
         self.server = "api.cognitive.microsoft.com"
         self.headers = {'User-Agent': useragent,"Ocp-Apim-Subscription-Key":config.Bing_API_Key,}
         self.limit = int(limit)
-        self.bingApikey = config.Bing_API_Key
+        try:
+            self.bingApikey = config.Bing_API_Key
+        except:
+            print "No Bing API Key,Exit"
+            exit(0)
         self.counter = 0
         self.proxies = proxy
 
@@ -65,6 +70,14 @@ class search_bing_api:
         else:
             print "Please insert your API key in the config.py"
             sys.exit()
+
+    def run(self):  # define this function,use for threading, define here or define in child-class both should be OK
+        self.process()
+        self.d = self.get_hostnames()
+        self.e = self.get_emails()
+        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name, len(self.d), len(self.e))
+        return self.d, self.e
+
 def bing_API(keyword, limit, useragent, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function
     search = search_bing_api(keyword, limit, useragent, proxy)
     search.process()

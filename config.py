@@ -1,30 +1,34 @@
 # encoding: utf-8
 # 全局配置文件
-
-import sys
 import random
 
-Google_CSE_API_Key = ""
+##########各种key #############
+Google_CSE_API_Key = "AIzaSyAm6CKK5jKPg_ulQQY2XQAnDk9GsUaLPy8"
+Google_CSE_ID = "016793098823726259780:spqupkdulsw"
+
 Bing_API_Key = ""
 
+FOFA_USER_EMAIL = "bit4woo@163.com"
+FOFA_API_KEY = "a7bd605da714ef8a55439d6c57e0c9df"
 
+SHODAN_API_KEY = "dEeUZg9GehYtkPYWwD6Ufn17sttHZUEH"
+
+
+#############proxy##################
+proxy_switch = 1
+#1 = 使用下面的proxy_default_enabled选项
+#2 = 全局使用proxy，即所有搜索引擎都使用proxy
+#3 = 全局禁用proxy
 default_proxies = {
     "http": "http://127.0.0.1:9999/",
     "https": "http://127.0.0.1:9999/",
 }
-use_proxy_in_default = {
-    'ask','baidu','bing','bing_api',''
-}
+proxy_default_enabled = [#默认启用代理的搜索引擎
+    'search_ask','search_google','search_google_cse' #类名
+    ]
 
+#########################port scan ##############
 default_ports = [21,22,443,3389,1433,8080]
-
-
-
-
-
-
-
-
 
 
 # 是否开启https服务器的证书校验

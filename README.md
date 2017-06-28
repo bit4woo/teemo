@@ -14,9 +14,11 @@
 - http://www.ask.com/（无请求限制，需要代理）
 - https://www.baidu.com/（无请求限制，不需要代理）
 - http://cn.bing.com/  （使用cn.bing.com）
-- https://api.cognitive.microsoft.com （尚未完成）
+- https://api.cognitive.microsoft.com （bing API 尚未完成）
 - http://www.dogpile.com/ （无需代理）
 - https://duckduckgo.com （尚未完成，页面控制）
+- http://www.exalead.com/search/web/
+- http://www.fofa.so/
 - https://www.so.com/
 - google (需要代理，可能被block)
 - yahoo
@@ -46,6 +48,24 @@
 利用枚举
 
 - subbrute [https://github.com/TheRook/subbrute](https://github.com/TheRook/subbrute)
+
+##各API申请指引
+其中部分接口需要API Key，如果有相应账号，可以在config.py中进行配置，没有也不影响程序的使用
+
+Google CSE(自定义搜索引擎):
+- 创建自定义的搜索引擎（CSE）https://cse.google.com/cse/all
+- 申请API Key: https://developers.google.com/custom-search/json-api/v1/overview
+
+Bing API:
+- https://azure.microsoft.com/zh-cn/try/cognitive-services/my-apis/
+- https://api.cognitive.microsoft.com/bing/v5.0/search
+- https://docs.microsoft.com/en-us/azure/cognitive-services/bing-web-search/quick-start
+
+Fofa:
+- 需要购买会员
+
+Shodan:
+- 登陆后页面右上角“show API key”
 
 ##基本使用
 

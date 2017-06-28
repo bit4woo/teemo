@@ -9,6 +9,7 @@ import time
 class search_baidu:
 
     def __init__(self, word, limit, useragent, proxy=None):
+        self.engine_name ="Baidu"
         self.word = word
         self.limit = int(limit)
         self.results = ""
@@ -46,6 +47,12 @@ class search_baidu:
         rawres = myparser.parser(self.totalresults, self.word)
         print "%s domain(s) found in Baidu" %len(rawres.hostnames())
         return rawres.hostnames()
+    def run(self): # define this function,use for threading, define here or define in child-class both should be OK
+        self.process()
+        self.d = self.get_hostnames()
+        self.e = self.get_emails()
+        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        return self.d, self.e
 
 def baidu(keyword, limit, useragent, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function
     search = search_baidu(keyword, limit, useragent)

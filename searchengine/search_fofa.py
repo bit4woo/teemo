@@ -2,105 +2,63 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-import urllib
-import urllib2
+import requests
 import base64
-import re
-import time
-import random
-import simplejson
 import config
+from lib import myparser
 
+class search_fofa:
+    def __init__(self, word, limit,useragent,proxy=None):
+        self.engine_name = "Fofa"
+        try:
+            self.email = config.FOFA_USER_EMAIL
+            self.key = config.FOFA_API_KEY
+        except:
+            print "No Fofa Config,Exit"
+            exit(0)
+        self.word = word
+        self.results = ""
+        self.totalresults = ""
+        self.server = "fofa.so"
+        self.headers = {'User-agent':useragent}
+        self.limit = int(limit)
+        self.counter = 0 #useless
+        self.proxies = proxy
+    def do_search(self):
+        try:
+            auth_url = "https://fofa.so/api/v1/info/my?email={0}&key={1}".format(self.email, self.key)
+            auth = requests.get(auth_url)
+            query = base64.b64encode("domain="+self.word)
+            url = "https://fofa.so/api/v1/search/all?email={0}&key={1}&qbase64={2}".format(self.email, self.key,
+                                                                                           query)
+            r = requests.get(url, headers=self.headers, proxies=self.proxies)
+            self.results = r.content
+            self.totalresults += self.results
+        except Exception, e:
+            print e
+    def get_emails(self):
+        rawres = myparser.parser(self.totalresults, self.word)
+        return rawres.emails()
 
-def useAPI(): #超过数量需要付费;不付费的情况下只能获取100个结果
-    email = config.FOFA_USER_EMAIL
-    key= config.FOFA_API_KEY
-
-    if email is "":
-        email = raw_input("Please Input Email:")
-    if key is "":
-        key = raw_input("Please input key:")
-
-    auth_url = "https://fofa.so/api/v1/info/my?email={0}&key={1}".format(email,key)
-    #print auth_url
-    response = urllib.urlopen(auth_url)
-    #print response.read()
-
-    query = base64.b64encode(raw_input("Please input query:"))#"Powered+by+vancheer"
-    request = "https://fofa.so/api/v1/search/all?email={0}&key={1}&qbase64={2}".format(email,key,query)
-
-    response = urllib.urlopen(request)
-
-    resp = response.readlines()[0]
-    resp = simplejson.loads(resp)
-    #print resp
-    if resp["error"] == None:
-        #print len(resp['results'])
-        for item in resp['results']:
-            if item[0].startswith("https"):
-                pass
-            else:
-                item[0] = "http://"+item[0]
-            print "{0} {1}".format(item[0],item[1])
-        if resp['size'] >=100:
-            print "{0} items found! just 100 get....".format(resp['size'])
-    else:
-        exit(0)
-
-def usecookie():
-
-    url = raw_input("Please Input URL Or Query Key Words:")
-    if url.startswith("https://fofa.so/result?"):
-        #https://fofa.so/result?q=domain%3Dwolaidai.com&qbase64=ZG9tYWluPXdvbGFpZGFpLmNvbQ%3D%3D
-        pass
-    else:
-        url = "https://fofa.so/result?q={0}&qbase64={1}".format(url,base64.b64encode(url))
-
-    cookie = raw_input("Please Input cookie:")
-    if "_fofapro_ars_session=" in cookie:
-        pass
-    else:
-        cookie = "_fofapro_ars_session="+cookie
-    print cookie
-    li = range(1,30)
-    random.shuffle(li)#to use page number not in order可以尝试乱序，看看能不能绕过频繁请求的检测
-    for i in li:
-        url = url.replace(" ","")+'&page='+str(i)
-        #print url
-        request = urllib2.Request(url)
-        request.add_header('Cookie', cookie)
-        response = urllib2.urlopen(request)
-        html = response.read()
-        #print html
-        urllist = findLinks(html)
-        for item in urllist:
-            print item
-        if "next_page" in html:
-            time.sleep(random.randint(3,10))
-            continue
-        else:
-            break
-
-def findLinks(htmlString):
-    links = re.compile("<a target=\"_blank\" href=\"(.+?)\"")
-    return links.findall(htmlString) #list
-
-
-def usecookietest():
-    request = urllib2.Request('https://fofa.so/result?q=%22Powered+by+vancheer%22&qbase64=IlBvd2VyZWQgYnkgdmFuY2hlZXIi&page=4')
-    request.add_header('Cookie', 'locale=zh-CN; _fofapro_ars_session=330b83bee72e84fbfs2eeb1471d2e6643')
-    response = urllib2.urlopen(request)
-    print response.read()
+    def get_hostnames(self):
+        rawres = myparser.parser(self.totalresults, self.word)
+        return rawres.hostnames()
+    def process(self):
+        self.do_search()
+    def run(self): # define this function,use for threading, define here or define in child-class both should be OK
+        self.process()
+        self.d = self.get_hostnames()
+        self.e = self.get_emails()
+        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        return self.d, self.e
 
 if __name__ == "__main__":
-    while True:
-        method = raw_input("Use API or Cookie:(1.API 2.Cookie[default])")
-        if method =="1":
-            useAPI()
-            break
-        elif method == "2" or method== "":
-            usecookie()
-            break
-        else:
-            print "error options"
-            continue
+        print "[-] Searching in fofa:"
+        useragent = "Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6" #他会检查useragent，之前多了一个( 导致504
+        proxy = {"http": "http://127.0.0.1:8080"}
+        search = search_fofa("meizu.com", 100, useragent)
+        search.process()
+        all_emails = search.get_emails()
+        all_hosts = search.get_hostnames()
+        print all_emails
+        print all_hosts

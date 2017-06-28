@@ -5,28 +5,31 @@ __github__ = 'https://github.com/bit4woo'
 from lib import myparser
 import time
 import requests
-#
+import random
 
 
 class search_google():
 
-    def __init__(self, word, limit, start, proxy):
+    def __init__(self, word, limit, useragent, proxy):
+        self.engine_name = "Google"
         self.word = word
         self.results = ""
         self.totalresults = ""
+        self.files = "pdf"
         self.server = "www.google.com"
-        self.userAgent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
+        self.headers = {'User-agent':useragent}
         self.quantity = "100"
-        self.limit = limit
-        self.counter = start
+        self.limit = int(limit)
+        self.counter = 0
         self.proxies = proxy
+
     def do_search(self):
         try:
-            urly = "http://" + self.server + "/search?num=" + self.quantity + "&start=" + str(self.counter) + "&hl=en&meta=&q=%40\"" + self.word + "\""
+            url = "https://{0}/search?num={1}&start={2}&hl=en&meta=&q={3}".format(self.server,self.quantity,self.counter,self.word)
         except Exception, e:
             print e
         try:
-            r = requests.get(urly, proxies=self.proxies)
+            r = requests.get(url, headers = self.headers, proxies=self.proxies)
             if "and not a robot" in r.content:
                 print "google has blocked your visit"
                 return 0
@@ -73,7 +76,7 @@ class search_google():
             if self.do_search() == 0:
                 break
             #more = self.check_next()
-            time.sleep(1) #should to sleep random time and use random user-agent to prevent block
+            time.sleep(random.randint(1,5)) #should to sleep random time and use random user-agent to prevent block
             print "\tSearching " + str(self.counter) + " results..."
             self.counter += 100
 
@@ -83,14 +86,20 @@ class search_google():
             time.sleep(0.3)
             self.counter += 100
             print "\tSearching " + str(self.counter) + " results..."
-
+    def run(self): # define this function,use for threading, define here or define in child-class both should be OK
+        self.process()
+        self.d = self.get_hostnames()
+        self.e = self.get_emails()
+        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        return self.d, self.e
 
 if __name__ == "__main__":
         print "[-] Searching in Google:"
-        proxy = {"http":"http://127.0.0.1:9999"}
-        search = search_google("meizu.com", '1000', 0, proxy)
+        proxy = {"http":"http://127.0.0.1:9988"}
+        useragent = "Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"  # 他会检查useragent，之前多了一个( 导致504
+        search = search_google("meizu.com", 100, useragent, proxy)
         search.process()
         all_emails = search.get_emails()
         all_hosts = search.get_hostnames()
         print all_emails
-        print all_hosts #ip blocked
+        print all_hosts

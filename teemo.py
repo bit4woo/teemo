@@ -11,11 +11,26 @@ from lib.common import *
 from subbrute import subbrute
 import threading
 
-from config import GoogleCSE_API_Key,default_proxies
+from config import default_proxies
 import datetime
 
 
-from searchengine.noneed_searchimpl import baidu_search,so_search, ask_search, bing_search, dogpile_search, exalead_search, google_search, yandex_search, yahoo_search
+#from searchengine.noneed_searchimpl import baidu_search,so_search, ask_search, bing_search, dogpile_search, exalead_search, google_search, yandex_search, yahoo_search
+
+from searchengine.search_ask import search_ask
+from searchengine.search_baidu import search_baidu
+from searchengine.search_bing import search_bing
+from searchengine.search_bing_api import search_bing_api
+from searchengine.search_dogpile import search_dogpile
+from searchengine.search_duckduckgo import search_duckduckgo
+from searchengine.search_exalead import search_exalead
+from searchengine.search_fofa import search_fofa
+from searchengine.search_google import search_google
+from searchengine.search_google_cse import search_google_cse
+from searchengine.search_shodan import search_shodan
+from searchengine.search_so import search_so
+from searchengine.search_yahoo import search_yahoo
+from searchengine.search_yandex import search_yandex
 
 from domainsites.Alexa import Alexa
 from domainsites.Chaxunla import Chaxunla
@@ -147,8 +162,8 @@ class portscan():
             t.start()
 
 
-def callengines_thread(engine, key_word, q_domains, q_emails, proxy=None,limit=1000):
-    x = engine(key_word, limit, proxy)
+def callengines_thread(engine, key_word, q_domains, q_emails, useragent, proxy=None,limit=1000):
+    x = engine(key_word, limit, useragent, proxy)
     domains,emails = x.run()
     if domains: # domains maybe None
         for domain in domains:
@@ -185,7 +200,10 @@ def main():
         proxy = args.proxy
         proxy = {args.proxy.split(":")[0]: proxy}
     elif default_proxies != None:  #config.py
-        proxy = default_proxies
+        if proxy_switch ==2 or proxy_switch==1:#全局启用proxy
+            proxy = default_proxies
+        elif proxy_switch ==3:
+            proxy ={}
     else:
         proxy = {}
 
@@ -222,12 +240,19 @@ def main():
     Threadlist = []
     q_domains = Queue() #to recevie return values
     q_emails = Queue()
+    useragent = random_useragent(allow_random_useragent)
+
     for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer]:
         #print callsites_thread(engine,domain,proxy)
         t = threading.Thread(target=callsites_thread, args=(engine, domain, q_domains, q_emails, proxy))
         Threadlist.append(t)
-    for engine in [baidu_search, so_search, ask_search, bing_search, dogpile_search, exalead_search, google_search, yandex_search, yahoo_search]:
-        t = threading.Thread(target=callengines_thread, args=(engine, domain, q_domains, q_emails, proxy, 500))
+    for engine in [search_ask,search_baidu,search_bing,search_bing_api,search_dogpile,search_duckduckgo,search_exalead,search_fofa,search_google,search_google_cse,
+                   search_shodan,search_so,search_yahoo,search_yandex]:
+        if proxy_switch == 1 and engine in proxy_default_enabled:
+            pass
+        else:
+            proxy ={}
+        t = threading.Thread(target=callengines_thread, args=(engine, domain, q_domains, q_emails, useragent, proxy, 500))
         Threadlist.append(t)
     #for t in Threadlist:
     #    print t

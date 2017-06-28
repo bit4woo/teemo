@@ -2,29 +2,58 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-import sys
-
-from SearchEngine.shodan import WebAPI
-from config import *
 
 
-class search_shodan():
-
-    def __init__(self, host, key):
-        self.host = host
-        if key != "":
-            self.key = key
-        else:
-            self.key = "oCiMsgM6rQWqiTvPxFHYcExlZgg7wvTt"
-        if self.key == "":
-            print "You need an API key in order to use SHODAN database. You can get one here: http://www.shodanhq.com/"
-            sys.exit()
-        self.api = WebAPI(self.key)
-
-    def run(self):
+import shodan
+import config
+from lib import myparser
+#
+class search_shodan:
+    def __init__(self, word, limit, useragent, proxy=None):
+        self.engine_name = "Shodan"
+        self.word = word.replace(' ', '%20')
+        self.results = ""  # 本页搜索结果
+        self.totalresults = ""  # 所有搜索结果
+        self.server = "shodan.io"
+        self.headers = {
+                'User-Agent': useragent}
+        self.limit = int(limit)
+        self.counter = 0
+        self.proxies = proxy
         try:
-            host = self.api.host(self.host)
-            return host['data']
+            self.apikey = config.SHODAN_API_KEY
         except:
-            print "SHODAN empty reply or error in the call"
-            return "error"
+            print "No Shodan API Key,Exit"
+            exit(0)
+    def do_search(self):
+        try:
+                api = shodan.Shodan(self.apikey)
+                self.results = api.search(self.word)
+                self.totalresults +=str(self.results)
+        except shodan.APIError, e:
+                print 'Error: %s' % e
+    def get_emails(self):
+        rawres = myparser.parser(self.totalresults, self.word)
+        return rawres.emails()
+
+    def get_hostnames(self):
+        rawres = myparser.parser(self.totalresults, self.word)
+        return rawres.hostnames()
+    def process(self):
+        self.do_search()
+    def run(self): # define this function,use for threading, define here or define in child-class both should be OK
+        self.process()
+        self.d = self.get_hostnames()
+        self.e = self.get_emails()
+        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        return self.d, self.e
+
+if __name__ == "__main__":
+    proxy = {"http": "http://127.0.0.1:8080"}
+    useragent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
+    search = search_shodan("meizu.com",100, useragent)
+    search.process()
+    emails = search.get_emails()
+    hosts = search.get_hostnames()
+    print emails
+    print hosts  # test successed
