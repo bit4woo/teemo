@@ -113,7 +113,7 @@ class search_google_cse:
             self.do_search_files(files)
             time.sleep(1)
             self.counter += 100
-            print "\tSearching " + str(self.counter) + " results..."
+            #print "\tSearching " + str(self.counter) + " results..."
     def run(self): # define this function,use for threading, define here or define in child-class both should be OK
         self.process()
         self.d = self.get_hostnames()

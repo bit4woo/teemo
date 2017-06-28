@@ -22,7 +22,7 @@ class Threatminer(multiprocessing.Process):
         return
 
     def print_banner(self):
-        print "[-] Searching now in %s.." %(self.engine_name)
+        print "[-] Searching now in %s..\r\n"  %(self.engine_name)
         return
 
     def run(self):

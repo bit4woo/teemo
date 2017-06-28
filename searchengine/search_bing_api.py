@@ -61,15 +61,12 @@ class search_bing_api:
         return rawres.hostnames_all()
 
     def process(self):
-        if self.bingApikey != "":
-            while (self.counter < self.limit):
-                self.do_search()
-                time.sleep(0.3)
-                self.counter += 50
-            print "\tSearching " + str(self.counter) + " results..."
-        else:
-            print "Please insert your API key in the config.py"
-            sys.exit()
+        while (self.counter < self.limit):
+            self.do_search()
+            time.sleep(0.3)
+            self.counter += 50
+        #print "\tSearching " + str(self.counter) + " results..."
+
 
     def run(self):  # define this function,use for threading, define here or define in child-class both should be OK
         self.process()

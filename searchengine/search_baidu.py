@@ -40,12 +40,12 @@ class search_baidu:
 
     def get_emails(self):
         rawres = myparser.parser(self.totalresults, self.word)
-        print "%s email(s) found in Baidu" %len(rawres.emails())
+        #print "%s email(s) found in Baidu" %len(rawres.emails())
         return rawres.emails()
 
     def get_hostnames(self):
         rawres = myparser.parser(self.totalresults, self.word)
-        print "%s domain(s) found in Baidu" %len(rawres.hostnames())
+        #print "%s domain(s) found in Baidu" %len(rawres.hostnames())
         return rawres.hostnames()
     def run(self): # define this function,use for threading, define here or define in child-class both should be OK
         self.process()

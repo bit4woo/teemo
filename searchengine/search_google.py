@@ -77,7 +77,7 @@ class search_google():
                 break
             #more = self.check_next()
             time.sleep(random.randint(1,5)) #should to sleep random time and use random user-agent to prevent block
-            print "\tSearching " + str(self.counter) + " results..."
+            #print "\tSearching " + str(self.counter) + " results..."
             self.counter += 100
 
     def process_profiles(self):
@@ -85,7 +85,7 @@ class search_google():
             self.do_search_profiles()
             time.sleep(0.3)
             self.counter += 100
-            print "\tSearching " + str(self.counter) + " results..."
+            #print "\tSearching " + str(self.counter) + " results..."
     def run(self): # define this function,use for threading, define here or define in child-class both should be OK
         self.process()
         self.d = self.get_hostnames()

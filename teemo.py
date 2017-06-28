@@ -75,10 +75,8 @@ if is_windows:
         colorama.init()
         #Now the unicode will work ^_^
     except:
-        print("[!] Error: Coloring libraries not installed ,no coloring will be used [Check the readme]")
+        print("[!] Error: Coloring libraries not installed ,no coloring will be used")
         G = Y = B = R = W = G = Y = B = R = W = ''
-
-
 else:
     G = '\033[92m'  # green
     Y = '\033[93m'  # yellow
@@ -86,7 +84,7 @@ else:
     R = '\033[91m'  # red
     W = '\033[0m'   # white
 
-version = 'V 0.2'
+version = 'V 0.3'
 
 def banner():
     print """%s
@@ -102,7 +100,7 @@ def banner():
 
          # Coded By bit4 - https://github.com/bit4woo
          # %s
-  """ % (R, W, Y, version)
+  """ % (G, W, Y, version)
 
 def parser_error(errmsg):
     banner()
@@ -196,24 +194,6 @@ def main():
         timestr = now.strftime("-%Y-%m-%d-%H-%M")
         savefile = domain+timestr+".txt"
 
-    if args.proxy != None:
-        proxy = args.proxy
-        proxy = {args.proxy.split(":")[0]: proxy}
-    elif default_proxies != None:  #config.py
-        if proxy_switch ==2 or proxy_switch==1:#全局启用proxy
-            proxy = default_proxies
-        elif proxy_switch ==3:
-            proxy ={}
-    else:
-        proxy = {}
-
-    #Check Verbosity
-    #global verbose
-    #verbose = args.verbose
-    #if verbose or verbose is None:
-        #verbose = True
-
-    #Check Bruteforce Status
     enable_bruteforce = args.bruteforce
     if enable_bruteforce or enable_bruteforce is None:
         enable_bruteforce = True
@@ -241,6 +221,24 @@ def main():
     q_domains = Queue() #to recevie return values
     q_emails = Queue()
     useragent = random_useragent(allow_random_useragent)
+
+    if args.proxy != None:
+        proxy = args.proxy
+        proxy = {args.proxy.split(":")[0]: proxy}
+    elif default_proxies != None and (proxy_switch ==2 or proxy_switch==1):  #config.py
+        proxy = default_proxies
+        try:
+            sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sk.settimeout(2)
+            ip = default_proxies['http'].split("/")[-2].split(":")[0]
+            port = default_proxies['http'].split("/")[-2].split(":")[1]
+            sk.connect((ip,int(port)))
+            sk.close
+        except:
+            print "\r\n[!!!]Proxy Test Failed,Please Check!\r\n"
+            proxy = {}
+    else:
+        proxy = {}
 
     for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer]:
         #print callsites_thread(engine,domain,proxy)
