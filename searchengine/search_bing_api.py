@@ -38,7 +38,7 @@ class search_bing_api:
 
     def do_search(self):
         try:
-            url = "https://api.cognitive.microsoft.com/bing/v5.0/search?q={0}&mkt=en-us".format(self.word,self.counter)# 这里的pn参数是条目数
+            url = "http://api.cognitive.microsoft.com/bing/v5.0/search?q={0}&mkt=en-us".format(self.word,self.counter)# 这里的pn参数是条目数
         except Exception, e:
             print e
         try:

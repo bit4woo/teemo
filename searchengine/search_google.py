@@ -25,7 +25,7 @@ class search_google():
 
     def do_search(self):
         try:
-            url = "https://{0}/search?num={1}&start={2}&hl=en&meta=&q={3}".format(self.server,self.quantity,self.counter,self.word)
+            url = "http://{0}/search?num={1}&start={2}&hl=en&meta=&q={3}".format(self.server,self.quantity,self.counter,self.word)
         except Exception, e:
             print e
         try:

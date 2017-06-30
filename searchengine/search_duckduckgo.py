@@ -23,7 +23,7 @@ class search_duckduckgo:
 
     def do_search(self):
         try:
-            url = "https://{0}/?q={1}".format(self.server,self.word)
+            url = "http://{0}/?q={1}".format(self.server,self.word)
         except Exception, e:
             print e
         try:
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         print "[-] Searching in duckduckgo:"
         useragent = "Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6" #他会检查useragent，之前多了一个( 导致504
         proxy = {"http": "http://127.0.0.1:8080"}
-        search = search_dogpile("meizu.com", '100',useragent,proxy)
+        search = search_duckduckgo("meizu.com", '100',useragent)
         search.process()
         all_emails = search.get_emails()
         all_hosts = search.get_hostnames()
