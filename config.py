@@ -3,15 +3,15 @@
 import random
 
 ##########各种key #############
-Google_CSE_API_Key = "AIzaSyAm6CKK5jKPg_ulQQY2XQAnDk9GsUaLPy8"
-Google_CSE_ID = "016793098823726259780:spqupkdulsw"
+Google_CSE_API_Key = "AIzaSyAm6ssCKK5jKPxg_ulQQY2dXQAnDk9GsUaLPy8"
+Google_CSE_ID = "0167930988223723446259780:spqsssupkdulsw"
 
 Bing_API_Key = ""
 
 FOFA_USER_EMAIL = "bit4woo@163.com"
-FOFA_API_KEY = "a7bd605da714ef8a55439d6c57e0c9df"
+FOFA_API_KEY = "a7bdsd605da714efs8a5s5439ddx6c57e0c9df"
 
-SHODAN_API_KEY = "dEeUZg9GehYtkPYWwD6Ufn17sttHZUEH"
+SHODAN_API_KEY = "dEesUZg9ddGehYtkPsYWwDss6Ufn17sttHZUEH"
 
 
 #############proxy##################
