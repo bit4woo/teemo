@@ -251,6 +251,7 @@ def main():
         else:
             proxy ={}
         t = threading.Thread(target=callengines_thread, args=(engine, domain, q_domains, q_emails, useragent, proxy, 500))
+        t.setDaemon(True)
         Threadlist.append(t)
     #for t in Threadlist:
     #    print t

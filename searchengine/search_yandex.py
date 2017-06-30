@@ -75,7 +75,7 @@ class search_yandex:
     def process(self):
         while self.counter <= self.limit and self.counter<500:
             self.do_search()
-            time.sleep(random.randin(1,5))
+            time.sleep(random.randint(1,5))
             self.counter += 50
             #print "Searching " + str(self.counter) + " results..."
 
