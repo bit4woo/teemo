@@ -10,6 +10,7 @@ import socket
 from lib.common import *
 from subbrute import subbrute
 import threading
+import lib.zonetransfer
 
 from config import default_proxies
 import datetime
@@ -49,6 +50,7 @@ from domainsites.Threatminer import Threatminer
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
+sys.dont_write_bytecode = True
 
 
 #In case you cannot install some of the required development packages, there's also an option to disable the SSL warning:
@@ -192,7 +194,7 @@ def main():
     if not savefile:
         now = datetime.datetime.now()
         timestr = now.strftime("-%Y-%m-%d-%H-%M")
-        savefile = domain+timestr+".txt"
+        savefile = ".\\output\\"+domain+timestr+".txt"
 
     enable_bruteforce = args.bruteforce
     if enable_bruteforce or enable_bruteforce is None:
@@ -216,6 +218,9 @@ def main():
     subdomains.extend(domains)
     #print subdomains
     '''
+
+    #do zone transfer check
+    # to do here
 
     Threadlist = []
     q_domains = Queue() #to recevie return values
@@ -300,7 +305,7 @@ def main():
 
     print "[+] {0} domains found in total".format(len(subdomains))
     print "[+] {0} emails found in total".format(len(emails))
-    print "[+] Results saved to {0} in {1}".format(savefile,os.getcwd())
+    print "[+] Results saved to {0} in {1}".format(savefile,os.path.join(os.getcwd(),"output"))
 
 if __name__=="__main__":
     main()
