@@ -47,3 +47,4 @@ Temporary Items
 .apdisk
 *.xml
 .idea/Teemo.iml
+output/

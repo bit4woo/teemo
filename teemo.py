@@ -194,7 +194,7 @@ def main():
     if not savefile:
         now = datetime.datetime.now()
         timestr = now.strftime("-%Y-%m-%d-%H-%M")
-        savefile = ".\\output\\"+domain+timestr+".txt"
+        savefile = "\\output\\"+domain+timestr+".txt"
 
     enable_bruteforce = args.bruteforce
     if enable_bruteforce or enable_bruteforce is None:
@@ -305,7 +305,7 @@ def main():
 
     print "[+] {0} domains found in total".format(len(subdomains))
     print "[+] {0} emails found in total".format(len(emails))
-    print "[+] Results saved to {0} in {1}".format(savefile,os.path.join(os.getcwd(),"output"))
+    print "[+] Results saved to {0}".format(os.path.join(os.getcwd(),savefile))
 
 if __name__=="__main__":
     main()
