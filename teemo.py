@@ -127,9 +127,11 @@ def parse_args():
 def write_file(filename, subdomains):
     #saving subdomains results to output file
     print "%s[-] Saving results to file: %s%s%s%s"%(Y,W,R,filename,W)
+    filename = os.path.join(os.getcwd(),"output",filename)
     with open(str(filename), 'wb') as f:
         for subdomain in subdomains:
             f.write(subdomain+"\r\n")
+    return filename
 
 class portscan():
 
@@ -194,7 +196,8 @@ def main():
     if not savefile:
         now = datetime.datetime.now()
         timestr = now.strftime("-%Y-%m-%d-%H-%M")
-        savefile = "\\output\\"+domain+timestr+".txt"
+        savefile = domain+timestr+".txt"
+
 
     enable_bruteforce = args.bruteforce
     if enable_bruteforce or enable_bruteforce is None:
@@ -291,7 +294,7 @@ def main():
         subdomains.extend(emails) #this function return value is NoneType ,can't use in function directly
         #print type(subdomains)
 
-        write_file(savefile, subdomains)
+        #write_file(savefile, subdomains)
 
         if ports:
             print G+"[-] Start port scan now for the following ports: %s%s"%(Y,ports)+W
@@ -305,7 +308,7 @@ def main():
 
     print "[+] {0} domains found in total".format(len(subdomains))
     print "[+] {0} emails found in total".format(len(emails))
-    print "[+] Results saved to {0}".format(os.path.join(os.getcwd(),savefile))
+    print "[+] Results saved to {0}".format(write_file(savefile, subdomains))
 
 if __name__=="__main__":
     main()
