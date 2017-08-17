@@ -32,7 +32,7 @@ class search_yandex:
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             if "automated requests" in r.content:
-                print "yandex blocked our request.exit"
+                print "[!]yandex blocked our request.exit"
                 exit(0)
             self.results = r.content
             self.totalresults += self.results

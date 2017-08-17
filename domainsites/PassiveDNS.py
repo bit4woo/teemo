@@ -3,7 +3,9 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
+#this can search email address ,but not returned
 from lib import myparser
+from lib.log import logger
 import requests
 
 class PassiveDNS():
@@ -26,11 +28,11 @@ class PassiveDNS():
                 pass
             else:
                 self.q.append(domain)
-        print "[-] {0} found {1} domains".format(self.engine_name, len(self.q))
+        logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
         return self.q
 
     def print_banner(self):
-        print "[-] Searching now in %s.." %(self.engine_name)
+        logger.info("Searching now in {0}..".format(self.engine_name))
         return
 
     def req(self, url):
@@ -43,7 +45,7 @@ class PassiveDNS():
             resp = requests.get(url, headers=headers, timeout=self.timeout)
             return resp.content
         except Exception as e:
-            print e
+            logger.error(e)
             return None
 
     def enumerate(self):

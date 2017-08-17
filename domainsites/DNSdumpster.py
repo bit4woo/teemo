@@ -2,8 +2,11 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
+
 import re
 import requests
+from lib.log import logger
+
 
 class DNSdumpster():
     def __init__(self, domain, proxy=None):
@@ -14,13 +17,18 @@ class DNSdumpster():
         self.q = []
         self.domain =domain
         self.timeout = 10
+        self.print_banner()
+        return
+
+    def print_banner(self):
+        logger.info("Searching now in {0}..".format(self.engine_name))
         return
 
     def run(self):
         domain_list = self.enumerate()
         for domain in domain_list:
             self.q.append(domain)
-        print "[-] {0} found {1} domains".format(self.engine_name, len(self.q))
+        logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
         return self.q
 
 

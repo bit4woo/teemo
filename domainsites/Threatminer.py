@@ -3,26 +3,24 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 #wydomain
-import multiprocessing
-import threading
-import urlparse
-from lib.common import *
 
-class Threatminer(multiprocessing.Process):
+from lib.common import *
+from lib.log import logger
+from lib.myparser import parser
+
+class Threatminer():
     def __init__(self, domain, proxy=None):
         #self.domain = urlparse.urlparse(domain).netloc
         self.domain = domain
         self.subdomains = []
         self.engine_name = "Threatminer"
-        multiprocessing.Process.__init__(self)
-        self.q = []
         self.timeout = 25
         self.print_banner()
         self.website = "https://www.threatminer.org"
         return
 
     def print_banner(self):
-        print "[-] Searching now in %s..\r\n"  %(self.engine_name)
+        logger.info("Searching now in {0}..".format(self.engine_name))
         return
 
     def run(self):
@@ -31,17 +29,13 @@ class Threatminer(multiprocessing.Process):
             # content = curl_get_content(url).get('resp')
             content = http_request_get(url).content
 
-            _regex = re.compile(r'(?<=<a href\="domain.php\?q=).*?(?=">)')
-            for sub in _regex.findall(content):
-                if is_domain(sub):
-                    self.q.append(sub)
-
-            self.q = list(set(self.q))
+            rawres = parser(content, self.domain)
+            result = rawres.hostnames()
         except Exception as e:
-            logging.info(str(e))
+            logger.error(str(e))
 
-        print "[-] {0} found {1} domains".format(self.engine_name, len(self.q))
-        return self.q
+        logger.info("{0} found {1} domains".format(self.engine_name, len(result)))
+        return result
 
 if __name__ == "__main__":
     x = Threatminer("meizu.com","https://127.0.0.1:9999")

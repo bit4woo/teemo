@@ -5,15 +5,15 @@ __github__ = 'https://github.com/bit4woo'
 
 import os
 import argparse
-from multiprocessing import Queue
 import socket
-from lib.common import *
-from subbrute import subbrute
 import threading
+import datetime
 import lib.zonetransfer
 
+from multiprocessing import Queue
+from lib.common import *
+from subbrute import subbrute
 from config import default_proxies
-import datetime
 
 
 #from searchengine.noneed_searchimpl import baidu_search,so_search, ask_search, bing_search, dogpile_search, exalead_search, google_search, yandex_search, yahoo_search
@@ -205,7 +205,7 @@ def main():
 
     #Validate domain
     if not is_domain(domain):
-        print R+"Error: Please enter a valid domain"+W
+        print R+"[!]Error: Please enter a valid domain"+W
         sys.exit()
 
 
@@ -259,14 +259,14 @@ def main():
         else:
             proxy ={}
         t = threading.Thread(target=callengines_thread, args=(engine, domain, q_domains, q_emails, useragent, proxy, 500))
-        t.setDaemon(True)
+        #t.setDaemon(True) #变成守护进程，独立于主进程。这里好像不需要
         Threadlist.append(t)
     #for t in Threadlist:
     #    print t
     for t in Threadlist: # use start() not run()
         t.start()
     for t in Threadlist:
-        t.join()
+        t.join() #主线程将等待这个线程，直到这个线程运行结束
 
     while not q_domains.empty():
         subdomains.append(q_domains.get())

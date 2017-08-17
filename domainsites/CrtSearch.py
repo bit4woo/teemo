@@ -3,14 +3,12 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
-import multiprocessing
-import threading
-import urlparse
 import requests
-import re
+from lib.log import logger
 from lib.myparser import parser
+from lib.common import http_request_get
 
-class CrtSearch(multiprocessing.Process):
+class CrtSearch():
     def __init__(self, domain, proxy=None):
 
         self.base_url = 'https://crt.sh/?q=%25.{domain}'
@@ -26,38 +24,23 @@ class CrtSearch(multiprocessing.Process):
         return
 
     def print_banner(self):
-        print "[-] Searching now in %s.." %(self.engine_name)
+        logger.info("Searching now in {0}..".format(self.engine_name))
         return
-
-
-    def req(self, url):
-        headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/40.0',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-GB,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate',
-        }
-
-        try:
-            resp = self.session.get(url, headers=headers, timeout=self.timeout)
-            if hasattr(resp, "text"):
-                return resp.text
-            else:
-                return resp.content
-        except Exception as e:
-            print e
-            return 0
-
 
     def run(self):
         url = self.base_url.format(domain=self.domain)
         #print url
-        self.resp = self.req(url)
-        if self.resp:
-            self.subdomains = self.get_hostnames()
-        for domain in self.subdomains:
-            self.q.append(domain)
-        print "[-] {0} found {1} domains".format(self.engine_name, len(self.q))
-        return self.q
+        try:
+            self.resp = http_request_get(url).content
+            if self.resp:
+                self.subdomains = self.get_hostnames()
+            for domain in self.subdomains:
+                self.q.append(domain)
+        except Exception,e:
+            logger.error(e)
+        finally:
+            logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
+            return self.q
 
     def get_hostnames(self):
         rawres = parser(self.resp, self.domain)

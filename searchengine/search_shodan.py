@@ -31,7 +31,7 @@ class search_shodan:
                 self.results = api.search(self.word)
                 self.totalresults +=str(self.results)
         except shodan.APIError, e:
-                print 'Error: %s' % e
+                print '[!]Error: %s' % e
     def get_emails(self):
         rawres = myparser.parser(self.totalresults, self.word)
         return rawres.emails()

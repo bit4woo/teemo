@@ -4,22 +4,18 @@ __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
 #wydomain
-
-import multiprocessing
-import threading
-import urlparse
 from lib.common import *
 from lib.captcha import *
+from lib.log import logger
 
 
-class Sitedossier(multiprocessing.Process):
+class Sitedossier():
     def __init__(self, domain, proxy=None):
         #self.domain = urlparse.urlparse(domain).netloc
         self.domain = domain
         self.subdomains = []
         self.session = requests.Session()
         self.engine_name = "Sitedossier"
-        multiprocessing.Process.__init__(self)
         self.q = []
         self.timeout = 25
         self.print_banner()
@@ -27,7 +23,7 @@ class Sitedossier(multiprocessing.Process):
         return
 
     def print_banner(self):
-        print "[-] Searching now in %s.." %(self.engine_name)
+        logger.info("Searching now in {0}..".format(self.engine_name))
         return
 
     def run(self):
@@ -37,13 +33,13 @@ class Sitedossier(multiprocessing.Process):
             self.parser(r)
             self.q = list(set(self.q))
         except Exception, e:
-            logging.info(str(e))
+            logger.info(str(e))
 
-        print "[-] {0} found {1} domains".format(self.engine_name, len(self.q))
+        logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
         return self.q
 
     def get_content(self, url):
-        logging.info('request: {0}'.format(url))
+        #logger.info('request: {0}'.format(url))
         r = http_request_get(url).text
         if self.human_act(r) is True:
             return r

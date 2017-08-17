@@ -2,10 +2,10 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-import string
+
 import httplib
-import sys
 from lib import myparser
+from lib.log import logger
 # to do :return emails
 
 class Pgpsearch:
@@ -19,6 +19,11 @@ class Pgpsearch:
         self.userAgent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
         self.engine_name = "PGP"
         self.q = []
+        self.print_banner()
+
+    def print_banner(self):
+        logger.info("Searching now in {0}..".format(self.engine_name))
+        return
 
     def process(self):
         h = httplib.HTTP(self.server)
@@ -40,5 +45,9 @@ class Pgpsearch:
         return rawres.hostnames()
     def run(self):
         self.q = self.get_hostnames() # how to receive emails.
-        print "[-] {0} found {1} domains".format(self.engine_name, len(self.q))
+        logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
         return self.q
+
+if __name__ == "__main__":
+    x= Pgpsearch("meizu.com")
+    print x.run()

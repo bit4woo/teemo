@@ -42,7 +42,7 @@ threads_count = 16
 # -------------------------------------------------
 
 # 超时时间
-timeout = 5
+timeout = 15
 
 # 是否允许URL重定向
 allow_redirects = True

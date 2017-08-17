@@ -3,13 +3,12 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
-import multiprocessing
 import threading
-import urlparse
 import requests
 import re
+from lib.log import logger
 
-class Virustotal(multiprocessing.Process):
+class Virustotal():
     def __init__(self, domain, subdomains=None, q=None, lock=threading.Lock(), proxy=None):
         subdomains = subdomains or []
         self.base_url = 'https://www.virustotal.com/en/domain/{domain}/information/'
@@ -18,7 +17,6 @@ class Virustotal(multiprocessing.Process):
         self.subdomains = []
         self.session = requests.Session()
         self.engine_name = "Virustotal"
-        multiprocessing.Process.__init__(self)
         self.lock = lock
         self.q = []
         self.timeout = 10
@@ -29,11 +27,11 @@ class Virustotal(multiprocessing.Process):
         domain_list = self.enumerate()
         for domain in domain_list:
             self.q.append(domain)
-        print "[-] {0} found {1} domains".format(self.engine_name, len(self.q))
+        logger.log("{0} found {1} domains".format(self.engine_name, len(self.q)))
         return self.q
 
     def print_banner(self):
-        print "[-] Searching now in %s.." %(self.engine_name)
+        logger.info("Searching now in {0}..".format(self.engine_name))
         return
 
     def req(self, url):

@@ -30,19 +30,21 @@
 
 利用第三方站点：
 
-- Alex
-- Chaxunla (图形验证码)
-- netcraft 
-- DNSDumpster
-- Virustotal
-- ThreatCrowd
-- CrtSearch
-- PassiveDNS
-- GooglCT
-- ILink
-- sitedossier
-- threatminer
-- Pgpsearch
+1. Alexa
+
+2. Chaxunla
+3. CrtSearch
+4. DNSdumpster
+5. Googlect
+6. Ilink
+7. Netcraft
+8. PassiveDNS
+9. Pgpsearch
+10. Sitedossier
+11. ThreatCrowd
+12. Threatminer
+13. Virustotal
+
 
 利用枚举
 
@@ -116,16 +118,17 @@ Shodan:
 
 Thanks for their sharing.
 
+## Change Log
+
+2017-08-17 : Update "domainsite" part, use logging to output; fix some bug.
+
 
 
 ## To Do
 
-- 接入打码平台
 - 域名有效性判断，端口扫描并记录--json格式（｛domain:{ip：127.0.0.1，ports:{80,443},cdn:{yes or no,具体是谁}}｝domain）
 - 泛解析，dns轮询相关
-- 优化config.py
 - 模糊匹配，例如包含"qq"的所有域名，比如qqimg.com
-- 搜索引擎模块，使用google hacking 搜索
 
 ## 相关思维导图
 ![xmind](doc/xmind.png)

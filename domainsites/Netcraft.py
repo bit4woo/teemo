@@ -2,15 +2,15 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-import multiprocessing
-import threading
+
 import urlparse
 import urllib
 import requests
 import re
 import hashlib
+from lib.log import logger
 
-class Netcraft(multiprocessing.Process):
+class Netcraft():
     def __init__(self, domain, proxy=None):
         self.base_url = 'http://searchdns.netcraft.com/?restriction=site+ends+with&host={domain}'
         #self.domain = urlparse.urlparse(domain).netloc
@@ -18,7 +18,6 @@ class Netcraft(multiprocessing.Process):
         self.subdomains = []
         self.session = requests.Session()
         self.engine_name = "Netcraft"
-        multiprocessing.Process.__init__(self)
         self.q = []
         self.timeout = 10
         self.print_banner()
@@ -28,11 +27,11 @@ class Netcraft(multiprocessing.Process):
         domain_list = self.enumerate()
         for domain in domain_list:
             self.q.append(domain)
-        print "[-] {0} found {1} domains".format(self.engine_name, len(self.q))
+        logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
         return self.q
 
     def print_banner(self):
-        print "[-] Searching now in %s.." %(self.engine_name)
+        logger.info("Searching now in {0}..".format(self.engine_name))
         return
 
     def req(self, url, cookies=None):
@@ -45,7 +44,7 @@ class Netcraft(multiprocessing.Process):
         try:
             resp = self.session.get(url, headers=headers, timeout=self.timeout,cookies=cookies)
         except Exception as e:
-            print e
+            logger.error(e)
             resp = None
         return resp
 
@@ -105,7 +104,7 @@ class Netcraft(multiprocessing.Process):
                     self.subdomains.append(subdomain.strip())
             return links_list
         except Exception as e:
-            print e
+            logger.error(e)
             pass
 
 

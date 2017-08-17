@@ -3,13 +3,10 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
-import multiprocessing
-import threading
-import urlparse
 import requests
+from lib.log import logger
 
-
-class ThreatCrowd(multiprocessing.Process):
+class ThreatCrowd():
     def __init__(self, domain, proxy=None):
         self.base_url = 'https://www.threatcrowd.org/searchApi/v2/domain/report/?domain={domain}'
         #self.domain = urlparse.urlparse(domain).netloc
@@ -17,7 +14,6 @@ class ThreatCrowd(multiprocessing.Process):
         self.subdomains = []
         self.session = requests.Session()
         self.engine_name = "ThreatCrowd"
-        multiprocessing.Process.__init__(self)
         self.q = []
         self.timeout = 20
         self.print_banner()
@@ -28,11 +24,11 @@ class ThreatCrowd(multiprocessing.Process):
         for domain in domain_list:
             self.q.append(domain)
 
-        print "[-] {0} found {1} domains".format(self.engine_name, len(self.q))
+        logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
         return self.q
 
     def print_banner(self):
-        print "[-] Searching now in %s.." %(self.engine_name)
+        logger.info("Searching now in {0}..".format(self.engine_name))
         return
 
     def req(self, url):
@@ -67,9 +63,8 @@ class ThreatCrowd(multiprocessing.Process):
         try:
             import json
         except Exception as e:
-            print e
+            logger.error(e)
             return
-
 
         try:
             links = json.loads(resp)['subdomains']

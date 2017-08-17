@@ -4,15 +4,11 @@ __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
 #wydomain
-
-import multiprocessing
-import threading
-import urlparse
-import requests
 from lib.common import *
+from lib.log import logger
 
 
-class Ilink(multiprocessing.Process):
+class Ilink():
     def __init__(self, domain, proxy=None):
         self.url = 'http://i.links.cn/subdomain/'
         #self.domain = urlparse.urlparse(domain).netloc
@@ -25,7 +21,7 @@ class Ilink(multiprocessing.Process):
         return
 
     def print_banner(self):
-        print "[-] Searching now in %s.." %(self.engine_name)
+        logger.info("Searching now in {0}..".format(self.engine_name))
         return
 
     def run(self):
@@ -44,10 +40,10 @@ class Ilink(multiprocessing.Process):
 
             self.q = list(set(self.q))
         except Exception as e:
-            pass
-
-        print "[-] {0} found {1} domains".format(self.engine_name, len(self.q))
-        return self.q
+            logger.error(e)
+        finally:
+            logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
+            return self.q
 
 if __name__ == "__main__":
     x = Ilink("meizu.com","https://127.0.0.1:9999")
