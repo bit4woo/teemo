@@ -6,6 +6,7 @@ import requests
 import base64
 import config
 from lib import myparser
+from lib.log import logger
 
 class search_fofa:
     def __init__(self, word, limit,useragent,proxy=None):
@@ -14,7 +15,7 @@ class search_fofa:
             self.email = config.FOFA_USER_EMAIL
             self.key = config.FOFA_API_KEY
         except:
-            print "No Fofa Config,Exit"
+            logger.warning("No Fofa Config,Exit")
             exit(0)
         self.word = word
         self.results = ""
@@ -24,6 +25,12 @@ class search_fofa:
         self.limit = int(limit)
         self.counter = 0 #useless
         self.proxies = proxy
+        self.print_banner()
+        return
+
+    def print_banner(self):
+        logger.info("Searching now in {0}..".format(self.engine_name))
+        return
     def do_search(self):
         try:
             auth_url = "https://fofa.so/api/v1/info/my?email={0}&key={1}".format(self.email, self.key)
@@ -35,7 +42,7 @@ class search_fofa:
             self.results = r.content
             self.totalresults += self.results
         except Exception, e:
-            print e
+            logger.error(e)
     def get_emails(self):
         rawres = myparser.parser(self.totalresults, self.word)
         return rawres.emails()
@@ -49,7 +56,7 @@ class search_fofa:
         self.process()
         self.d = self.get_hostnames()
         self.e = self.get_emails()
-        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e)))
         return self.d, self.e
 
 if __name__ == "__main__":

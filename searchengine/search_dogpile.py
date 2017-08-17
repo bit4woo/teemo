@@ -4,6 +4,7 @@ __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 import requests
 from lib import myparser
+from lib.log import logger
 import time
 import config
 
@@ -20,18 +21,23 @@ class search_dogpile:
         self.headers = {
             'User-Agent': useragent}
         self.proxies = proxy
+        self.print_banner()
+        return
 
+    def print_banner(self):
+        logger.info("Searching now in {0}..".format(self.engine_name))
+        return
     def do_search(self):
         try:
             url = "http://{0}/search/web?qsi={1}&q={2}".format(self.server,self.counter,self.word)
         except Exception, e:
-            print e
+            logger.error(e)
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.total_results += self.results
         except Exception,e:
-            print e
+            logger.error(e)
 
     def process(self):
         while self.counter <= self.limit and self.counter <= 1000:
@@ -51,7 +57,7 @@ class search_dogpile:
         self.process()
         self.d = self.get_hostnames()
         self.e = self.get_emails()
-        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e)))
         return self.d, self.e
 
 def dogpile(keyword, limit, useragent,proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function

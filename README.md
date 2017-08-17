@@ -54,10 +54,9 @@
 
 
 
-## 各API申请指引
-其中部分接口需要API Key，如果有相应账号，可以在config.py中进行配置，没有也不影响程序的使用。
+## 各API申请指引(非必要)
 
-
+其中部分接口需要API Key，如果有相应账号，可以在config.py中进行配置，**<u>没有也不影响程序的使用</u>**。
 
 Google CSE(自定义搜索引擎):
 - 创建自定义的搜索引擎（CSE）https://cse.google.com/cse/all
@@ -103,8 +102,6 @@ Shodan:
 * 收集域名并扫描指定端口 :
 
 ``python teemo.py -d example.com -p 80,443``
-
-
 
 
 

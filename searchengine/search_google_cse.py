@@ -6,7 +6,7 @@ __github__ = 'https://github.com/bit4woo'
 import requests
 import sys
 from lib.myparser import parser
-import re
+from lib.log import logger
 import time
 import config
 
@@ -28,28 +28,34 @@ class search_google_cse:
             self.api_key = config.Google_CSE_API_Key
             self.cse_id = config.Google_CSE_ID
         except:
-            print "No Google CSE API Key,Exit."
+            logger.error("No Google CSE API Key,Exit..")
             exit(0)
         self.lowRange = 0
         self.highRange = 100
         self.proxies = proxy
+        self.print_banner()
+        return
+
+    def print_banner(self):
+        logger.info("Searching now in {0}..".format(self.engine_name))
+        return
 
     def do_search(self):
         try:
             url = "https://{0}/customsearch/v1?key={1}&highRange={2}&lowRange={3}&cx={4}&start={5}&q={6}".format(self.server,self.api_key,self.highRange,self.lowRange,self.cse_id,self.counter,self.word)
         except Exception, e:
-            print e
+            logger.error(e)
         try:
             r = requests.get(url, headers = self.headers, proxies=self.proxies)
             if r.status_code != 200:
-                print r.content
+                #print r.content
                 return 0
             else:
                 self.results = r.content
                 self.totalresults += self.results
                 return 1
         except Exception,e:
-            print e
+            logger.error(e)
             return 0
 
     def do_search_files(self):
@@ -57,18 +63,18 @@ class search_google_cse:
             query = "filetype:"+self.files+"%20site:"+self.word
             url = "https://{0}/customsearch/v1?key={1}&highRange={2}&lowRange={3}&cx={4}&start={5}&q={6}".format(self.server,self.api_key,self.highRange,self.lowRange,self.cse_id,self.counter,query)
         except Exception, e:
-            print e
+            logger.error(e)
         try:
             r = requests.get(url, headers = self.headers, proxies=self.proxies)
             if "and not a robot" in r.content:
-                print "google has blocked your visit"
+                logger.warning("google has blocked your visit")
                 return 0
             else:
                 self.results = r.content
                 self.totalresults += self.results
                 return 1
         except Exception,e:
-            print e
+            logger.error(e)
             return 0
 
     def get_emails(self):
@@ -118,7 +124,7 @@ class search_google_cse:
         self.process()
         self.d = self.get_hostnames()
         self.e = self.get_emails()
-        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e)))
         return self.d, self.e
 
 if __name__ == "__main__":

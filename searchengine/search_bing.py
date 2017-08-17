@@ -4,6 +4,7 @@ __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 import httplib
 from lib import myparser
+from lib.log import logger
 import time
 import requests
 
@@ -19,18 +20,24 @@ class search_bing:
         self.counter = 0
         self.headers = {"Cookie":"SRCHHPGUSR=ADLT=DEMOTE&NRSLT=50","Accept-Language":"'en-us,en","User-Agent":useragent}
         self.proxies = proxy
+        self.print_banner()
+        return
+
+    def print_banner(self):
+        logger.info("Searching now in {0}..".format(self.engine_name))
+        return
 
     def do_search(self):
         try:
             url = "http://{0}/search?q={1}&count=50&first={2}".format(self.server,self.word,self.counter)# 这里的pn参数是条目数
         except Exception, e:
-            print e
+            logger.log(e)
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.totalresults += self.results
         except Exception,e:
-            print e
+            logger.log(e)
 
     def do_search_vhost(self):
         h = httplib.HTTP(self.server)
@@ -70,7 +77,7 @@ class search_bing:
         self.process()
         self.d = self.get_hostnames()
         self.e = self.get_emails()
-        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e)))
         return self.d, self.e
 
 def bing(keyword, limit, useragent, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function

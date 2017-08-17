@@ -3,6 +3,7 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 from lib import myparser
+from lib.log import logger
 import re
 import requests
 import config
@@ -23,12 +24,18 @@ class search_ask():
         self.limit = int(limit)  #item number?
         self.counter = 0 #page number  ---> page 参数
         self.proxies = proxy
+        self.print_banner()
+        return
+
+    def print_banner(self):
+        logger.info("Searching now in {0}..".format(self.engine_name))
+        return
 
     def do_search(self):
         try:
             url = "http://{0}/web?q={1}&pu=100&page={2}".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
         except Exception, e:
-            print e
+            logger.error(e)
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             #如果不指定header， agent的值将如下 ：  User-Agent: python-requests/2.18.1  这对有请求限制的搜索引擎很关键，比如google
@@ -36,7 +43,7 @@ class search_ask():
             self.results = r.content
             self.totalresults += self.results
         except Exception,e:
-            print e
+            logger.error(e)
 
     def check_next(self):
         renext = re.compile('>Next<') #<li class="PartialWebPagination-next">Next</li>
@@ -70,7 +77,7 @@ class search_ask():
         self.process()
         self.d = self.get_hostnames()
         self.e = self.get_emails()
-        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e)))
         return self.d, self.e
 
 def ask(keyword, limit, useragent, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function

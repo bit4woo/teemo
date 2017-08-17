@@ -4,6 +4,7 @@ __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 import httplib
 from lib import myparser
+from lib.log import logger
 import re
 import time
 import requests
@@ -23,21 +24,27 @@ class search_yandex:
         self.limit = int(limit)
         self.counter = 0
         self.proxies = proxy
+        self.print_banner()
+        return
+
+    def print_banner(self):
+        logger.info("Searching now in {0}..".format(self.engine_name))
+        return
 
     def do_search(self):
         try:
             url = "http://{0}/search?text={1}&numdoc=50&lr={2}".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
         except Exception, e:
-            print e
+            logger.error(e)
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             if "automated requests" in r.content:
-                print "[!]yandex blocked our request.exit"
+                logger.warning("yandex blocked our request.exit")
                 exit(0)
             self.results = r.content
             self.totalresults += self.results
         except Exception,e:
-            print e
+            logger.error(e)
 
     def do_search_files(self, files):  # TODO
         h = httplib.HTTP(self.server)
@@ -55,7 +62,7 @@ class search_yandex:
         nextres = renext.findall(self.results)
         if nextres != []:
             nexty = "1"
-            print str(self.counter)
+            #print str(self.counter)
         else:
             nexty = "0"
         return nexty
@@ -88,7 +95,7 @@ class search_yandex:
         self.process()
         self.d = self.get_hostnames()
         self.e = self.get_emails()
-        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e)))
         return self.d, self.e
 
 if __name__ == "__main__":

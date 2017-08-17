@@ -3,7 +3,7 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 import requests
-import sys
+from lib.log import logger
 from lib import myparser
 import time
 import config
@@ -31,22 +31,28 @@ class search_bing_api:
         try:
             self.bingApikey = config.Bing_API_Key
         except:
-            print "No Bing API Key,Exit"
+            logger.warning("No Bing API Key,Exit")
             exit(0)
         self.counter = 0
         self.proxies = proxy
+        self.print_banner()
+        return
+
+    def print_banner(self):
+        logger.info("Searching now in {0}..".format(self.engine_name))
+        return
 
     def do_search(self):
         try:
             url = "http://api.cognitive.microsoft.com/bing/v5.0/search?q={0}&mkt=en-us".format(self.word,self.counter)# 这里的pn参数是条目数
         except Exception, e:
-            print e
+            logger.error(e)
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.totalresults += self.results
         except Exception,e:
-            print e
+            logger.error(e)
 
     def get_emails(self):
         rawres = myparser.parser(self.totalresults, self.word)
@@ -72,7 +78,7 @@ class search_bing_api:
         self.process()
         self.d = self.get_hostnames()
         self.e = self.get_emails()
-        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name, len(self.d), len(self.e))
+        logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name, len(self.d), len(self.e)))
         return self.d, self.e
 
 def bing_API(keyword, limit, useragent, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function

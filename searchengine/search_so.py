@@ -5,7 +5,7 @@ __github__ = 'https://github.com/bit4woo'
 from lib import myparser
 import re
 import requests
-import config
+from lib.log import logger
 
 #核心方法之一，没有请求限制，无需要代理
 class search_so():
@@ -21,18 +21,24 @@ class search_so():
         self.limit = int(limit)
         self.counter = 1 #page number  ---> page 参数
         self.proxies = proxy
+        self.print_banner()
+        return
+
+    def print_banner(self):
+        logger.info("Searching now in {0}..".format(self.engine_name))
+        return
 
     def do_search(self):
         try:#https://www.so.com/s?q={query}&pn={page_no}
             url = "https://{0}/s?q={1}&pn={2}".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
         except Exception, e:
-            print e
+            logger.error(e)
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.totalresults += self.results
         except Exception,e:
-            print e
+            logger.error(e)
 
     def check_next(self):
         renext = re.compile('snext')
@@ -62,7 +68,7 @@ class search_so():
         self.process()
         self.d = self.get_hostnames()
         self.e = self.get_emails()
-        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e)))
         return self.d, self.e
 
 def so(keyword, limit, useragent, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function

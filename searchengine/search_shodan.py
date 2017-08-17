@@ -7,6 +7,7 @@ __github__ = 'https://github.com/bit4woo'
 import shodan
 import config
 from lib import myparser
+from lib.log import logger
 #
 class search_shodan:
     def __init__(self, word, limit, useragent, proxy=None):
@@ -25,13 +26,20 @@ class search_shodan:
         except:
             print "No Shodan API Key,Exit"
             exit(0)
+        self.print_banner()
+        return
+
+    def print_banner(self):
+        logger.info("Searching now in {0}..".format(self.engine_name))
+        return
+
     def do_search(self):
         try:
                 api = shodan.Shodan(self.apikey)
                 self.results = api.search(self.word)
                 self.totalresults +=str(self.results)
         except shodan.APIError, e:
-                print '[!]Error: %s' % e
+                logger.error(e)
     def get_emails(self):
         rawres = myparser.parser(self.totalresults, self.word)
         return rawres.emails()
@@ -45,7 +53,7 @@ class search_shodan:
         self.process()
         self.d = self.get_hostnames()
         self.e = self.get_emails()
-        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e)))
         return self.d, self.e
 
 if __name__ == "__main__":

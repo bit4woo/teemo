@@ -4,6 +4,7 @@ __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 import requests
 from lib import myparser
+from lib.log import logger
 import time
 
 class search_yahoo:
@@ -18,18 +19,24 @@ class search_yahoo:
         self.limit = int(limit)
         self.proxies = proxy
         self.counter = 0
+        self.print_banner()
+        return
+
+    def print_banner(self):
+        logger.info("Searching now in {0}..".format(self.engine_name))
+        return
 
     def do_search(self):
         try:
             url = "http://{0}/search?q={1}&b={2}&pz=10".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
         except Exception, e:
-            print e
+            logger.error(e)
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.total_results += self.results
         except Exception,e:
-            print e
+            logger.error(e)
 
     def process(self):
         while self.counter <= self.limit and self.counter <= 1000:
@@ -50,7 +57,7 @@ class search_yahoo:
         self.process()
         self.d = self.get_hostnames()
         self.e = self.get_emails()
-        print "[-] {0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e))
+        logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e)))
         return self.d, self.e
 
 if __name__ == "__main__":
