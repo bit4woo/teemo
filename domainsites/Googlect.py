@@ -106,6 +106,6 @@ class Googlect():
 
 if __name__ == "__main__":
     proxy = {"https":"https://127.0.0.1:9988"}
-    x = Googlect("meizu.com",proxy)
+    x = Googlect("welab.co",proxy)
     #print x.parser_dnsname()
     print x.run()

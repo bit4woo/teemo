@@ -6,82 +6,87 @@ __github__ = 'https://github.com/bit4woo'
 import os
 import re
 import dns.resolver, dns.zone
+from lib.log import logger
 
-def get_ns_server(domain):
-    ns_servers = []
-    try:
-        resolver = dns.resolver.Resolver()
-        resolver.timeout = 5
-        resolver.lifetime = 10
+class zonetransfer:
+    def __init__(self,domain):
+        self.domain= domain
+        self.nsservers = []
+        self.results =[]
+        self.has_zone_transfer = 0
 
-        # 使用阿里DNS服务器，效果不咋滴
-        #resolver.nameservers = ["223.5.5.5", "223.6.6.6"]
 
-        answers = resolver.query(domain, "NS")
-        if answers:
-            for answer in answers:
-                #print answer
-                ns_servers.append(str(answer))
-    except Exception, e:
-        print "[-]get ns server error! try: dig %s NS +short" %(domain) , str(e)
-    return ns_servers #域名末尾有点
-
-def get_ns_server_nslookup(domain):
-    #result = os.system("nslookup -type=ns {0}".format(domain))
-    result = os.popen('nslookup -type=ns ' + domain).read()
-    #print result
-    #其实域名后是否有点对axfr查询无影响
-    '''
-    if sys.platform == 'win32':
-        dns_servers = re.findall('nameserver = (.*?)\n', result)
-    else:
-        dns_servers = re.findall('nameserver = (.*?)\.\n', result)
-    '''
-    dns_servers = re.findall('nameserver = (.*?)\n', result)
-    return dns_servers
-
-def axfr_check(domain, nsserver):
-    has_zone_transfer = False
-    results = []
-    try:
-        zone = dns.zone.from_xfr(dns.query.xfr(str(nsserver), domain, timeout=5, lifetime=10))
-        if zone:
-            has_zone_transfer = True
-            names = zone.nodes.keys()
-            names.sort()
-            for n in names:
-                record = zone[n].to_text(n)
-                results.append(record)
-                print record
-    except Exception, e:
-        #print "[get xfr error]", domain, "\t", nsserver, str(e)
-        pass
-    return has_zone_transfer,results
-
-def check(domain):
-    try:
-        nsserver = get_ns_server(domain)
-    except:
+    def get_ns_server(self):
         try:
-            nsserver = get_ns_server_nslookup()
-        except:
-            pass
-    finally:
-        nsserver = []
+            resolver = dns.resolver.Resolver()
+            resolver.timeout = 5
+            resolver.lifetime = 10
 
-    if nsserver == "None":
-        print "None NS Server found for {0}".format(domain)
-    else:
-        for _ in nsserver:
-            has_zone_transfer,results = axfr_check(domain, _)
-            fp = open(".\\output\\{0}_zone_transfer.txt".format(_),"wb")
-            if has_zone_transfer == True:
-                print "Zone Transfer Detected for {0}".format(_)
-                for item in results:
+            # 使用阿里DNS服务器，效果不咋滴
+            #resolver.nameservers = ["223.5.5.5", "223.6.6.6"]
+
+            answers = resolver.query(self.domain, "NS")
+            if answers:
+                for answer in answers:
+                    #print answer
+                    self.nsservers.append(str(answer))
+        except Exception, e:
+            pass
+            #print "[-]get ns server error! try: dig %s NS +short" %(domain) , str(e)
+
+    def get_ns_server_nslookup(self):
+        #result = os.system("nslookup -type=ns {0}".format(domain))
+        result = os.popen('nslookup -type=ns ' + self.domain).read()
+        #print result
+        #其实域名后是否有点对axfr查询无影响
+        '''
+        if sys.platform == 'win32':
+            dns_servers = re.findall('nameserver = (.*?)\n', result)
+        else:
+            dns_servers = re.findall('nameserver = (.*?)\.\n', result)
+        '''
+        dns_servers = re.findall('nameserver = (.*?)\n', result)
+        self.nsservers.extend(dns_servers)
+
+    def axfr_check(self, domain, nsserver):
+        try:
+            zone = dns.zone.from_xfr(dns.query.xfr(str(nsserver), domain, timeout=5, lifetime=10))
+            if zone:
+                self.has_zone_transfer += 1
+                names = zone.nodes.keys()
+                names.sort()
+                for n in names:
+                    record = zone[n].to_text(n)
+                    self.results.append(record)
+                    print record
+        except Exception, e:
+            #print "[get xfr error]", domain, "\t", nsserver, str(e)
+            pass
+
+    def check(self):
+        logger.info("Doing Zone Transfer Check ...")
+        try:
+            self.get_ns_server()
+            self.get_ns_server_nslookup()
+        except Exception as e:
+            logger.error(e)
+
+        if len(self.nsservers) == 0:
+            logger.info("None NS Server found for {0}.".format(self.domain))
+        else:
+            for _ in self.nsservers:
+                has_zone_transfer = self.axfr_check(self.domain, _)
+
+            if has_zone_transfer != 0 and len(self.results) != 0:
+                logger.info("Zone Transfer Detected for {0}".format(self.domain))
+                fp = open("..\\output\\{0}_zone_transfer.txt".format(self.domain), "wb")
+                fp.writelines(self.results)
+                fp.close()
+                for item in self.results:
                     print item
-                    fp.write(item)
-            else:
-                pass
+            if has_zone_transfer == 0 or len(self.results) == 0:
+                logger.info("Zone Transfer False")
+
 
 if __name__ == '__main__':
     '''
@@ -89,7 +94,8 @@ if __name__ == '__main__':
     b = get_ns_server_nslookup("meizu.com")
     print a
     print b
-    '''
 
     for _ in ["ns1.as6453.net"]:
         z= axfr_check("bf",_)
+    '''
+    zonetransfer("meizu.com").check()

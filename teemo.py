@@ -8,7 +8,7 @@ import argparse
 import socket
 import threading
 import datetime
-import lib.zonetransfer
+from lib.zonetransfer import check
 
 from multiprocessing import Queue
 from lib.common import *
@@ -222,9 +222,6 @@ def main():
     #print subdomains
     '''
 
-    #do zone transfer check
-    # to do here
-
     Threadlist = []
     q_domains = Queue() #to recevie return values
     q_emails = Queue()
@@ -247,6 +244,9 @@ def main():
             proxy = {}
     else:
         proxy = {}
+
+    #doing zone transfer checking
+    check(domain)
 
     for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer]:
         #print callsites_thread(engine,domain,proxy)
