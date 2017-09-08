@@ -66,7 +66,7 @@ class Googlect():
             else:
                 return resp.content
         except Exception as e:
-            print e
+            logger.error(e)
             return 0
     def parser_subject(self):
         #try:

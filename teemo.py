@@ -235,18 +235,15 @@ def main():
         subdomains = sorted(list(set(subdomains)))
         emails = sorted(list(set(emails)))
         subdomains.extend(emails) #this function return value is NoneType ,can't use in function directly
+        subdomains.extend(IPrange_list)
         #print type(subdomains)
 
         #write_file(savefile, subdomains)
         fp = open(savefile,"wb")
         fp.writelines("\n".join(subdomains))
-        fp.write("\n")
-        fp.writelines("\n".join(IPrange_list))
 
         for subdomain in subdomains:
             print G+subdomain+W
-        for ip in IPrange_list:
-            print G + ip + W
 
     print "[+] {0} domains found in total".format(len(subdomains))
     print "[+] {0} emails found in total".format(len(emails))

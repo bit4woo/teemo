@@ -18,7 +18,7 @@ class search_yahoo:
         self.headers = {'User-agent':useragent}
         self.limit = int(limit)
         self.proxies = proxy
-        self.counter = 0
+        self.counter = 1
         self.print_banner()
         return
 
@@ -39,7 +39,7 @@ class search_yahoo:
             logger.error(e)
 
     def process(self):
-        while self.counter <= self.limit and self.counter <= 1000:
+        while self.counter <= self.limit and self.counter <= 200:
             self.do_search()
             time.sleep(1)
 
@@ -61,7 +61,6 @@ class search_yahoo:
         return self.d, self.e
 
 if __name__ == "__main__":
-        print "[-] Searching in yahoo:"
         useragent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
         search = search_yahoo("meizu.com", '100', useragent)
         search.process()

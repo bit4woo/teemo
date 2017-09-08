@@ -130,7 +130,7 @@ class search_google_cse:
 if __name__ == "__main__":
     proxy = {"http": "http://127.0.0.1:9988"}
     useragent = "Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"  # 他会检查useragent，之前多了一个( 导致504
-    x = search_googleCSE("meizu.com",100,useragent,proxy)
+    x = search_google_cse("meizu.com",100,useragent,proxy)
     x.process()
     print x.get_emails()
     print x.get_hostnames()

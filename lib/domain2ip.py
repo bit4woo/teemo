@@ -99,6 +99,7 @@ if __name__ == "__main__":
     #print query("baidu.com")
     iplist = open("C:\Users\jax\Desktop\ips.txt").readlines()
     #print iplist
-    fp = open("tmp.txt", "wb")
+    fp = open("tmp.txt", "ab")
     x = get_IP_range(["baidu.com"])
+    fp.write("\n")
     fp.writelines("\n".join(x))

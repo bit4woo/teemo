@@ -3,7 +3,7 @@
 import random
 
 ##########各种key #############
-Google_CSE_API_Key = "AIzaSyAm6ssCKK5jKPxg_ulQQY2dXQAnDk9GsUaLPy8"
+Google_CSE_API_Key = ""
 Google_CSE_ID = "0167930988223723446259780:spqsssupkdulsw"
 
 Bing_API_Key = ""

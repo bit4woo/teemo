@@ -27,7 +27,7 @@ class Virustotal():
         domain_list = self.enumerate()
         for domain in domain_list:
             self.q.append(domain)
-        logger.log("{0} found {1} domains".format(self.engine_name, len(self.q)))
+        logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
         return self.q
 
     def print_banner(self):
