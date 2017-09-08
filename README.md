@@ -31,7 +31,6 @@
 利用第三方站点：
 
 1. Alexa
-
 2. Chaxunla
 3. CrtSearch
 4. DNSdumpster
@@ -99,10 +98,6 @@ Shodan:
 
 ``python teemo.py -d example.com -o result.txt``
 
-* 收集域名并扫描指定端口 :
-
-``python teemo.py -d example.com -p 80,443``
-
 
 
 ## 参考
@@ -118,7 +113,7 @@ Thanks for their sharing.
 ## Change Log
 
 2017-08-17 : Update "domainsite" part, use logging to output; fix some bug.
-
+2017-09-08 : Remove port scan function,leave it to nmap, add IP and Network analysis.
 
 
 ## To Do

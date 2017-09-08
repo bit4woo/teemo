@@ -48,7 +48,7 @@ class DNSdumpster():
             else:
                 resp = self.session.post(url, data=params, headers=headers, timeout=self.timeout)
         except Exception as e:
-            print e
+            logger.error(e)
             return None
         if hasattr(resp, "text"):
             return resp.text

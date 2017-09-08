@@ -7,7 +7,7 @@ import json
 import subprocess
 
 import logging
-
+import sys
 import requests as requests
 import requests as __requests__
 
@@ -95,7 +95,59 @@ def read_json(filename):
     else:
         return []
 
+def banner():
+    # Check if we are running this on windows platform
+    is_windows = sys.platform.startswith('win')
 
+    # Console Colors
+    if is_windows:
+        # Windows deserve coloring too :D
+        G = '\033[92m'  # green
+        Y = '\033[93m'  # yellow
+        B = '\033[94m'  # blue
+        R = '\033[91m'  # red
+        W = '\033[0m'  # white
+        try:
+            import win_unicode_console, colorama
+            win_unicode_console.enable()
+            colorama.init()
+            # Now the unicode will work ^_^
+        except:
+            print("[!] Error: Coloring libraries not installed ,no coloring will be used")
+            G = Y = B = R = W = G = Y = B = R = W = ''
+    else:
+        G = '\033[92m'  # green
+        Y = '\033[93m'  # yellow
+        B = '\033[94m'  # blue
+        R = '\033[91m'  # red
+        W = '\033[0m'  # white
 
+    version = 'V 0.4'
 
+    print """%s
+
+          #####  ######  ######  #    #   ####
+            #    #       #       ##  ##  #    #
+            #    #####   #####   # ## #  #    #
+            #    #       #       #    #  #    #
+            #    #       #       #    #  #    #
+            #    ######  ######  #    #   ####
+
+            %s%s
+
+         # Coded By bit4 - https://github.com/bit4woo
+         # %s
+  """ % (G, W, Y, version)
+
+    waring = "[!] legal disclaimer: Usage of Teemo for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program"
+    print waring
+def strip_list(inputlist):
+    if isinstance(inputlist,list):
+        resultlist =[]
+        for x in inputlist:
+            x = x.strip()
+            resultlist.append(x)
+        return resultlist
+    else:
+        print "the input should be a list"
 

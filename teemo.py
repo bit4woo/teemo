@@ -9,9 +9,11 @@ import socket
 import threading
 import datetime
 from lib.zonetransfer import zonetransfer
+from lib.domain2ip import get_IP_range
+from lib.log import logger
+from lib.common import *
 
 from multiprocessing import Queue
-from lib.common import *
 from subbrute import subbrute
 from config import default_proxies
 
@@ -60,7 +62,6 @@ try:
 except:
     pass
 
-#Check if we are running this on windows platform
 is_windows = sys.platform.startswith('win')
 
 # Console Colors
@@ -70,12 +71,12 @@ if is_windows:
     Y = '\033[93m'  # yellow
     B = '\033[94m'  # blue
     R = '\033[91m'  # red
-    W = '\033[0m'   # white
+    W = '\033[0m'  # white
     try:
-        import win_unicode_console , colorama
+        import win_unicode_console, colorama
         win_unicode_console.enable()
         colorama.init()
-        #Now the unicode will work ^_^
+        # Now the unicode will work ^_^
     except:
         print("[!] Error: Coloring libraries not installed ,no coloring will be used")
         G = Y = B = R = W = G = Y = B = R = W = ''
@@ -84,30 +85,12 @@ else:
     Y = '\033[93m'  # yellow
     B = '\033[94m'  # blue
     R = '\033[91m'  # red
-    W = '\033[0m'   # white
-
-version = 'V 0.3'
-
-def banner():
-    print """%s
-
-          #####  ######  ######  #    #   ####
-            #    #       #       ##  ##  #    #
-            #    #####   #####   # ## #  #    #
-            #    #       #       #    #  #    #
-            #    #       #       #    #  #    #
-            #    ######  ######  #    #   ####
-
-            %s%s
-
-         # Coded By bit4 - https://github.com/bit4woo
-         # %s
-  """ % (G, W, Y, version)
+    W = '\033[0m'  # white
 
 def parser_error(errmsg):
     banner()
-    print "Usage: python "+sys.argv[0]+" [Options] use -h for help"
-    print R+"Error: "+errmsg+W
+    print ("Usage: python "+sys.argv[0]+" [Options] use -h for help")
+    logger.error("Error: "+errmsg)
     sys.exit()
 
 def parse_args():
@@ -117,51 +100,11 @@ def parse_args():
     parser._optionals.title = "OPTIONS"
     parser.add_argument('-d', '--domain', help="Domain name to enumrate it's subdomains", required=True)
     parser.add_argument('-b', '--bruteforce', help='Enable the subbrute bruteforce module',nargs='?', default=False)
-    parser.add_argument('-p', '--ports', help='Scan the found subdomains against specified tcp ports')
     #parser.add_argument('-v', '--verbose', help='Enable Verbosity and display results in realtime',nargs='?', default=False)
     #parser.add_argument('-t', '--threads', help='Number of threads to use for subbrute bruteforce', type=int, default=30)
     parser.add_argument('-o', '--output', help='Save the results to text file')
     parser.add_argument('-x', '--proxy', help='The http proxy to visit google')
     return parser.parse_args()
-
-def write_file(filename, subdomains):
-    #saving subdomains results to output file
-    print "%s[-] Saving results to file: %s%s%s%s"%(Y,W,R,filename,W)
-    filename = os.path.join(os.getcwd(),"output",filename)
-    with open(str(filename), 'wb') as f:
-        for subdomain in subdomains:
-            f.write(subdomain+"\r\n")
-    return filename
-
-class portscan():
-
-    def __init__(self,subdomains,ports):
-        self.subdomains = subdomains
-        self.ports = ports
-        self.threads = 20
-        self.lock = threading.BoundedSemaphore(value=self.threads)
-
-    def port_scan(self,host,ports):
-        openports = []
-        self.lock.acquire()
-        for port in ports:
-            try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(2)
-                result = s.connect_ex((host, int(port)))
-                if result == 0:
-                    openports.append(port)
-                s.close
-            except Exception as e:
-                pass
-        self.lock.release()
-        if len(openports) > 0:
-            print "%s%s%s - %sFound open ports:%s %s%s%s"%(G,host,W,R,W,Y,', '.join(openports),W)
-
-    def run(self):
-        for subdomain in self.subdomains:
-            t = threading.Thread(target=self.port_scan,args=(subdomain,self.ports))
-            t.start()
 
 
 def callengines_thread(engine, key_word, q_domains, q_emails, useragent, proxy=None,limit=1000):
@@ -189,7 +132,6 @@ def main():
     domain = args.domain
     #threads = args.threads
     savefile = args.output
-    ports = args.ports
     bruteforce_list = []
     subdomains = []
 
@@ -197,7 +139,7 @@ def main():
         now = datetime.datetime.now()
         timestr = now.strftime("-%Y-%m-%d-%H-%M")
         savefile = domain+timestr+".txt"
-
+    savefile = os.path.join(os.getcwd(), "output", savefile)
 
     enable_bruteforce = args.bruteforce
     if enable_bruteforce or enable_bruteforce is None:
@@ -211,8 +153,7 @@ def main():
 
     #Print the Banner
     banner()
-    waring = "[!] legal disclaimer: Usage of Teemo for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program"
-    print waring
+
     print B+"[-] Enumerating subdomains now for %s"% domain+W
 
     '''
@@ -288,6 +229,8 @@ def main():
         subdomains.extend(bruteforce_list)
 
 
+    IPrange_list = get_IP_range(subdomains)
+
     if subdomains is not None:
         subdomains = sorted(list(set(subdomains)))
         emails = sorted(list(set(emails)))
@@ -295,20 +238,18 @@ def main():
         #print type(subdomains)
 
         #write_file(savefile, subdomains)
+        fp = open(savefile,"wb")
+        fp.writelines("\n".join(subdomains))
+        fp.write("\n")
+        fp.writelines("\n".join(IPrange_list))
 
-        if ports:
-            print G+"[-] Start port scan now for the following ports: %s%s"%(Y,ports)+W
-            ports = ports.split(',') #list
-            pscan = portscan(subdomains,ports)
-            pscan.run()
-
-        else:
-            for subdomain in subdomains:
-                print G+subdomain+W
+        for subdomain in subdomains:
+            print G+subdomain+W
+        for ip in IPrange_list:
+            print G + ip + W
 
     print "[+] {0} domains found in total".format(len(subdomains))
     print "[+] {0} emails found in total".format(len(emails))
-    print "[+] Results saved to {0}".format(write_file(savefile, subdomains))
-
+    print "[+] Results saved to {0}".format(savefile)
 if __name__=="__main__":
     main()
