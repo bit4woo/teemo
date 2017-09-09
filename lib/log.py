@@ -5,6 +5,9 @@ __github__ = 'https://github.com/bit4woo'
 
 import logging
 import sys
+import os
+sys.path.extend("E:\wolaidai\github\Teemo\\")
+reload(sys)
 
 LOGGER = logging.getLogger("TeemoLog")
 
@@ -23,7 +26,8 @@ try:
         LOGGER_HANDLER = logging.StreamHandler(sys.stdout)
     else:
         LOGGER_HANDLER = ColorizingStreamHandler(sys.stdout)
-except ImportError:
+except ImportError,e:
+    #print e
     LOGGER_HANDLER = logging.StreamHandler(sys.stdout)
 
 FORMATTER = logging.Formatter("\r[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S")
@@ -39,4 +43,6 @@ if __name__ == "__main__":
     logger.warning("warning")
     logger.info("log")
     logger.debug("debug")
+    logger.error("sss")
     logger.info("Searching now in {0}..".format(engine_name))
+    print os.path.basename(__file__)

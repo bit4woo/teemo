@@ -149,6 +149,7 @@ class parser:
         self.genericClean()
         reg_hosts = re.compile('[a-zA-Z0-9]'+'[a-zA-Z0-9.-]*\.' + self.word)
         #reg_hosts = re.compile('[a-zA-Z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}'+self.word)
+
         self.temp = reg_hosts.findall(self.results)
         hostnames = self.unique()
         return hostnames
@@ -190,3 +191,5 @@ class parser:
             if x not in self.new:
                 self.new.append(x)
         return self.new
+if __name__ == "__main__":
+    print("xx")

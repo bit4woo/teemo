@@ -31,13 +31,13 @@ class search_dogpile:
         try:
             url = "http://{0}/search/web?qsi={1}&q={2}".format(self.server,self.counter,self.word)
         except Exception, e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.total_results += self.results
         except Exception,e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
 
     def process(self):
         while self.counter <= self.limit and self.counter <= 1000:

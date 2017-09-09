@@ -44,7 +44,7 @@ class Netcraft():
         try:
             resp = self.session.get(url, headers=headers, timeout=self.timeout,cookies=cookies)
         except Exception as e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
             resp = None
         return resp
 
@@ -104,7 +104,7 @@ class Netcraft():
                     self.subdomains.append(subdomain.strip())
             return links_list
         except Exception as e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
             pass
 
 

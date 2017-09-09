@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-#wydomain
+#根据证书返回结构，会返回带*号的域名，可用于查找属于同机构的多个域名，和相似域名。
 
 from lib.common import *
 from lib.log import logger
@@ -24,7 +24,7 @@ class Googlect():
         self.website = 'https://www.google.com/transparencyreport/jsonp/ct'
         self.subdomains = []
         self.engine_name = "GoogleCT"
-        self.timeout = 25
+        self.timeout = 10
         self.print_banner()
         self.proxy = proxy
         return
@@ -66,24 +66,23 @@ class Googlect():
             else:
                 return resp.content
         except Exception as e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
             return 0
     def parser_subject(self):
-        #try:
-        callback = self.random_str()
-        url = '{0}/search?domain={1}&incl_exp=true&incl_sub=true&token={2}&c={3}'.format(
-                self.website, self.domain, urllib.quote(self.token), callback)
-        content = self.req(url)
-        result = json.loads(content[27:-3])
-        self.token = result.get('nextPageToken')
-        for subject in result.get('results'):
-            if subject.get('subject'):
-                self.dns_names.append(subject.get('subject'))
-            if subject.get('hash'):
-                self.hashs.append(subject.get('hash'))
-        #except Exception as e:
-            #print e.message
-            #pass
+        try:
+            callback = self.random_str()
+            url = '{0}/search?domain={1}&incl_exp=true&incl_sub=true&token={2}&c={3}'.format(
+                    self.website, self.domain, urllib.quote(self.token), callback)
+            content = self.req(url)
+            result = json.loads(content[27:-3])
+            self.token = result.get('nextPageToken')
+            for subject in result.get('results'):
+                if subject.get('subject'):
+                    self.dns_names.append(subject.get('subject'))
+                if subject.get('hash'):
+                    self.hashs.append(subject.get('hash'))
+        except Exception as e:
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
 
         if self.token:
             self.parser_subject()
@@ -106,6 +105,6 @@ class Googlect():
 
 if __name__ == "__main__":
     proxy = {"https":"https://127.0.0.1:9988"}
-    x = Googlect("welab.co",proxy)
+    x = Googlect("jd.com",proxy)
     #print x.parser_dnsname()
     print x.run()

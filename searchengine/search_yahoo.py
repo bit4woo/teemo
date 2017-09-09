@@ -30,13 +30,13 @@ class search_yahoo:
         try:
             url = "http://{0}/search?q={1}&b={2}&pz=10".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
         except Exception, e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.total_results += self.results
         except Exception,e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
 
     def process(self):
         while self.counter <= self.limit and self.counter <= 200:

@@ -37,7 +37,7 @@ class CrtSearch():
             for domain in self.subdomains:
                 self.q.append(domain)
         except Exception,e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         finally:
             logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
             return self.q
@@ -47,5 +47,5 @@ class CrtSearch():
         return rawres.hostnames()
 
 if __name__ == "__main__":
-    x= CrtSearch("meizu.com")
+    x= CrtSearch("jd.com")
     print x.run()

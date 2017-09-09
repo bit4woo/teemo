@@ -48,7 +48,7 @@ class DNSdumpster():
             else:
                 resp = self.session.post(url, data=params, headers=headers, timeout=self.timeout)
         except Exception as e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
             return None
         if hasattr(resp, "text"):
             return resp.text
@@ -65,7 +65,8 @@ class DNSdumpster():
         token = self.get_csrftoken(resp)
         params = {'csrfmiddlewaretoken': token, 'targetip': self.domain}
         post_resp = self.req('POST', self.base_url, params)
-        self.extract_domains(post_resp)
+        if post_resp:
+            self.extract_domains(post_resp)
         return self.subdomains
 
     def extract_domains(self, resp):

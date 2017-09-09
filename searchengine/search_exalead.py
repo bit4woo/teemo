@@ -6,6 +6,7 @@ __github__ = 'https://github.com/bit4woo'
 import requests
 from lib import myparser
 from lib.log import logger
+from lib.myrequests import http_request_get
 import re
 import time
 
@@ -20,7 +21,7 @@ class search_exalead:
         self.totalresults = ""
         self.server = "www.exalead.com"
         self.userAgent = useragent
-        self.headers = {'User-agent':useragent,'Referer':"http://{0}/search/web/results/?q={1}".format(self.server,self.word)}
+        self.referer = "http://{0}/search/web/results/?q={1}".format(self.server,self.word)
         self.limit = int(limit)
         self.counter = 0
         self.proxies = proxy
@@ -35,25 +36,30 @@ class search_exalead:
         try:
             url = "http://{0}/search/web/results/?q={1}&elements_per_page=50&start_index={2}".format(self.server,self.word,self.counter)# 这里的pn参数是条目数
         except Exception, e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         try:
-            r = requests.get(url, headers = self.headers, proxies = self.proxies)
-            self.results = r.content
-            self.totalresults += self.results
+            r = http_request_get(url, custom_referer=self.referer, proxies = self.proxies)
+            if "We are sorry, but your request has been blocked" in r.content:
+                logger.warning("Exalead blocked our request")
+                return -1
+            else:
+                self.results = r.content
+                self.totalresults += self.results
+                return 0
         except Exception,e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
 
     def do_search_files(self):
         try:
             url = "http://{0}/search/web/results/?q={1}filetype:{2}&elements_per_page=50&start_index={3}".format(self.server,self.word,self.files,self.counter)# 这里的pn参数是条目数
         except Exception, e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.totalresults += self.results
         except Exception,e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
 
     def check_next(self): #for search file
         renext = re.compile('topNextUrl')
@@ -79,7 +85,8 @@ class search_exalead:
 
     def process(self):
         while self.counter <= self.limit:
-            self.do_search()
+            if self.do_search()==-1:
+                break
             self.counter += 50
             #print "\tSearching " + str(self.counter) + " results..."
 

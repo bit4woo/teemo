@@ -1,6 +1,8 @@
 # encoding: utf-8
 # 全局配置文件
 import random
+import sys
+sys.dont_write_bytecode = True
 
 ##########各种key #############
 Google_CSE_API_Key = ""
@@ -21,15 +23,11 @@ proxy_switch = 1
 #3 = 全局禁用proxy
 default_proxies = {
     "http": "http://127.0.0.1:9988/",
-    "https": "http://127.0.0.1:9988/",
+    "https": "https://127.0.0.1:9988/",
 }
 proxy_default_enabled = [#默认启用代理的搜索引擎
-    'search_ask','search_google','search_google_cse' #类名
+    'search_ask','search_google','search_google_cse','search_duckduckgo' #类名
     ]
-
-#########################port scan ##############
-default_ports = [21,22,443,3389,1433,8080]
-
 
 # 是否开启https服务器的证书校验
 allow_ssl_verify = False

@@ -13,7 +13,7 @@
 利用搜索引擎：
 - http://www.ask.com/ （无请求限制，需要代理）
 - https://www.baidu.com/ （无请求限制，不需要代理）
-- http://cn.bing.com/  （使用cn.bing.com）
+- http://cn.bing.com/
 - https://api.cognitive.microsoft.com （bing API 尚未完成）
 - http://www.dogpile.com/ （无需代理）
 - https://duckduckgo.com （尚未完成，页面控制）
@@ -121,6 +121,7 @@ Thanks for their sharing.
 - 域名有效性判断，端口扫描并记录--json格式（｛domain:{ip：127.0.0.1，ports:{80,443},cdn:{yes or no,具体是谁}}｝domain）
 - 泛解析，dns轮询相关
 - 模糊匹配，例如包含"qq"的所有域名，比如qqimg.com
+- pgp --email 、googlect---other domain with same CT
 
 ## 相关思维导图
 ![xmind](doc/xmind.png)

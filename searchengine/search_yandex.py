@@ -35,16 +35,18 @@ class search_yandex:
         try:
             url = "http://{0}/search?text={1}&numdoc=50&lr={2}".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
         except Exception, e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             if "automated requests" in r.content:
-                logger.warning("yandex blocked our request.exit")
-                exit(0)
-            self.results = r.content
-            self.totalresults += self.results
+                logger.warning("Yandex blocked our request")
+                return -1
+            else:
+                self.results = r.content
+                self.totalresults += self.results
+                return 0
         except Exception,e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
 
     def do_search_files(self, files):  # TODO
         h = httplib.HTTP(self.server)
@@ -81,7 +83,8 @@ class search_yandex:
 
     def process(self):
         while self.counter <= self.limit and self.counter<500:
-            self.do_search()
+            if self.do_search() ==-1:
+                break
             time.sleep(random.randint(1,5))
             self.counter += 50
             #print "Searching " + str(self.counter) + " results..."
@@ -102,7 +105,7 @@ if __name__ == "__main__":
         print "[-] Searching in Bing:"
         useragent = "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52"
         proxy = {"http": "http://127.0.0.1:8080"}
-        search = search_yandex("meizu.com", 10, useragent, proxy)
+        search = search_yandex("meizu.com", 500, useragent, proxy)
         search.process()
         all_emails = search.get_emails()
         all_hosts = search.get_hostnames()

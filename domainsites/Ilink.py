@@ -40,7 +40,7 @@ class Ilink():
 
             self.q = list(set(self.q))
         except Exception as e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         finally:
             logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
             return self.q

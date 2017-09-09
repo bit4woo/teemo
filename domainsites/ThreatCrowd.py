@@ -63,7 +63,7 @@ class ThreatCrowd():
         try:
             import json
         except Exception as e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
             return
 
         try:

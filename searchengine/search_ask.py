@@ -8,8 +8,8 @@ import re
 import requests
 import config
 
-
 #核心方法之一，没有请求限制，只是需要代理
+
 class search_ask():
 
     def __init__(self, word, limit, useragent, proxy):
@@ -20,7 +20,7 @@ class search_ask():
         self.server = "www.ask.com"
         self.headers = {
             'User-Agent': useragent}
-        self.quantity = "100" #useless
+        #self.quantity = "100" #useless
         self.limit = int(limit)  #item number?
         self.counter = 0 #page number  ---> page 参数
         self.proxies = proxy
@@ -33,17 +33,16 @@ class search_ask():
 
     def do_search(self):
         try:
-            url = "http://{0}/web?q={1}&pu=100&page={2}".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
-        except Exception, e:
-            logger.error(e)
-        try:
+            url = "http://{0}/web?q={1}&pu=100&page={2}".format(self.server, self.word,self.counter)  # %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             #如果不指定header， agent的值将如下 ：  User-Agent: python-requests/2.18.1  这对有请求限制的搜索引擎很关键，比如google
             #采用随机user agent的话，
             self.results = r.content
             self.totalresults += self.results
+            return 0
         except Exception,e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
+            return -1
 
     def check_next(self):
         renext = re.compile('>Next<') #<li class="PartialWebPagination-next">Next</li>
@@ -60,8 +59,10 @@ class search_ask():
 
     def process(self):
         while (self.counter < self.limit/100): #limit = item number; counter= page number ... 100 items per page
-            self.do_search()
-            more = self.check_next()
+            if self.do_search() ==-1:
+                break
+            else:
+                more = self.check_next()
             if more == "1":
                 self.counter += 1
             else:
@@ -85,9 +86,6 @@ def ask(keyword, limit, useragent, proxy): #define this function to use in threa
     search.process()
     print search.get_emails()
     return search.get_emails(), search.get_hostnames()
-
-
-
 
 if __name__ == "__main__":
     proxy = {"http":"http://127.0.0.1:9988"}

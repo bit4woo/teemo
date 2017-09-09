@@ -13,7 +13,7 @@ class search_duckduckgo:
         self.word = word
         self.total_results = ""
         self.results =""
-        self.server = "duckduckgo.com" #https://duckduckgo.com/
+        self.server = "duckduckgo.com" #must use https
         self.limit = int(limit)
         self.counter = 0
         self.headers = {
@@ -28,15 +28,16 @@ class search_duckduckgo:
 
     def do_search(self):
         try:
-            url = "http://{0}/?q={1}".format(self.server,self.word)
+            url = "https://{0}/?q={1}".format(self.server,self.word)
+            #must use https
         except Exception, e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.total_results += self.results
         except Exception,e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
 
     def process(self):
         '''
@@ -71,7 +72,7 @@ def dogpile(keyword, limit, useragent,proxy): #define this function to use in th
 if __name__ == "__main__":
         print "[-] Searching in duckduckgo:"
         useragent = "Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6" #他会检查useragent，之前多了一个( 导致504
-        proxy = {"http": "http://127.0.0.1:8080"}
+        proxy = {"https": "https://127.0.0.1:9988"}
         search = search_duckduckgo("meizu.com", '100',useragent)
         search.process()
         all_emails = search.get_emails()

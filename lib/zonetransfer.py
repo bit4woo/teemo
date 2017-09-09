@@ -69,7 +69,7 @@ class zonetransfer:
             self.get_ns_server()
             self.get_ns_server_nslookup()
         except Exception as e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
 
         if len(self.nsservers) == 0:
             logger.info("None NS Server found for {0}.".format(self.domain))

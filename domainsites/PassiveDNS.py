@@ -45,7 +45,7 @@ class PassiveDNS():
             resp = requests.get(url, headers=headers, timeout=self.timeout)
             return resp.content
         except Exception as e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
             return None
 
     def enumerate(self):

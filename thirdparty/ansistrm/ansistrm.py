@@ -2,10 +2,9 @@
 # Copyright (C) 2010-2012 Vinay Sajip. All rights reserved. Licensed under the new BSD license.
 #
 import logging
-import os
 import re
 import subprocess
-import sys
+
 
 from lib.core.convert import stdoutencode
 
@@ -67,6 +66,7 @@ class ColorizingStreamHandler(logging.StreamHandler):
         except (KeyboardInterrupt, SystemExit):
             raise
         except IOError:
+            raise
             pass
         except:
             self.handleError(record)

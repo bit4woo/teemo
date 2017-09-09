@@ -34,29 +34,29 @@ class search_google():
         try:
             url = "http://{0}/search?num={1}&start={2}&hl=en&meta=&q={3}".format(self.server,self.quantity,self.counter,self.word)
         except Exception, e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         try:
             r = requests.get(url, headers = self.headers, proxies=self.proxies)
             if "and not a robot" in r.content:
-                logger.warning("google has blocked your visit")
+                logger.warning("Google has blocked your visit")
                 return 0
             else:
                 self.results = r.content
                 self.totalresults += self.results
                 return 1
         except Exception,e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
             return 0
 
     def do_search_profiles(self):
         try:
             urly="http://" + self.server + "/search?num=" + self.quantity + "&start=" + str(self.counter) + "&hl=en&meta=&q=site:www.google.com%20intitle:\"Google%20Profile\"%20\"Companies%20I%27ve%20worked%20for\"%20\"at%20" + self.word + "\""
         except Exception, e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         try:
             r=requests.get(urly, proxies=self.proxies)
         except Exception,e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         self.results = r.content
 
         #'&hl=en&meta=&q=site:www.google.com%20intitle:"Google%20Profile"%20"Companies%20I%27ve%20worked%20for"%20"at%20' + self.word + '"')

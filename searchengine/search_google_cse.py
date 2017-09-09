@@ -24,6 +24,7 @@ class search_google_cse:
         self.quantity = "10"
         self.limit = int(limit)
         self.counter = 1 #不能是0
+        self.timeout = 10
         try:
             self.api_key = config.Google_CSE_API_Key
             self.cse_id = config.Google_CSE_ID
@@ -44,38 +45,38 @@ class search_google_cse:
         try:
             url = "https://{0}/customsearch/v1?key={1}&highRange={2}&lowRange={3}&cx={4}&start={5}&q={6}".format(self.server,self.api_key,self.highRange,self.lowRange,self.cse_id,self.counter,self.word)
         except Exception, e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         try:
-            r = requests.get(url, headers = self.headers, proxies=self.proxies)
+            r = requests.get(url, headers = self.headers, proxies=self.proxies, timeout=self.timeout)
             if r.status_code != 200:
                 #print r.content
-                return 0
+                return -1
             else:
                 self.results = r.content
                 self.totalresults += self.results
-                return 1
+                return 0
         except Exception,e:
-            logger.error(e)
-            return 0
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
+            return -1
 
     def do_search_files(self):
         try:
             query = "filetype:"+self.files+"%20site:"+self.word
             url = "https://{0}/customsearch/v1?key={1}&highRange={2}&lowRange={3}&cx={4}&start={5}&q={6}".format(self.server,self.api_key,self.highRange,self.lowRange,self.cse_id,self.counter,query)
         except Exception, e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         try:
             r = requests.get(url, headers = self.headers, proxies=self.proxies)
             if "and not a robot" in r.content:
                 logger.warning("google has blocked your visit")
-                return 0
+                return -1
             else:
                 self.results = r.content
                 self.totalresults += self.results
                 return 1
         except Exception,e:
-            logger.error(e)
-            return 0
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
+            return -1
 
     def get_emails(self):
         rawres = parser(self.totalresults, self.word)
@@ -92,7 +93,7 @@ class search_google_cse:
     def process(self):
         tracker = self.counter + self.lowRange
         while tracker <= self.limit:
-            if self.do_search() == 0:
+            if self.do_search() == -1:
                 break
             else:
                 time.sleep(1)

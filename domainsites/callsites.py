@@ -3,7 +3,6 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
-#from wydomain
 from domainsites.Alexa import Alexa
 from domainsites.Chaxunla import Chaxunla
 from domainsites.CrtSearch import CrtSearch

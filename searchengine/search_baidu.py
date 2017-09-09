@@ -30,13 +30,13 @@ class search_baidu:
         try:
             url = "http://{0}/s?wd={1}&pn={2}".format(self.server,self.word,self.counter)# 这里的pn参数是条目数
         except Exception, e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.totalresults += self.results
         except Exception,e:
-            logger.error(e)
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
 
     def process(self):
         while self.counter <= self.limit and self.counter <= 1000:
