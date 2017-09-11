@@ -15,14 +15,20 @@ def query(domain, record_type='A'):
     try:
         resp = resolver.query(domain, record_type, raise_on_no_answer=False)
         if resp.response.answer:
+            tmpip = []
+            tmpcname = []
             for i in resp.response.answer:
                 for j in i.items:
                     try:
-                        print "{0}   {1}".format(domain,j.address)
+                        #print "{0}   {1}".format(domain,j.address)
+                        tmpip.append(j.address)
                         ips.append(j.address)
                     except:# CNAME here
-                        print "{0}   {1}".format(domain,j.to_text())
-            return ips
+                        #print "{0}   {1}".format(domain,j.to_text())
+                        tmpcname.append(j.to_text())
+            line ="{0}  {1} {2}".format(domain,",".join(tmpcname),",".join(tmpip))
+            print line
+            return ips,line
 
         # If we don't receive an answer from our current resolver let's
         # assume we received information on nameservers we can use and
@@ -36,11 +42,24 @@ def query(domain, record_type='A'):
             resolver.nameservers = ns
             return query(resolver, domain, record_type)
 
-        return []
+        return [],domain
     except (dns.resolver.NXDOMAIN, dns.resolver.NoNameservers, dns.exception.Timeout):
-        return []
+        return [],domain
 
 
+def query_muti(domain_list):
+    IP_list =[]
+    lines = []
+    for domain in domain_list:
+        try:
+            ips,line = query(domain)
+            IP_list.extend(ips)
+            lines.append(line)
+        except Exception,e:
+            print e
+            print domain
+    IP_list = list(set(IP_list))
+    return IP_list,lines
 
 def get_class_c_network(ip_str_list):
     ip_str_list= strip_list(ip_str_list)
@@ -83,23 +102,18 @@ def smaller_network(ip_str_list):
 
 
 def get_IP_range(domain_list):
-    IP_list =[]
-    for domain in domain_list:
-        try:
-            IP_list.extend(query(domain))
-        except Exception,e:
-            print e
-            print domain
-    IP_list = list(set(IP_list))
-
+    IP_list,lines = query_muti(domain_list)
     return get_class_c_network(IP_list)
 
 if __name__ == "__main__":
 
-    #print query("baidu.com")
+    """
     iplist = open("C:\Users\jax\Desktop\ips.txt").readlines()
     #print iplist
     fp = open("tmp.txt", "ab")
     x = get_IP_range(["baidu.com"])
     fp.write("\n")
     fp.writelines("\n".join(x))
+    """
+    print query("m.jdxxxxxxxxxxxxxxxxxxxxxxxxxx.com")
+    print get_IP_range(["baidu.com"])

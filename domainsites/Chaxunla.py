@@ -20,7 +20,9 @@ class Chaxunla(object):
         super(Chaxunla, self).__init__()
         self.domain = domain
         self.url = 'http://api.chaxun.la/toolsAPI/getDomain/'
-        self.subset = []
+        self.domain_name = []
+        self.smiliar_domain_name = []
+        self.email = []
         self.verify = ""
         self.engine_name= "Chaxunla"
         self.print_banner()
@@ -39,19 +41,19 @@ class Chaxunla(object):
             if result.get('status') == '1':
                 for item in result.get('data'):
                     if is_domain(item.get('domain')):
-                        self.subset.append(item.get('domain'))
+                        self.domain_name.append(item.get('domain'))
             elif result.get('status') == 3:
                 logger.warning("chaxun.la api block our ip...")
                 logger.info("input you verify_code")
                 # print('get verify_code():', self.verify)
                 # self.verify_code()
                 # self.run()
-            self.subset = list(set(self.subset))
+            self.domain_name = list(set(self.domain_name))
         except Exception as e:
             logger.info(str(e))
         finally:
-            logger.info("{0} found {1} domains".format(self.engine_name, len(self.subset)))
-            return self.subset
+            logger.info("{0} found {1} domains".format(self.engine_name, len(self.domain_name)))
+            return self.domain_name,self.smiliar_domain_name,self.email
 
 
     def download(self, url):

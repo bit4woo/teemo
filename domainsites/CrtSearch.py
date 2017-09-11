@@ -18,7 +18,9 @@ class CrtSearch():
         self.subdomains = []
         self.session = requests.Session()
         self.engine_name = "crt.sh"
-        self.q = []
+        self.domain_name = []
+        self.smiliar_domain_name = []
+        self.email = []
         self.timeout = 25
         self.print_banner()
         return
@@ -34,17 +36,21 @@ class CrtSearch():
             self.resp = http_request_get(url).content
             if self.resp:
                 self.subdomains = self.get_hostnames()
+                self.email = self.get_email()
             for domain in self.subdomains:
-                self.q.append(domain)
+                self.domain_name.append(domain)
         except Exception,e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         finally:
-            logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
-            return self.q
+            logger.info("{0} found {1} domains".format(self.engine_name, len(self.domain_name)))
+            return self.domain_name,self.smiliar_domain_name,self.email
 
     def get_hostnames(self):
         rawres = parser(self.resp, self.domain)
         return rawres.hostnames()
+    def get_email(self):
+        rawres = parser(self.resp, self.domain)
+        return rawres.emails()
 
 if __name__ == "__main__":
     x= CrtSearch("jd.com")

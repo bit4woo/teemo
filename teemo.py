@@ -119,10 +119,16 @@ def callengines_thread(engine, key_word, q_domains, q_emails, useragent, proxy=N
 
 def callsites_thread(engine, key_word, q_domains, q_emails, proxy=None):
     enum = engine(key_word,proxy)
-    domains = enum.run()
+    domains,similar_domains,emails = enum.run()
     if domains:
         for domain in domains:
             q_domains.put(domain)
+    if similar_domains:
+        for item in  similar_domains:
+            q_domains.put(item) #put both domain and similar in domain set
+    if emails:
+        for item in emails:
+            q_emails.put(item)
         #return list(set(final_domains))
 
 
@@ -164,7 +170,7 @@ def main():
     '''
 
     Threadlist = []
-    q_domains = Queue() #to recevie return values
+    q_domains = Queue() #to recevie return values,use it to ensure thread safe.
     q_emails = Queue()
     useragent = random_useragent(allow_random_useragent)
 

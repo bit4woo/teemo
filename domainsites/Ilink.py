@@ -15,7 +15,9 @@ class Ilink():
         self.domain = domain
         self.subdomains = []
         self.engine_name = "Ilinks"
-        self.q = []
+        self.domain_name = []
+        self.smiliar_domain_name = []
+        self.email = []
         self.timeout = 25
         self.print_banner()
         return
@@ -36,14 +38,14 @@ class Ilink():
             subs = re.compile(r'(?<=value\=\"http://).*?(?=\"><input)')
             for item in subs.findall(r):
                 if is_domain(item):
-                    self.q.append(item)
+                    self.domain_name.append(item)
 
-            self.q = list(set(self.q))
+            self.domain_name = list(set(self.domain_name))
         except Exception as e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         finally:
-            logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
-            return self.q
+            logger.info("{0} found {1} domains".format(self.engine_name, len(self.domain_name)))
+            return self.domain_name,self.smiliar_domain_name,self.email
 
 if __name__ == "__main__":
     x = Ilink("meizu.com","https://127.0.0.1:9999")

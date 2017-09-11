@@ -14,7 +14,9 @@ class ThreatCrowd():
         self.subdomains = []
         self.session = requests.Session()
         self.engine_name = "ThreatCrowd"
-        self.q = []
+        self.domain_name = []
+        self.smiliar_domain_name = []
+        self.email = []
         self.timeout = 20
         self.print_banner()
         return
@@ -22,10 +24,10 @@ class ThreatCrowd():
     def run(self):
         domain_list = self.enumerate()
         for domain in domain_list:
-            self.q.append(domain)
+            self.domain_name.append(domain)
 
-        logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
-        return self.q
+        logger.info("{0} found {1} domains".format(self.engine_name, len(self.domain_name)))
+        return self.domain_name,self.smiliar_domain_name,self.email
 
     def print_banner(self):
         logger.info("Searching now in {0}..".format(self.engine_name))

@@ -16,7 +16,9 @@ class Sitedossier():
         self.subdomains = []
         self.session = requests.Session()
         self.engine_name = "Sitedossier"
-        self.q = []
+        self.domain_name = []
+        self.smiliar_domain_name = []
+        self.email = []
         self.timeout = 25
         self.print_banner()
         self.captcha = Captcha()
@@ -31,12 +33,12 @@ class Sitedossier():
             url = 'http://www.sitedossier.com/parentdomain/{0}'.format(self.domain)
             r = self.get_content(url)
             self.parser(r)
-            self.q = list(set(self.q))
+            self.domain_name = list(set(self.domain_name))
         except Exception, e:
             logger.info(str(e))
 
-        logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
-        return self.q
+        logger.info("{0} found {1} domains".format(self.engine_name, len(self.domain_name)))
+        return self.domain_name,self.smiliar_domain_name,self.email
 
     def get_content(self, url):
         #logger.info('request: {0}'.format(url))
@@ -50,13 +52,13 @@ class Sitedossier():
         npage = re.search('<a href="/parentdomain/(.*?)"><b>Show', response)
         if npage:
             for sub in self.get_subdomain(response):
-                self.q.append(sub)
+                self.domain_name.append(sub)
             nurl = 'http://www.sitedossier.com/parentdomain/{0}'.format(npage.group(1))
             response = self.get_content(nurl)
             self.parser(response)
         else:
             for sub in self.get_subdomain(response):
-                self.q.append(sub)
+                self.domain_name.append(sub)
 
     def get_subdomain(self, response):
         domain = re.compile(r'(?<=<a href\=\"/site/).*?(?=\">)')

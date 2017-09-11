@@ -17,6 +17,9 @@ class Threatminer():
         self.timeout = 25
         self.print_banner()
         self.website = "https://www.threatminer.org"
+        self.domain_name = []
+        self.smiliar_domain_name = []
+        self.email = []
         return
 
     def print_banner(self):
@@ -30,12 +33,12 @@ class Threatminer():
             content = http_request_get(url).content
 
             rawres = parser(content, self.domain)
-            result = rawres.hostnames()
+            self.domain_name = rawres.hostnames()
         except Exception as e:
             logger.error(str(e))
 
-        logger.info("{0} found {1} domains".format(self.engine_name, len(result)))
-        return result
+        logger.info("{0} found {1} domains".format(self.engine_name, len(self.domain_name)))
+        return self.domain_name,self.smiliar_domain_name,self.email
 
 if __name__ == "__main__":
     x = Threatminer("meizu.com","https://127.0.0.1:9999")

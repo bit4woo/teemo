@@ -14,7 +14,9 @@ class DNSdumpster():
         self.base_url = 'https://dnsdumpster.com/'
         self.engine_name = "DNSdumpster"
         self.session= requests.session()
-        self.q = []
+        self.domain_name = []
+        self.smiliar_domain_name = []
+        self.email = []
         self.domain =domain
         self.timeout = 10
         self.print_banner()
@@ -27,9 +29,9 @@ class DNSdumpster():
     def run(self):
         domain_list = self.enumerate()
         for domain in domain_list:
-            self.q.append(domain)
-        logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
-        return self.q
+            self.domain_name.append(domain)
+        logger.info("{0} found {1} domains".format(self.engine_name, len(self.domain_name)))
+        return self.domain_name,self.smiliar_domain_name,self.email
 
 
     def req(self, req_method, url, params=None):

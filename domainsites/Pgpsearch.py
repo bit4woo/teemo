@@ -18,7 +18,9 @@ class Pgpsearch:
         self.hostname = "pgp.mit.edu"
         self.userAgent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
         self.engine_name = "PGP"
-        self.q = []
+        self.domain_name = []
+        self.smiliar_domain_name = []
+        self.email = []
         self.print_banner()
 
     def print_banner(self):
@@ -44,9 +46,10 @@ class Pgpsearch:
         rawres = myparser.parser(self.results, self.word)
         return rawres.hostnames()
     def run(self):
-        self.q = self.get_hostnames() # how to receive emails.
-        logger.info("{0} found {1} domains".format(self.engine_name, len(self.q)))
-        return self.q
+        self.domain_name = self.get_hostnames() # how to receive emails.
+        self.email = self.get_emails()
+        logger.info("{0} found {1} domains and {2} emails".format(self.engine_name, len(self.domain_name), len(self.email)))
+        return self.domain_name,self.smiliar_domain_name,self.email
 
 if __name__ == "__main__":
     x= Pgpsearch("meizu.com")

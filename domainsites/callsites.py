@@ -25,7 +25,7 @@ def callsites(key_word,proxy=None):
     final_emails = []
     enums = [enum(key_word, proxy) for enum in Alexa,Chaxunla,CrtSearch,DNSdumpster,Googlect,Ilink,Netcraft,PassiveDNS,Pgpsearch,Sitedossier,ThreatCrowd,Threatminer,Virustotal]
     for enum in enums:
-        domain = enum.run()
+        domain,similar_domain,emails= enum.run()
         final_domains.extend(domain)
         #final_emails.extend(email)
     return list(set(final_domains))
@@ -33,7 +33,7 @@ def callsites(key_word,proxy=None):
 
 def callsites_thread(engine,key_word, q, proxy=None,):
     enum = engine(key_word,proxy)
-    domain = enum.run()
+    domain, similar_domain, emails = enum.run()
     #final_emails.extend(email)
     for item in list(set(domain)):
         q.put(item)

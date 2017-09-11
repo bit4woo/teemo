@@ -27,6 +27,9 @@ class Googlect():
         self.timeout = 10
         self.print_banner()
         self.proxy = proxy
+        self.domain_name = []
+        self.smiliar_domain_name = []
+        self.email = []
         return
 
     def print_banner(self):
@@ -50,9 +53,14 @@ class Googlect():
         self.hashs = list(set(self.hashs)) # unique sort hash
         self.parser_dnsname()
         self.dns_names = list(set(self.dns_names))
+        for item in self.dns_names:
+            if self.domain in item:
+                self.domain_name.append(item)
+            else:
+                self.smiliar_domain_name.append(item)
         #self.subjects = list(set(self.subjects))
         logger.info("{0} found {1} domains".format(self.engine_name, len(self.dns_names)))
-        return self.dns_names
+        return self.domain_name,self.smiliar_domain_name,self.email
     def req(self, url):
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/40.0',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
