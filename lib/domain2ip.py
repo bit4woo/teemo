@@ -50,7 +50,7 @@ def query(domain, record_type='A'):
 def query_muti(domain_list):
     IP_list =[]
     lines = []
-    for domain in domain_list:
+    for domain in set(domain_list):
         try:
             ips,line = query(domain)
             IP_list.extend(ips)
