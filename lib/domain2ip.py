@@ -22,11 +22,12 @@ def query(domain, record_type='A'):
                     try:
                         #print "{0}   {1}".format(domain,j.address)
                         tmpip.append(j.address)
-                        ips.append(j.address)
                     except:# CNAME here
                         #print "{0}   {1}".format(domain,j.to_text())
                         tmpcname.append(j.to_text())
-            line ="{0}  {1} {2}".format(domain,",".join(tmpcname),",".join(tmpip))
+            line ="{0}\t{1}\t{2}".format(domain.ljust(30),", ".join(tmpcname),", ".join(tmpip))
+            if tmpip != None: #only collect IP that don't use CDN （cname）
+                ips.extend(tmpip)
             print line
             return ips,line
 
@@ -41,13 +42,14 @@ def query(domain, record_type='A'):
             ]
             resolver.nameservers = ns
             return query(resolver, domain, record_type)
-
+        print domain
         return [],domain
     except (dns.resolver.NXDOMAIN, dns.resolver.NoNameservers, dns.exception.Timeout):
+        print domain
         return [],domain
 
 
-def query_muti(domain_list):
+def domains2ips(domain_list):
     IP_list =[]
     lines = []
     for domain in set(domain_list):
@@ -61,7 +63,8 @@ def query_muti(domain_list):
     IP_list = list(set(IP_list))
     return IP_list,lines
 
-def get_class_c_network(ip_str_list):
+def iprange(ip_str_list):
+    ip_str_list = list(set(ip_str_list))
     ip_str_list= strip_list(ip_str_list)
     #直接获取各个C段
     subnet = set()
@@ -100,10 +103,6 @@ def smaller_network(ip_str_list):
     x = netaddr.spanning_cidr(['192.168.0.0', '192.168.2.245', '192.168.2.255'])
     print x
 
-
-def get_IP_range(domain_list):
-    IP_list,lines = query_muti(domain_list)
-    return get_class_c_network(IP_list)
 
 if __name__ == "__main__":
 

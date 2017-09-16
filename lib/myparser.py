@@ -188,7 +188,9 @@ class parser:
     def unique(self):
         self.new = []
         for x in self.temp:
-            if x not in self.new:
+            if ".." in x: #remove domain name like "IP...www.domain.com"
+                pass
+            elif x not in self.new:
                 self.new.append(x)
         return self.new
 if __name__ == "__main__":

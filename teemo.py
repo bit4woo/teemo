@@ -3,23 +3,31 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
-import os
 import argparse
+import datetime
+import os
 import socket
 import threading
-import datetime
-from lib.zonetransfer import zonetransfer
-from lib.domain2ip import get_IP_range
-from lib.log import logger
-from lib.common import *
-
 from multiprocessing import Queue
-from subbrute import subbrute
-from config import default_proxies
 
+from brute.subDomainsBrute import SubNameBrute
 
-#from searchengine.noneed_searchimpl import baidu_search,so_search, ask_search, bing_search, dogpile_search, exalead_search, google_search, yandex_search, yahoo_search
-
+from domainsites.Alexa import Alexa
+from domainsites.Chaxunla import Chaxunla
+from domainsites.CrtSearch import CrtSearch
+from domainsites.DNSdumpster import DNSdumpster
+from domainsites.Googlect import Googlect
+from domainsites.Ilink import Ilink
+from domainsites.Netcraft import Netcraft
+from domainsites.PassiveDNS import PassiveDNS
+from domainsites.Pgpsearch import Pgpsearch
+from domainsites.Sitedossier import Sitedossier
+from domainsites.ThreatCrowd import ThreatCrowd
+from domainsites.Threatminer import Threatminer
+from lib.common import *
+from lib.domain2ip import domains2ips,iprange
+from lib.log import logger
+from lib.zonetransfer import zonetransfer
 from searchengine.search_ask import search_ask
 from searchengine.search_baidu import search_baidu
 from searchengine.search_bing import search_bing
@@ -35,21 +43,7 @@ from searchengine.search_so import search_so
 from searchengine.search_yahoo import search_yahoo
 from searchengine.search_yandex import search_yandex
 
-from domainsites.Alexa import Alexa
-from domainsites.Chaxunla import Chaxunla
-from domainsites.CrtSearch import CrtSearch
-from domainsites.DNSdumpster import DNSdumpster
-from domainsites.Googlect import Googlect
-from domainsites.Ilink import Ilink
-from domainsites.Netcraft import Netcraft
-from domainsites.PassiveDNS import PassiveDNS
-from domainsites.Pgpsearch import Pgpsearch
-from domainsites.Sitedossier import Sitedossier
-from domainsites.ThreatCrowd import ThreatCrowd
-from domainsites.Threatminer import Threatminer
-
-
-import sys
+# from searchengine.noneed_searchimpl import baidu_search,so_search, ask_search, bing_search, dogpile_search, exalead_search, google_search, yandex_search, yahoo_search
 reload(sys)
 sys.setdefaultencoding('utf-8')
 sys.dont_write_bytecode = True
@@ -93,7 +87,7 @@ def parser_error(errmsg):
     logger.error("Error: "+errmsg)
     sys.exit()
 
-def parse_args():
+def parse_args(): #optparse模块从2.7开始废弃，建议使用argparse
     #parse the arguments
     parser = argparse.ArgumentParser(epilog = '\tExample: \r\npython '+sys.argv[0]+" -d google.com")
     parser.error = parser_error
@@ -187,7 +181,7 @@ def main():
             sk.connect((ip,int(port)))
             sk.close
         except:
-            print "\r\n[!!!]Proxy Test Failed,Please Check!\r\n"
+            logger.warning("Proxy Test Failed, Please Check!")
             proxy = {}
     else:
         proxy = {}
@@ -223,33 +217,40 @@ def main():
 
 
     if enable_bruteforce:
-        print G+"[-] Starting bruteforce module now using subbrute.."+W
-        record_type = False
-        path_to_file = os.path.dirname(os.path.realpath(__file__))
-        subs = os.path.join(path_to_file, 'subbrute', 'names.txt')
-        resolvers = os.path.join(path_to_file, 'subbrute', 'resolvers.txt')
-        process_count = 10
-        output = False
-        json_output = False
-        bruteforce_list = subbrute.print_target(domain, record_type, subs, resolvers, process_count, output, json_output, subdomains)
-        subdomains.extend(bruteforce_list)
+        print G+"[-] Starting bruteforce using subDomainsBrute.."+W
+        d = SubNameBrute(target=domain)
+        d.run()
+        brute_lines = d.result_lines
+        brute_domains = d.result_domains
+        brute_ips = d.result_ips
 
 
-    IPrange_list = get_IP_range(subdomains)
 
-    if subdomains is not None:
+    if subdomains is not None: #prepaire output
+        IP_list, lines = domains2ips(subdomains) #query domains that got from website and search engine
+
+        IP_list.extend(brute_ips)
+        IPrange_list = iprange(IP_list)
+
+        subdomains.extend(brute_domains)
         subdomains = sorted(list(set(subdomains)))
+
+        lines.extend(brute_lines)
+        lines = list(set(lines))
+
         emails = sorted(list(set(emails)))
+
         subdomains.extend(emails) #this function return value is NoneType ,can't use in function directly
         subdomains.extend(IPrange_list)
         #print type(subdomains)
+        for subdomain in subdomains:
+            print G+subdomain+W
 
-        #write_file(savefile, subdomains)
+        subdomains.extend(lines)
         fp = open(savefile,"wb")
         fp.writelines("\n".join(subdomains))
 
-        for subdomain in subdomains:
-            print G+subdomain+W
+
 
     print "[+] {0} domains found in total".format(len(subdomains))
     print "[+] {0} emails found in total".format(len(emails))

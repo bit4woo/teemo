@@ -96,3 +96,10 @@ headers = {
     'X_FORWARDED_FOR': random_x_forwarded_for(allow_random_x_forward),
     'Referer' : 'http://www.baidu.com',
 }
+
+
+#################subdomainbrute options#############################
+subnamefile = "subnames.txt"   #subnames_full.txt
+ignore_intranet = False
+threads = 100
+full_scan = True

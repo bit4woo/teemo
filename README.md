@@ -47,7 +47,7 @@
 
 利用枚举
 
-- subbrute [https://github.com/TheRook/subbrute](https://github.com/TheRook/subbrute)
+- subDomainsBrute [https://github.com/lijiejie/subDomainsBrute](https://github.com/lijiejie/subDomainsBrute)
 
 
 
@@ -118,10 +118,9 @@ Thanks for their sharing.
 
 ## To Do
 
-- 域名有效性判断，端口扫描并记录--json格式（｛domain:{ip：127.0.0.1，ports:{80,443},cdn:{yes or no,具体是谁}}｝domain）
-- 泛解析，dns轮询相关
+- 优化DNS查询部分，抽象成一个函数
 - 模糊匹配，例如包含"qq"的所有域名，比如qqimg.com
-- pgp --email 、googlect---other domain with same CT
+
 
 ## 相关思维导图
 ![xmind](doc/xmind.png)
