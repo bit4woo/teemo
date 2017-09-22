@@ -5,15 +5,15 @@ import sys
 sys.dont_write_bytecode = True
 
 ##########各种key #############
-Google_CSE_API_Key = ""
-Google_CSE_ID = "0167930988223723446259780:spqsssupkdulsw"
+Google_CSE_API_Key = "AIzaSyCFyYfbMZwNeObc_wswczgOUbRB0-c2wA0"
+Google_CSE_ID = "teemo-1487466194614"
 
-Bing_API_Key = ""
+Bing_API_Key = "7fe1cecac425447389c0d3effb73c4f7"
 
 FOFA_USER_EMAIL = "bit4woo@163.com"
-FOFA_API_KEY = "a7bdsd605da714efs8a5s5439ddx6c57e0c9df"
+FOFA_API_KEY = "4c428ccbf09eeb05590ab842f24c45dd"
 
-SHODAN_API_KEY = "dEesUZg9ddGehYtkPsYWwDss6Ufn17sttHZUEH"
+SHODAN_API_KEY = "mvqpLKKMMlkyYHUnzVviD0M0C158UV5L"
 
 
 #############proxy##################

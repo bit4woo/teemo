@@ -44,7 +44,7 @@ class search_bing_api:
 
     def do_search(self):
         try:
-            url = "http://api.cognitive.microsoft.com/bing/v5.0/search?q={0}&mkt=en-us".format(self.word,self.counter)# 这里的pn参数是条目数
+            url = "http://api.cognitive.microsoft.com/bing/v7.0/search?q={0}&mkt=en-us".format(self.word,self.counter)# 这里的pn参数是条目数
         except Exception, e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         try:
