@@ -69,13 +69,16 @@ class Googlect():
         }
         try:
             resp = requests.get(url, headers=headers, timeout=self.timeout,proxies = self.proxy)
-            if hasattr(resp, "text"):
-                return resp.text
+            if resp.status_code == 200:
+                if hasattr(resp, "text"):
+                    return resp.text
+                else:
+                    return resp.conten
             else:
-                return resp.content
+                return None
         except Exception as e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-            return 0
+            return None
     def parser_subject(self):
         try:
             callback = self.random_str()
@@ -91,6 +94,7 @@ class Googlect():
                     self.hashs.append(subject.get('hash'))
         except Exception as e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
+            return
 
         if self.token:
             self.parser_subject()
@@ -108,7 +112,8 @@ class Googlect():
                 if result.get('result').get('dnsNames'):
                     self.dns_names.extend(result.get('result').get('dnsNames'))
             except Exception as e:
-                pass
+                logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
+                return
             self.random_sleep()
 
 if __name__ == "__main__":

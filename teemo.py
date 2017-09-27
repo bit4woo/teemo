@@ -8,7 +8,8 @@ import datetime
 import os
 import socket
 import threading
-from multiprocessing import Queue
+#from multiprocessing import Queue
+import Queue
 
 from brute.subDomainsBrute import SubNameBrute
 
@@ -43,7 +44,6 @@ from searchengine.search_so import search_so
 from searchengine.search_yahoo import search_yahoo
 from searchengine.search_yandex import search_yandex
 
-# from searchengine.noneed_searchimpl import baidu_search,so_search, ask_search, bing_search, dogpile_search, exalead_search, google_search, yandex_search, yahoo_search
 reload(sys)
 sys.setdefaultencoding('utf-8')
 sys.dont_write_bytecode = True
@@ -128,132 +128,136 @@ def callsites_thread(engine, key_word, q_domains, q_emails, proxy=None):
 
 
 def main():
-    args = parse_args()
-    domain = args.domain
-    #threads = args.threads
-    savefile = args.output
-    bruteforce_list = []
-    subdomains = []
+    try:
+        args = parse_args()
+        domain = args.domain
+        #threads = args.threads
+        savefile = args.output
+        bruteforce_list = []
+        subdomains = []
 
-    if not savefile:
-        now = datetime.datetime.now()
-        timestr = now.strftime("-%Y-%m-%d-%H-%M")
-        savefile = domain+timestr+".txt"
-    savefile = os.path.join(os.getcwd(), "output", savefile)
+        if not savefile:
+            now = datetime.datetime.now()
+            timestr = now.strftime("-%Y-%m-%d-%H-%M")
+            savefile = domain+timestr+".txt"
+        savefile = os.path.join(os.getcwd(), "output", savefile)
 
-    enable_bruteforce = args.bruteforce
-    if enable_bruteforce or enable_bruteforce is None:
-        enable_bruteforce = True
+        enable_bruteforce = args.bruteforce
+        if enable_bruteforce or enable_bruteforce is None:
+            enable_bruteforce = True
 
-    #Validate domain
-    if not is_domain(domain):
-        print R+"[!]Error: Please enter a valid domain"+W
-        sys.exit()
+        #Validate domain
+        if not is_domain(domain):
+            print R+"[!]Error: Please enter a valid domain"+W
+            sys.exit()
 
 
-    #Print the Banner
-    banner()
+        #Print the Banner
+        banner()
 
-    print B+"[-] Enumerating subdomains now for %s"% domain+W
+        print B+"[-] Enumerating subdomains now for %s"% domain+W
 
-    '''
-    subdomains.extend(callsites(domain,proxy))
-    domains,emails = callengines(domain,500,proxy)
-    subdomains.extend(domains)
-    #print subdomains
-    '''
+        '''
+        subdomains.extend(callsites(domain,proxy))
+        domains,emails = callengines(domain,500,proxy)
+        subdomains.extend(domains)
+        #print subdomains
+        '''
 
-    Threadlist = []
-    q_domains = Queue() #to recevie return values,use it to ensure thread safe.
-    q_emails = Queue()
-    useragent = random_useragent(allow_random_useragent)
+        Threadlist = []
+        q_domains = Queue.Queue() #to recevie return values,use it to ensure thread safe.
+        q_emails = Queue.Queue()
+        useragent = random_useragent(allow_random_useragent)
 
-    if args.proxy != None:
-        proxy = args.proxy
-        proxy = {args.proxy.split(":")[0]: proxy}
-    elif default_proxies != None and (proxy_switch ==2 or proxy_switch==1):  #config.py
-        proxy = default_proxies
-        try:
-            sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sk.settimeout(2)
-            ip = default_proxies['http'].split("/")[-2].split(":")[0]
-            port = default_proxies['http'].split("/")[-2].split(":")[1]
-            sk.connect((ip,int(port)))
-            sk.close
-        except:
-            logger.warning("Proxy Test Failed, Please Check!")
-            proxy = {}
-    else:
-        proxy = {}
-
-    #doing zone transfer checking
-    zonetransfer(domain).check()
-
-    for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer]:
-        #print callsites_thread(engine,domain,proxy)
-        t = threading.Thread(target=callsites_thread, args=(engine, domain, q_domains, q_emails, proxy))
-        Threadlist.append(t)
-    for engine in [search_ask,search_baidu,search_bing,search_bing_api,search_dogpile,search_duckduckgo,search_exalead,search_fofa,search_google,search_google_cse,
-                   search_shodan,search_so,search_yahoo,search_yandex]:
-        if proxy_switch == 1 and engine in proxy_default_enabled:
-            pass
+        if args.proxy != None:
+            proxy = args.proxy
+            proxy = {args.proxy.split(":")[0]: proxy}
+        elif default_proxies != None and (proxy_switch ==2 or proxy_switch==1):  #config.py
+            proxy = default_proxies
+            try:
+                sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sk.settimeout(2)
+                ip = default_proxies['http'].split("/")[-2].split(":")[0]
+                port = default_proxies['http'].split("/")[-2].split(":")[1]
+                sk.connect((ip,int(port)))
+                sk.close
+            except:
+                logger.warning("Proxy Test Failed, Please Check!")
+                proxy = {}
         else:
-            proxy ={}
-        t = threading.Thread(target=callengines_thread, args=(engine, domain, q_domains, q_emails, useragent, proxy, 500))
-        #t.setDaemon(True) #变成守护进程，独立于主进程。这里好像不需要
-        Threadlist.append(t)
-    #for t in Threadlist:
-    #    print t
-    for t in Threadlist: # use start() not run()
-        t.start()
-    for t in Threadlist:
-        t.join() #主线程将等待这个线程，直到这个线程运行结束
+            proxy = {}
 
-    while not q_domains.empty():
-        subdomains.append(q_domains.get())
-    emails = []
-    while not q_emails.empty():
-        emails.append(q_emails.get())
+        #doing zone transfer checking
+        zonetransfer(domain).check()
 
+        for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer]:
+            #print callsites_thread(engine,domain,proxy)
+            t = threading.Thread(target=callsites_thread, args=(engine, domain, q_domains, q_emails, proxy))
+            Threadlist.append(t)
 
-    if enable_bruteforce:
-        print G+"[-] Starting bruteforce using subDomainsBrute.."+W
-        d = SubNameBrute(target=domain)
-        d.run()
-        brute_lines = d.result_lines
-        brute_domains = d.result_domains
-        brute_ips = d.result_ips
+        for engine in [search_ask,search_baidu,search_bing,search_bing_api,search_dogpile,search_duckduckgo,search_exalead,search_fofa,search_google,search_google_cse,
+                       search_shodan,search_so,search_yahoo,search_yandex]:
+            if proxy_switch == 1 and engine in proxy_default_enabled:
+                pass
+            else:
+                proxy ={}
+            t = threading.Thread(target=callengines_thread, args=(engine, domain, q_domains, q_emails, useragent, proxy, 500))
+            t.setDaemon(True) #变成守护进程，独立于主进程。这里好像不需要
+            Threadlist.append(t)
 
+        #for t in Threadlist:
+        #    print t
+        for t in Threadlist: # use start() not run()
+            t.start()
+        for t in Threadlist:
+            t.join() #主线程将等待这个线程，直到这个线程运行结束
 
-
-    if subdomains is not None: #prepaire output
-        IP_list, lines = domains2ips(subdomains) #query domains that got from website and search engine
-
-        IP_list.extend(brute_ips)
-        IPrange_list = iprange(IP_list)
-
-        subdomains.extend(brute_domains)
-        subdomains = sorted(list(set(subdomains)))
-
-        lines.extend(brute_lines)
-        lines = list(set(lines))
-
-        emails = sorted(list(set(emails)))
-
-        subdomains.extend(emails) #this function return value is NoneType ,can't use in function directly
-        subdomains.extend(IPrange_list)
-        #print type(subdomains)
-        for subdomain in subdomains:
-            print G+subdomain+W
-
-        subdomains.extend(lines)
-        fp = open(savefile,"wb")
-        fp.writelines("\n".join(subdomains))
+        while not q_domains.empty():
+            subdomains.append(q_domains.get())
+        emails = []
+        while not q_emails.empty():
+            emails.append(q_emails.get())
 
 
+        if enable_bruteforce:
+            print G+"[-] Starting bruteforce using subDomainsBrute.."+W
+            d = SubNameBrute(target=domain)
+            d.run()
+            brute_lines = d.result_lines
+            brute_domains = d.result_domains
+            brute_ips = d.result_ips
 
-    print "[+] {0} domains found in total".format(len(subdomains))
-    print "[+] {0} emails found in total".format(len(emails))
-    print "[+] Results saved to {0}".format(savefile)
+
+        if subdomains is not None: #prepaire output
+            IP_list, lines = domains2ips(subdomains) #query domains that got from website and search engine
+
+            IP_list.extend(brute_ips)
+            IPrange_list = iprange(IP_list)
+
+            subdomains.extend(brute_domains)
+            subdomains = sorted(list(set(subdomains)))
+
+            lines.extend(brute_lines)
+            lines = list(set(lines))
+
+            emails = sorted(list(set(emails)))
+
+            subdomains.extend(emails) #this function return value is NoneType ,can't use in function directly
+            subdomains.extend(IPrange_list)
+            #print type(subdomains)
+            for subdomain in subdomains:
+                print G+subdomain+W
+
+            subdomains.extend(lines)
+            fp = open(savefile,"wb")
+            fp.writelines("\n".join(subdomains))
+
+
+
+        print "[+] {0} domains found in total".format(len(subdomains))
+        print "[+] {0} emails found in total".format(len(emails))
+        print "[+] Results saved to {0}".format(savefile)
+    except KeyboardInterrupt as e:
+        logger.info("exit. due to KeyboardInterrupt")
 if __name__=="__main__":
     main()

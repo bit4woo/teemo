@@ -8,6 +8,12 @@ import requests
 from lib.log import logger
 
 #核心方法之一，没有请求限制，无需要代理
+try:
+    import requests.packages.urllib3
+    requests.packages.urllib3.disable_warnings()
+except:
+    pass
+
 class search_so():
 
     def __init__(self, word, limit, useragent, proxy):
