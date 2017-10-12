@@ -18,3 +18,7 @@ if subdomains is not None:
         write_file("xxx", subdomains)
     else:
         write_file(domain, subdomains)
+
+if __name__ == "__main__":
+    fp = open("test","w")
+    fp.writelines("\n".join(subdomains).decode("utf-8"))

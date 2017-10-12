@@ -8,7 +8,6 @@ import datetime
 import os
 import socket
 import threading
-#from multiprocessing import Queue
 import Queue
 
 from brute.subDomainsBrute import SubNameBrute
@@ -226,6 +225,8 @@ def main():
             brute_lines = d.result_lines
             brute_domains = d.result_domains
             brute_ips = d.result_ips
+        else:
+            brute_ips = []
 
 
         if subdomains is not None: #prepaire output
@@ -250,7 +251,7 @@ def main():
 
             subdomains.extend(lines)
             fp = open(savefile,"wb")
-            fp.writelines("\n".join(subdomains))
+            fp.writelines("\n".join(subdomains).decode("utf-8"))
 
 
 
