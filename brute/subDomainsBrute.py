@@ -38,6 +38,7 @@ class SubNameBrute:
         except:
             self.full_scan = False
         self.subdomainfile = subdomainfile if subdomainfile != None else config.subnamefile
+        self.basedir = os.path.dirname(os.path.dirname(__file__)) #Teemo home dir
         self._load_dns_servers()
         self._load_next_sub()
         self.queue = PriorityQueue()
@@ -50,7 +51,7 @@ class SubNameBrute:
         self.result_lines= []
         self.result_domains = []
         self.result_ips = []
-        self.basedir = os.path.dirname(os.path.dirname(__file__)) #Teemo home dir
+
 
     def _load_dns_servers(self):
         print '[+] Validate DNS servers ...'
@@ -316,4 +317,4 @@ class SubNameBrute:
 if __name__ == '__main__':
     d = SubNameBrute(target='qpgame.com')
     d.run()
-    print d.result
+    print d.result_lines
