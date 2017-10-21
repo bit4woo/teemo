@@ -16,7 +16,7 @@ import re
 import dns.resolver
 import time
 import os
-#sys.path.append("..")
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from lib.consle_width import getTerminalSize
 import config
 
