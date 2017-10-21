@@ -208,7 +208,7 @@ def main():
         #    print t
         for t in Threadlist: # use start() not run()
             t.start()
-        for t in Threadlist:
+        for t in Threadlist: #为什么需要2次循环，不能在一次循环中完成？
             t.join() #主线程将等待这个线程，直到这个线程运行结束
 
         while not q_domains.empty():

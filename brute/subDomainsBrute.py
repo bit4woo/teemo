@@ -50,12 +50,14 @@ class SubNameBrute:
         self.result_lines= []
         self.result_domains = []
         self.result_ips = []
+        self.basedir = os.path.dirname(os.path.dirname(__file__)) #Teemo home dir
 
     def _load_dns_servers(self):
         print '[+] Validate DNS servers ...'
         self.dns_servers = []
         pool = Pool(30)
-        for server in open('dict/dns_servers.txt').xreadlines():
+        filename = os.path.join(self.basedir,"dict","dns_servers.txt")
+        for server in open(filename).xreadlines():
             server = server.strip()
             if server:
                 pool.apply_async(self._test_server, (server,))
@@ -90,12 +92,12 @@ class SubNameBrute:
     def _load_sub_names(self):
         self._print_msg('[+] Load sub names ...')
         if self.full_scan and self.subdomainfile == 'subnames.txt':
-            _file = 'dict/subnames_full.txt'
+            _file = os.path.join(self.basedir,'dict','subnames_full.txt')
         else:
             if os.path.exists(self.subdomainfile):
                 _file = self.subdomainfile
-            elif os.path.exists('dict/%s' % self.subdomainfile):
-                _file = 'dict/%s' % self.subdomainfile
+            elif os.path.exists(os.path.join(self.basedir,'dict',self.subdomainfile)):
+                _file = os.path.join(self.basedir,'dict',self.subdomainfile)
             else:
                 self._print_msg('[ERROR] Names file not exists: %s' % self.subdomainfile)
                 exit(-1)
@@ -141,7 +143,7 @@ class SubNameBrute:
         self._print_msg('[+] Load next level subs ...')
         self.next_subs = []
         _set = set()
-        _file = 'dict/next_sub.txt' if not self.full_scan else 'dict/next_sub_full.txt'
+        _file = os.path.join(self.basedir,'dict','next_sub.txt') if not self.full_scan else os.path.join(self.basedir,'dict','next_sub_full.txt')
         with open(_file) as f:
             for line in f:
                 sub = line.strip()
@@ -296,7 +298,7 @@ class SubNameBrute:
             except Exception as e:
                 import traceback
                 traceback.print_exc()
-                with open('output/errors.log', 'a') as errFile:
+                with open(os.path.join(self.basedir,'ouput','errors.log'), 'a') as errFile:
                     errFile.write('[%s] %s %s\n' % (type(e), cur_sub_domain, e))
             self._print_msg()
 
