@@ -139,7 +139,7 @@ def main():
             now = datetime.datetime.now()
             timestr = now.strftime("-%Y-%m-%d-%H-%M")
             savefile = domain+timestr+".txt"
-        savefile = os.path.join(os.getcwd(), "output", savefile)
+        savefile = os.path.join(os.path.dirname(__file__), "output", savefile)
 
         enable_bruteforce = args.bruteforce
         if enable_bruteforce or enable_bruteforce is None:
