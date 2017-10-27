@@ -1,15 +1,15 @@
 # encoding: utf-8
 
 import re
+import socket
 from config import *
 
 import json
 import subprocess
 
-import logging
-import sys
 import requests as requests
 import requests as __requests__
+import colorama
 
 # from tldextract import extract, TLDExtract
 
@@ -24,6 +24,22 @@ def is_domain(domain):
         r'(?:[A-Z0-9_](?:[A-Z0-9-_]{0,247}[A-Z0-9])?\.)+(?:[A-Z]{2,6}|[A-Z0-9-]{2,}(?<!-))\Z', 
         re.IGNORECASE)
     return True if domain_regex.match(domain) else False
+
+def proxy_verify(proxy):
+    OK_proxy= {}
+    if isinstance(proxy, dict) and len(proxy)!=0:
+        for item in proxy.keys():
+            ip = proxy.get(item).split("//")[-1].split(":")[0]
+            port = proxy.get(item).split("//")[-1].split(":")[1]
+            try:
+                sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sk.settimeout(2)
+                sk.connect((ip, int(port)))
+                sk.close
+                OK_proxy[item] = proxy.get(item)
+            except:
+                pass
+    return OK_proxy
 
 def http_request_get(url, body_content_workflow=False, allow_redirects=allow_redirects, custom_cookie="", proxies = None):
     try:
@@ -96,33 +112,14 @@ def read_json(filename):
         return []
 
 def banner():
-    # Check if we are running this on windows platform
-    is_windows = sys.platform.startswith('win')
-
-    # Console Colors
-    if is_windows:
-        # Windows deserve coloring too :D
-        G = '\033[92m'  # green
-        Y = '\033[93m'  # yellow
-        B = '\033[94m'  # blue
-        R = '\033[91m'  # red
-        W = '\033[0m'  # white
-        try:
-            import win_unicode_console, colorama
-            win_unicode_console.enable()
-            colorama.init()
-            # Now the unicode will work ^_^
-        except:
-            print("[!] Error: Coloring libraries not installed ,no coloring will be used")
-            G = Y = B = R = W = G = Y = B = R = W = ''
-    else:
-        G = '\033[92m'  # green
-        Y = '\033[93m'  # yellow
-        B = '\033[94m'  # blue
-        R = '\033[91m'  # red
-        W = '\033[0m'  # white
-
-    version = 'V 0.4'
+    colorama.init()
+    G = colorama.Fore.GREEN  # green
+    Y = colorama.Fore.YELLOW  # yellow
+    B = colorama.Fore.BLUE  # blue
+    R = colorama.Fore.RED  # red
+    W = colorama.Fore.WHITE  # white
+    version = 'V 0.5'
+    waring = "[!] legal disclaimer: Usage of Teemo for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program\n"
 
     print """%s
 
@@ -137,10 +134,10 @@ def banner():
 
          # Coded By bit4 - https://github.com/bit4woo
          # %s
-  """ % (G, W, Y, version)
+         
+%s
+  """ % (G, W, Y, version, waring) #must inport colorama to ensure G、W、Y works fine
 
-    waring = "[!] legal disclaimer: Usage of Teemo for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program"
-    print waring
 def strip_list(inputlist):
     if isinstance(inputlist,list):
         resultlist =[]
@@ -149,5 +146,5 @@ def strip_list(inputlist):
             resultlist.append(x)
         return resultlist
     else:
-        print "the input should be a list"
+        print "The input should be a list"
 

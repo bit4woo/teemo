@@ -22,8 +22,8 @@ proxy_switch = 1
 #2 = 全局使用proxy，即所有搜索引擎都使用proxy
 #3 = 全局禁用proxy
 default_proxies = {
-    "http": "http://127.0.0.1:9988/",
-    "https": "https://127.0.0.1:9988/",
+    "http": "http://127.0.0.1:9988",
+    "https": "https://127.0.0.1:9988",
 }
 proxy_default_enabled = [#默认启用代理的搜索引擎
     'search_ask','search_google','search_google_cse','search_duckduckgo' #类名
