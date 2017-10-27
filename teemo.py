@@ -227,6 +227,8 @@ def main():
             brute_ips = d.result_ips
         else:
             brute_ips = []
+            brute_lines = []
+            brute_domains = []
 
 
         if subdomains is not None: #prepaire output

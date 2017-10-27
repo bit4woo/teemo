@@ -49,13 +49,14 @@ class DNSdumpster():
                 resp = self.session.get(url, headers=headers, timeout=self.timeout)
             else:
                 resp = self.session.post(url, data=params, headers=headers, timeout=self.timeout)
+            if hasattr(resp, "text"):
+                return resp.text
+            else:
+                return resp.content
         except Exception as e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
             return None
-        if hasattr(resp, "text"):
-            return resp.text
-        else:
-            return resp.content
+
 
     def get_csrftoken(self, resp):
         csrf_regex = re.compile("<input type='hidden' name='csrfmiddlewaretoken' value='(.*?)' />", re.S)
@@ -64,11 +65,12 @@ class DNSdumpster():
 
     def enumerate(self):
         resp = self.req('GET', self.base_url)
-        token = self.get_csrftoken(resp)
-        params = {'csrfmiddlewaretoken': token, 'targetip': self.domain}
-        post_resp = self.req('POST', self.base_url, params)
-        if post_resp:
-            self.extract_domains(post_resp)
+        if resp:
+            token = self.get_csrftoken(resp)
+            params = {'csrfmiddlewaretoken': token, 'targetip': self.domain}
+            post_resp = self.req('POST', self.base_url, params)
+            if post_resp:
+                self.extract_domains(post_resp)
         return self.subdomains
 
     def extract_domains(self, resp):
