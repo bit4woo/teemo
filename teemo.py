@@ -202,7 +202,8 @@ def main():
 
             subdomains.extend(lines)
             fp = open(args.output,"wb")
-            fp.writelines("\n".join(subdomains).decode("utf-8"))
+            #fp.writelines("\n".join(subdomains).decode("utf-8"))
+            fp.writelines("\n".join(subdomains).encode("utf-8"))
 
 
         print "[+] {0} domains found in total".format(len(subdomains))
