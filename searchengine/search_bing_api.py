@@ -45,16 +45,13 @@ class search_bing_api:
     def do_search(self):
         try:
             url = "http://api.cognitive.microsoft.com/bing/v7.0/search?q={0}&mkt=en-us".format(self.word,self.counter)# 这里的pn参数是条目数
-        except Exception, e:
-            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-        try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.totalresults += self.results
-            return 0
-        except Exception,e:
+            return True
+        except Exception, e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-            return -1
+            return False
 
     def get_emails(self):
         rawres = myparser.parser(self.totalresults, self.word)
@@ -70,13 +67,12 @@ class search_bing_api:
 
     def process(self):
         while (self.counter < self.limit):
-            if self.do_search() ==-1:
-                break
-            else:
+            if self.do_search():
                 time.sleep(0.3)
                 self.counter += 50
-        #print "\tSearching " + str(self.counter) + " results..."
-
+                continue
+            else:
+                break
 
     def run(self):  # define this function,use for threading, define here or define in child-class both should be OK
         self.process()

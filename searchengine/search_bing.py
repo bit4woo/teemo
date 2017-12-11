@@ -30,14 +30,13 @@ class search_bing:
     def do_search(self):
         try:
             url = "http://{0}/search?q={1}&count=50&first={2}".format(self.server,self.word,self.counter)# 这里的pn参数是条目数
-        except Exception, e:
-            logger.log(e)
-        try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.totalresults += self.results
-        except Exception,e:
-            logger.log(e)
+            return True
+        except Exception, e:
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
+            return False
 
     def do_search_vhost(self):
         h = httplib.HTTP(self.server)
@@ -68,11 +67,13 @@ class search_bing:
 
     def process(self):
         while (self.counter < self.limit):
-            self.do_search()
-            #self.do_search_vhost()
-            time.sleep(1)
-            self.counter += 50
-            #print "\tSearching " + str(self.counter) + " results..."
+            if self.do_search():
+                #self.do_search_vhost()
+                time.sleep(1)
+                self.counter += 50
+                continue
+            else:
+                break
     def run(self): # define this function,use for threading, define here or define in child-class both should be OK
         self.process()
         self.d = self.get_hostnames()

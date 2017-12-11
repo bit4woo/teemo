@@ -37,30 +37,30 @@ class search_so():
     def do_search(self):
         try:#https://www.so.com/s?q={query}&pn={page_no}
             url = "https://{0}/s?q={1}&pn={2}".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
-        except Exception, e:
-            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-        try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.totalresults += self.results
-        except Exception,e:
+            return True
+        except Exception, e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
+            return False
 
     def check_next(self):
         renext = re.compile('snext')
         nextres = renext.findall(self.results)
         if nextres != []:
-            nexty = "1"
+            return True
         else:
-            nexty = "0"
-        return nexty
+            return False
 
     def process(self):
         while (self.counter < self.limit/10): #limit = item number; counter= page number ... 10 items per page
-            self.do_search()
-            more = self.check_next()
-            if more == "1":
-                self.counter += 1
+            if self.do_search():
+                if self.check_next():
+                    self.counter += 1
+                    continue
+                else:
+                    break
             else:
                 break
     def get_emails(self):

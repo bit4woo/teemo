@@ -9,8 +9,10 @@ from netaddr import IPAddress,IPNetwork
 import netaddr
 from lib.common import strip_list
 
-def query(domain, record_type='A'):
+def query(domain, record_type='A',server=None):
     resolver = dns.resolver.Resolver()
+    if server != None:
+        resolver.nameservers = [server]
     ips = []
     try:
         resp = resolver.query(domain, record_type, raise_on_no_answer=False)
@@ -49,17 +51,18 @@ def query(domain, record_type='A'):
         return [],domain
 
 
-def domains2ips(domain_list):
+def domains2ips(domain_list,server=None):
     IP_list =[]
     lines = []
+    domain_list = strip_list(domain_list)
     for domain in set(domain_list):
         try:
-            ips,line = query(domain)
+            ips,line = query(domain,record_type='A',server=server)
             IP_list.extend(ips)
             lines.append(line)
         except Exception,e:
             print e
-            print domain
+            #print domain
     IP_list = list(set(IP_list))
     return IP_list,lines
 
@@ -106,13 +109,8 @@ def smaller_network(ip_str_list):
 
 if __name__ == "__main__":
 
-    """
-    iplist = open("C:\Users\jax\Desktop\ips.txt").readlines()
-    #print iplist
-    fp = open("tmp.txt", "ab")
-    x = get_IP_range(["baidu.com"])
-    fp.write("\n")
-    fp.writelines("\n".join(x))
-    """
-    print query("m.jdxxxxxxxxxxxxxxxxxxxxxxxxxx.com")
-    print get_IP_range(["baidu.com"])
+
+    domains = open("C:\Users\jax\Desktop\hrpc.txt").readlines()
+
+    x,lines= domains2ips(domains,"172.30.35.35")
+    print lines

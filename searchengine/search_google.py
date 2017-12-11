@@ -33,20 +33,17 @@ class search_google():
     def do_search(self):
         try:
             url = "http://{0}/search?num={1}&start={2}&hl=en&meta=&q={3}".format(self.server,self.quantity,self.counter,self.word)
-        except Exception, e:
-            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-        try:
-            r = requests.get(url, headers = self.headers, proxies=self.proxies)
+            r = requests.get(url, headers=self.headers, proxies=self.proxies)
             if "and not a robot" in r.content:
                 logger.warning("Google has blocked your visit")
-                return 0
+                return False
             else:
                 self.results = r.content
                 self.totalresults += self.results
-                return 1
-        except Exception,e:
+                return True
+        except Exception, e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-            return 0
+            return False
 
     def do_search_profiles(self):
         try:
@@ -80,12 +77,12 @@ class search_google():
 
     def process(self):
         while self.counter <= self.limit and self.counter <= 1000:
-            if self.do_search() == 0:
+            if self.do_search():
+                time.sleep(random.randint(1, 5))  # should to sleep random time and use random user-agent to prevent block
+                self.counter += 100
+            else:
                 break
-            #more = self.check_next()
-            time.sleep(random.randint(1,5)) #should to sleep random time and use random user-agent to prevent block
-            #print "\tSearching " + str(self.counter) + " results..."
-            self.counter += 100
+
 
     def process_profiles(self):
         while self.counter < self.limit:

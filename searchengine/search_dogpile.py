@@ -6,7 +6,6 @@ import requests
 from lib import myparser
 from lib.log import logger
 import time
-import config
 
 class search_dogpile:
 
@@ -30,21 +29,24 @@ class search_dogpile:
     def do_search(self):
         try:
             url = "http://{0}/search/web?qsi={1}&q={2}".format(self.server,self.counter,self.word)
-        except Exception, e:
-            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-        try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.total_results += self.results
-        except Exception,e:
+            return True
+        except Exception, e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
+            return False
+
 
     def process(self):
         while self.counter <= self.limit and self.counter <= 1000:
-            self.do_search()
-            time.sleep(1)
-            #print "\tSearching " + str(self.counter) + " results..."
-            self.counter += 20
+            if self.do_search():
+                time.sleep(1)
+                #print "\tSearching " + str(self.counter) + " results..."
+                self.counter += 20
+                continue
+            else:
+                break
 
     def get_emails(self):
         rawres = myparser.parser(self.total_results, self.word)
@@ -70,7 +72,7 @@ def dogpile(keyword, limit, useragent,proxy): #define this function to use in th
 if __name__ == "__main__":
         print "[-] Searching in dogpilesearch:"
         useragent = "Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6" #他会检查useragent，之前多了一个( 导致504
-        proxy = {"http": "http://127.0.0.1:8080"}
+        proxy = {"http": "http://127.0.0.1:9988"}
         search = search_dogpile("meizu.com", '100',useragent,proxy)
         search.process()
         all_emails = search.get_emails()

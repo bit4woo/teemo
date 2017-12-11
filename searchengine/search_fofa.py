@@ -41,8 +41,10 @@ class search_fofa:
             r = requests.get(url, headers=self.headers, proxies=self.proxies)
             self.results = r.content
             self.totalresults += self.results
+            return True
         except Exception, e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
+            return False
     def get_emails(self):
         rawres = myparser.parser(self.totalresults, self.word)
         return rawres.emails()

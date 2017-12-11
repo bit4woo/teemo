@@ -5,6 +5,7 @@ __github__ = 'https://github.com/bit4woo'
 import requests
 from lib import myparser
 from lib.log import logger
+import time
 
 class search_duckduckgo:
 
@@ -29,25 +30,24 @@ class search_duckduckgo:
     def do_search(self):
         try:
             url = "https://{0}/?q={1}".format(self.server,self.word)
-            #must use https
-        except Exception, e:
-            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-        try:
             r = requests.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.total_results += self.results
-        except Exception,e:
+            return True
+            #must use https
+        except Exception, e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
+            return False
 
     def process(self):
-        '''
         while self.counter <= self.limit and self.counter <= 1000:
-            self.do_search()
-            time.sleep(1)
-            #print "\tSearching " + str(self.counter) + " results..."
-            self.counter += 20
-        '''
-        self.do_search()
+            if self.do_search():
+                time.sleep(1)
+                self.counter += 20
+                continue
+            else:
+                break
+
     def get_emails(self):
         rawres = myparser.parser(self.total_results, self.word)
         return rawres.emails()

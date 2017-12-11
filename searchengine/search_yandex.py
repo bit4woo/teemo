@@ -33,20 +33,18 @@ class search_yandex:
 
     def do_search(self):
         try:
-            url = "http://{0}/search?text={1}&numdoc=50&lr={2}".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
-        except Exception, e:
-            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-        try:
-            r = requests.get(url, headers = self.headers, proxies = self.proxies)
+            url = "http://{0}/search?text={1}&numdoc=50&lr=10590&pn={2}".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
+            r = requests.get(url, headers=self.headers, proxies=self.proxies)
             if "automated requests" in r.content:
                 logger.warning("Yandex blocked our request")
-                return -1
+                return False
             else:
                 self.results = r.content
                 self.totalresults += self.results
-                return 0
-        except Exception,e:
+                return True
+        except Exception, e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
+            return False
 
     def do_search_files(self, files):  # TODO
         h = httplib.HTTP(self.server)
@@ -63,11 +61,9 @@ class search_yandex:
         renext = re.compile('topNextUrl')
         nextres = renext.findall(self.results)
         if nextres != []:
-            nexty = "1"
-            #print str(self.counter)
+            return True
         else:
-            nexty = "0"
-        return nexty
+            return False
 
     def get_emails(self):
         rawres = myparser.parser(self.totalresults, self.word)
@@ -83,11 +79,15 @@ class search_yandex:
 
     def process(self):
         while self.counter <= self.limit and self.counter<500:
-            if self.do_search() ==-1:
+            if self.do_search():
+                if self.check_next():
+                    time.sleep(random.randint(1, 5))
+                    self.counter += 1
+                    continue
+                else:
+                    break
+            else:
                 break
-            time.sleep(random.randint(1,5))
-            self.counter += 50
-            #print "Searching " + str(self.counter) + " results..."
 
     def process_files(self, files):
         while self.counter < self.limit and self.counter<500:
@@ -104,7 +104,7 @@ class search_yandex:
 if __name__ == "__main__":
         print "[-] Searching in Bing:"
         useragent = "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52"
-        proxy = {"http": "http://127.0.0.1:8080"}
+        proxy = {"http": "http://127.0.0.1:9988"}
         search = search_yandex("meizu.com", 500, useragent, proxy)
         search.process()
         all_emails = search.get_emails()

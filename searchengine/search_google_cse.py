@@ -44,20 +44,16 @@ class search_google_cse:
     def do_search(self):
         try:
             url = "https://{0}/customsearch/v1?key={1}&highRange={2}&lowRange={3}&cx={4}&start={5}&q={6}".format(self.server,self.api_key,self.highRange,self.lowRange,self.cse_id,self.counter,self.word)
-        except Exception, e:
-            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-        try:
             r = requests.get(url, headers = self.headers, proxies=self.proxies, timeout=self.timeout)
             if r.status_code != 200:
-                #print r.content
-                return -1
+                return False
             else:
                 self.results = r.content
                 self.totalresults += self.results
-                return 0
-        except Exception,e:
+                return True
+        except Exception, e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-            return -1
+            return False
 
     def do_search_files(self):
         try:
@@ -93,9 +89,7 @@ class search_google_cse:
     def process(self):
         tracker = self.counter + self.lowRange
         while tracker <= self.limit:
-            if self.do_search() == -1:
-                break
-            else:
+            if self.do_search():
                 time.sleep(1)
                 ESC = chr(27)
                 sys.stdout.write(ESC + '[2K' + ESC + '[G')
@@ -109,6 +103,8 @@ class search_google_cse:
                 else:
                     self.counter += 10
                 tracker = self.counter + self.lowRange
+            else:
+                break
 
     def store_results(self):
         filename = "debug_results.txt"

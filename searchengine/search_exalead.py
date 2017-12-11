@@ -9,6 +9,7 @@ from lib.log import logger
 from lib.myrequests import http_request_get
 import re
 import time
+import random
 
 
 class search_exalead:
@@ -35,19 +36,17 @@ class search_exalead:
     def do_search(self):
         try:
             url = "http://{0}/search/web/results/?q={1}&elements_per_page=50&start_index={2}".format(self.server,self.word,self.counter)# 这里的pn参数是条目数
-        except Exception, e:
-            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-        try:
             r = http_request_get(url, custom_referer=self.referer, proxies = self.proxies)
             if "We are sorry, but your request has been blocked" in r.content:
                 logger.warning("Exalead blocked our request")
-                return -1
+                return False
             else:
                 self.results = r.content
                 self.totalresults += self.results
-                return 0
-        except Exception,e:
+                return True
+        except Exception, e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
+            return False
 
     def do_search_files(self):
         try:
@@ -85,10 +84,12 @@ class search_exalead:
 
     def process(self):
         while self.counter <= self.limit:
-            if self.do_search()==-1:
+            if self.do_search():
+                self.counter +=50
+                time.sleep(random.randint(1,3))
+                continue
+            else:
                 break
-            self.counter += 50
-            #print "\tSearching " + str(self.counter) + " results..."
 
     def process_files(self):
         while self.counter < self.limit:

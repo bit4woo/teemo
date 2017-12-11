@@ -39,10 +39,10 @@ class search_ask():
             #采用随机user agent的话，
             self.results = r.content
             self.totalresults += self.results
-            return 0
+            return True
         except Exception,e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-            return -1
+            return False
 
     def check_next(self):
         renext = re.compile('>Next<') #<li class="PartialWebPagination-next">Next</li>
@@ -59,14 +59,16 @@ class search_ask():
 
     def process(self):
         while (self.counter < self.limit/100): #limit = item number; counter= page number ... 100 items per page
-            if self.do_search() ==-1:
-                break
-            else:
+            if self.do_search():
                 more = self.check_next()
-            if more == "1":
-                self.counter += 1
+                if more == "1":
+                    self.counter += 1
+                    continue
+                else:
+                    break
             else:
                 break
+
     def get_emails(self):
         rawres = myparser.parser(self.totalresults, self.word)
         return rawres.emails()
