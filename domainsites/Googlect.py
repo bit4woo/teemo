@@ -30,6 +30,7 @@ class Googlect():
         self.domain_name = []
         self.smiliar_domain_name = []
         self.email = []
+        self.result = ""
         return
 
     def print_banner(self):
@@ -71,27 +72,29 @@ class Googlect():
             resp = requests.get(url, headers=headers, timeout=self.timeout,proxies = self.proxy)
             if resp.status_code == 200:
                 if hasattr(resp, "text"):
-                    return resp.text
+                    self.result = resp.text
                 else:
-                    return resp.conten
+                    self.result = resp.content
+                return True
             else:
-                return None
+                logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], resp.reason))
+                return False
         except Exception as e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-            return None
+            return False
     def parser_subject(self):
         try:
             callback = self.random_str()
             url = '{0}/search?domain={1}&incl_exp=true&incl_sub=true&token={2}&c={3}'.format(
                     self.website, self.domain, urllib.quote(self.token), callback)
-            content = self.req(url)
-            result = json.loads(content[27:-3])
-            self.token = result.get('nextPageToken')
-            for subject in result.get('results'):
-                if subject.get('subject'):
-                    self.dns_names.append(subject.get('subject'))
-                if subject.get('hash'):
-                    self.hashs.append(subject.get('hash'))
+            if self.req(url):
+                result = json.loads(self.result[27:-3])
+                self.token = result.get('nextPageToken')
+                for subject in result.get('results'):
+                    if subject.get('subject'):
+                        self.dns_names.append(subject.get('subject'))
+                    if subject.get('hash'):
+                        self.hashs.append(subject.get('hash'))
         except Exception as e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
             return

@@ -6,6 +6,7 @@ import requests
 from lib import myparser
 from lib.log import logger
 import time
+import random
 
 class search_duckduckgo:
 
@@ -42,7 +43,7 @@ class search_duckduckgo:
     def process(self):
         while self.counter <= self.limit and self.counter <= 1000:
             if self.do_search():
-                time.sleep(1)
+                time.sleep(random.randint(1,3))
                 self.counter += 20
                 continue
             else:
