@@ -7,11 +7,13 @@ __github__ = 'https://github.com/bit4woo'
 from lib.common import *
 from lib.log import logger
 import time
-import urllib
+from lib.myparser import parser
 from random import Random,uniform #googlect
+import ast
 
 class Googlect():
     #https://www.google.com/transparencyreport/jsonp/ct/search?domain=apple.com&incl_exp=true&incl_sub=true&token=CAo%3D&c=_callbacks_._4ixpyevsd
+    #https://transparencyreport.google.com/transparencyreport/api/v3/httpsreport/ct/certsearch?include_expired=true&include_subdomains=true&domain=jd.com
     def __init__(self, domain, proxy=None):
         self.verify = ""
         #self.domain = urlparse.urlparse(domain).netloc
@@ -21,7 +23,7 @@ class Googlect():
         self.subjects = []
         self.hashs = []
         self.num_result = 0
-        self.website = 'https://www.google.com/transparencyreport/jsonp/ct'
+        self.website = 'https://transparencyreport.google.com/transparencyreport/api/v3/httpsreport/ct'
         self.subdomains = []
         self.engine_name = "GoogleCT"
         self.timeout = 10
@@ -51,8 +53,6 @@ class Googlect():
 
     def run(self):
         self.parser_subject()
-        self.hashs = list(set(self.hashs)) # unique sort hash
-        self.parser_dnsname()
         self.dns_names = list(set(self.dns_names))
         for item in self.dns_names:
             if self.domain in item:
@@ -84,43 +84,38 @@ class Googlect():
             return False
     def parser_subject(self):
         try:
-            callback = self.random_str()
-            url = '{0}/search?domain={1}&incl_exp=true&incl_sub=true&token={2}&c={3}'.format(
-                    self.website, self.domain, urllib.quote(self.token), callback)
+            #certsearch?include_expired=true&include_subdomains=true&domain=jd.com
+            url = '{0}/certsearch?domain={1}&include_expired=true&include_subdomains=true'.format(
+                self.website, self.domain)
             if self.req(url):
-                result = json.loads(self.result[27:-3])
-                self.token = result.get('nextPageToken')
-                for subject in result.get('results'):
-                    if subject.get('subject'):
-                        self.dns_names.append(subject.get('subject'))
-                    if subject.get('hash'):
-                        self.hashs.append(subject.get('hash'))
+                result = (self.result[6:-1]).replace("\n","").replace("[","").replace("]","").split(",")[-4]
+                total_page = (self.result[6:-1]).replace("\n","").replace("[","").replace("]","").split(",")[-1]
+                current_page = (self.result[6:-1]).replace("\n", "").replace("[", "").replace("]", "").split(",")[-2]
+                self.token = ast.literal_eval(result)
+                rawres = parser(self.result, self.domain)
+                domains = rawres.hostnames()
+                if domains!= None:
+                    self.dns_names.extend(domains)
+                '''
+                while current_page < total_page:#重复请求，页面未变，该如何修改页面呢？
+                    url = "https://transparencyreport.google.com/transparencyreport/api/v3/httpsreport/ct/certsearch/page?p={0}".format(self.token)
+                    if self.req(url):
+                        print "xxxxx"
+                        current_page = \
+                        (self.result[6:-1]).replace("\n", "").replace("[", "").replace("]", "").split(",")[-2]
+                        print current_page
+                        rawres = parser(self.result, self.domain)
+                        domains = rawres.hostnames()
+                        self.dns_names.extend(domains)
+                    else:
+                        break
+                '''
         except Exception as e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
             return
 
-        if self.token:
-            self.parser_subject()
-
-    def parser_dnsname(self):
-        for hashstr in self.hashs:
-            try:
-                callback = self.random_str()
-                url = '{0}/cert?hash={1}&c={2}'.format(
-                        self.website, urllib.quote(hashstr), callback)
-                content = http_request_get(url, proxies=self.proxy).content
-                result = json.loads(content[27:-3])
-                if result.get('result').get('subject'):
-                    self.subjects.append(result.get('result').get('subject'))
-                if result.get('result').get('dnsNames'):
-                    self.dns_names.extend(result.get('result').get('dnsNames'))
-            except Exception as e:
-                logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-                return
-            self.random_sleep()
-
 if __name__ == "__main__":
     proxy = {"https":"https://127.0.0.1:9988"}
-    x = Googlect("jd.com",proxy)
+    x = Googlect("meizu.com",proxy)
     #print x.parser_dnsname()
     print x.run()

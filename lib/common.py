@@ -147,4 +147,3 @@ def strip_list(inputlist):
         return resultlist
     else:
         print "The input should be a list"
-
