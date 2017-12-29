@@ -44,7 +44,7 @@ class search_google_cse:
     def do_search(self):
         try:
             url = "https://{0}/customsearch/v1?key={1}&highRange={2}&lowRange={3}&cx={4}&start={5}&q={6}".format(self.server,self.api_key,self.highRange,self.lowRange,self.cse_id,self.counter,self.word)
-            r = requests.get(url, headers = self.headers, proxies=self.proxies, timeout=self.timeout)
+            r = requests.get(url, headers = self.headers, proxies=self.proxies, timeout=self.timeout,verify =False)
             if r.status_code != 200:
                 return False
             else:

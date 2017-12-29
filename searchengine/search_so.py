@@ -37,7 +37,7 @@ class search_so():
     def do_search(self):
         try:#https://www.so.com/s?q={query}&pn={page_no}
             url = "https://{0}/s?q={1}&pn={2}".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
-            r = requests.get(url, headers = self.headers, proxies = self.proxies)
+            r = requests.get(url, headers = self.headers, proxies = self.proxies,verify=False)
             self.results = r.content
             self.totalresults += self.results
             return True

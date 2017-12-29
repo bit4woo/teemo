@@ -31,7 +31,7 @@ class search_duckduckgo:
     def do_search(self):
         try:
             url = "https://{0}/?q={1}".format(self.server,self.word)
-            r = requests.get(url, headers = self.headers, proxies = self.proxies)
+            r = requests.get(url, headers = self.headers, proxies = self.proxies,verify=False)
             self.results = r.content
             self.total_results += self.results
             return True

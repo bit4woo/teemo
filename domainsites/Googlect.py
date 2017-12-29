@@ -69,7 +69,7 @@ class Googlect():
         'Accept-Encoding': 'gzip, deflate',
         }
         try:
-            resp = requests.get(url, headers=headers, timeout=self.timeout,proxies = self.proxy)
+            resp = requests.get(url, headers=headers, timeout=self.timeout,proxies = self.proxy,verify=False)
             if resp.status_code == 200:
                 if hasattr(resp, "text"):
                     self.result = resp.text
