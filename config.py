@@ -26,14 +26,9 @@ default_proxies = {
     "https": "https://127.0.0.1:9988",
 }
 proxy_default_enabled = [#默认启用代理的搜索引擎
-    'search_ask','search_google','search_google_cse','search_duckduckgo' #类名
+    'search_ask','search_google','search_google_cse','search_duckduckgo','Googlect','ThreatCrowd' #类名
     ]
 
-# 是否开启https服务器的证书校验
-allow_ssl_verify = False
-
-# 线程数
-threads_count = 16
 
 # -------------------------------------------------
 # requests 配置项
@@ -44,6 +39,9 @@ timeout = 15
 
 # 是否允许URL重定向
 allow_redirects = True
+
+#是否校验ssl
+allow_ssl_verify =False
 
 # 是否允许继承http Request类的Session支持，在发出的所有请求之间保持cookies。
 allow_http_session = True

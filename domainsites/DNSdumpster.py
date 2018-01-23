@@ -6,14 +6,15 @@ __github__ = 'https://github.com/bit4woo'
 import re
 import requests
 from lib.log import logger
+req = requests.Session()
 
 
 class DNSdumpster():
     def __init__(self, domain, proxy=None):
+        self.proxy = proxy
         self.subdomains = []
         self.base_url = 'https://dnsdumpster.com/'
         self.engine_name = "DNSdumpster"
-        self.session= requests.session()
         self.domain_name = []
         self.smiliar_domain_name = []
         self.email = []
@@ -46,9 +47,9 @@ class DNSdumpster():
 
         try:
             if req_method == 'GET':
-                resp = self.session.get(url, headers=headers, timeout=self.timeout)
+                resp = req.get(url, headers=headers, timeout=self.timeout, proxies = self.proxy)
             else:
-                resp = self.session.post(url, data=params, headers=headers, timeout=self.timeout)
+                resp = req.post(url, data=params, headers=headers, timeout=self.timeout,proxies = self.proxy)
             if hasattr(resp, "text"):
                 return resp.text
             else:
@@ -92,5 +93,8 @@ class DNSdumpster():
         return links
 
 if __name__ == "__main__":
-    x = DNSdumpster("meizu.com")
+    proxy = {"https":"https://127.0.0.1:9988"}
+    proxy = {"http":"http://127.0.0.1:9988"}
+    proxy = {}
+    x = DNSdumpster("meizu.com",proxy)
     print x.run()

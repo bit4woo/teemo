@@ -3,16 +3,18 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
-#wydomain
-from lib.common import *
 from lib.captcha import *
 from lib.log import logger
-
+import re
+import requests
+req = requests.Session()
 
 class Sitedossier():
     def __init__(self, domain, proxy=None):
         #self.domain = urlparse.urlparse(domain).netloc
+        self.proxy = proxy
         self.domain = domain
+        self.url = 'http://www.sitedossier.com/parentdomain/{0}'.format(self.domain)
         self.subdomains = []
         self.session = requests.Session()
         self.engine_name = "Sitedossier"
@@ -30,19 +32,18 @@ class Sitedossier():
 
     def run(self):
         try:
-            url = 'http://www.sitedossier.com/parentdomain/{0}'.format(self.domain)
-            r = self.get_content(url)
+            r = self.get_content(self.url)
             self.parser(r)
             self.domain_name = list(set(self.domain_name))
         except Exception, e:
-            logger.info(str(e))
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
 
         logger.info("{0} found {1} domains".format(self.engine_name, len(self.domain_name)))
         return self.domain_name,self.smiliar_domain_name,self.email
 
     def get_content(self, url):
         #logger.info('request: {0}'.format(url))
-        r = http_request_get(url).text
+        r = req.get(url,proxies = self.proxy).text
         if self.human_act(r) is True:
             return r
         else:
@@ -83,7 +84,7 @@ class Sitedossier():
     def audit(self, code):
         payload = {'w':code}
         url = 'http://www.sitedossier.com/audit'
-        r = http_request_post(url, payload=payload)
+        r = req.post(url, data=payload, proxies = self.proxy)
 
     def get_audit_img(self, response):
         auditimg = re.compile(r'(?<=<img src\=\"/auditimage/).*?(?=\?" alt="Please)')
@@ -99,5 +100,7 @@ class Sitedossier():
         return json.dumps(self, indent=2, default=handler)
 
 if __name__ == "__main__":
-    x = Sitedossier("meizu.com","https://127.0.0.1:9999")
+    proxy = {"https":"https://127.0.0.1:9988","http":"http://127.0.0.1:9988"}
+    #proxy = {}
+    x = Sitedossier("meizu.com",proxy)
     print x.run()

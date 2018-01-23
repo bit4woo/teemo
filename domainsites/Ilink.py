@@ -3,14 +3,19 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
-#wydomain
 from lib.common import *
 from lib.log import logger
+import requests
+req = requests.Session()
 
+'''
+website offline
+'''
 
 class Ilink():
     def __init__(self, domain, proxy=None):
         self.url = 'http://i.links.cn/subdomain/'
+        self.proxy = proxy
         #self.domain = urlparse.urlparse(domain).netloc
         self.domain = domain
         self.subdomains = []
@@ -34,7 +39,7 @@ class Ilink():
                 'b4': 1,
                 'domain': self.domain
             }
-            r = http_request_post(self.url,payload=payload).text
+            r = req.get(self.url,data=payload,proxies=self.proxy).content
             subs = re.compile(r'(?<=value\=\"http://).*?(?=\"><input)')
             for item in subs.findall(r):
                 if is_domain(item):
@@ -48,5 +53,7 @@ class Ilink():
             return self.domain_name,self.smiliar_domain_name,self.email
 
 if __name__ == "__main__":
-    x = Ilink("meizu.com","https://127.0.0.1:9999")
+    proxy = {"https":"https://127.0.0.1:9988","http":"http://127.0.0.1:9988"}
+    #proxy = {}
+    x = Ilink("meizu.com",proxy)
     print x.run()

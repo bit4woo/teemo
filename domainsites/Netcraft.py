@@ -9,14 +9,15 @@ import requests
 import re
 import hashlib
 from lib.log import logger
+req = requests.Session()
 
 class Netcraft():
     def __init__(self, domain, proxy=None):
         self.base_url = 'http://searchdns.netcraft.com/?restriction=site+ends+with&host={domain}'
         #self.domain = urlparse.urlparse(domain).netloc
+        self.proxy = proxy
         self.domain = domain
         self.subdomains = []
-        self.session = requests.Session()
         self.engine_name = "Netcraft"
         self.domain_name = []
         self.smiliar_domain_name = []
@@ -44,7 +45,7 @@ class Netcraft():
         'Accept-Encoding': 'gzip, deflate',
         }
         try:
-            resp = self.session.get(url, headers=headers, timeout=self.timeout,cookies=cookies)
+            resp = req.get(url, headers=headers, timeout=self.timeout,cookies=cookies,proxies = self.proxy)
         except Exception as e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
             resp = None
@@ -111,5 +112,7 @@ class Netcraft():
 
 
 if __name__ == "__main__":
-    x = Netcraft("meizu.com","https://127.0.0.1:9999")
+    proxy = {"https":"https://127.0.0.1:9988","http":"http://127.0.0.1:9988"}
+    proxy = {}
+    x = Netcraft("meizu.com",proxy)
     print x.run()

@@ -12,7 +12,7 @@ import config
 
 class search_ask():
 
-    def __init__(self, word, limit, useragent, proxy):
+    def __init__(self, word, limit, useragent, proxy=None):
         self.engine_name = "Ask"
         self.word = word.replace(' ', '%20')
         self.results = "" #本页搜索结果

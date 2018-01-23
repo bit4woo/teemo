@@ -4,12 +4,18 @@ __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 #根据证书返回结构，会返回带*号的域名，可用于查找属于同机构的多个域名，和相似域名。
 
-from lib.common import *
 from lib.log import logger
 import time
 from lib.myparser import parser
 from random import Random,uniform #googlect
 import ast
+import requests
+req = requests.Session()
+try:
+    import requests.packages.urllib3
+    requests.packages.urllib3.disable_warnings()
+except:
+    pass
 
 class Googlect():
     #https://www.google.com/transparencyreport/jsonp/ct/search?domain=apple.com&incl_exp=true&incl_sub=true&token=CAo%3D&c=_callbacks_._4ixpyevsd
@@ -69,7 +75,7 @@ class Googlect():
         'Accept-Encoding': 'gzip, deflate',
         }
         try:
-            resp = requests.get(url, headers=headers, timeout=self.timeout,proxies = self.proxy,verify=False)
+            resp = req.get(url, headers=headers, timeout=self.timeout,proxies = self.proxy,verify=False)
             if resp.status_code == 200:
                 if hasattr(resp, "text"):
                     self.result = resp.text

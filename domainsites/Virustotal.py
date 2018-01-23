@@ -3,21 +3,18 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
-import threading
 import requests
 import re
 from lib.log import logger
+req = requests.Session()
 
 class Virustotal():
-    def __init__(self, domain, subdomains=None, q=None, lock=threading.Lock(), proxy=None):
-        subdomains = subdomains or []
+    def __init__(self, domain, proxy=None):
         self.base_url = 'https://www.virustotal.com/en/domain/{domain}/information/'
-        #self.domain = urlparse.urlparse(domain).netloc
+        self.proxy = proxy
         self.domain = domain
         self.subdomains = []
-        self.session = requests.Session()
         self.engine_name = "Virustotal"
-        self.lock = lock
         self.domain_name = []
         self.smiliar_domain_name = []
         self.email = []
@@ -44,9 +41,9 @@ class Virustotal():
         }
 
         try:
-            resp = self.session.get(url, headers=headers, timeout=self.timeout)
+            resp = req.get(url, headers=headers, timeout=self.timeout, proxies = self.proxy)
         except Exception as e:
-            logger.info(str(e))
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
             resp = None
 
         return self.get_response(resp)
@@ -78,9 +75,11 @@ class Virustotal():
                         #print "%s%s: %s%s"%(R, self.engine_name, W, subdomain)
                     self.subdomains.append(subdomain.strip())
         except Exception as e:
-            logger.info(str(e))
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
 
 
 if __name__ == "__main__":
-    x = Virustotal("meizu.com","https://127.0.0.1:9988")
+    proxy = {"https":"https://127.0.0.1:9988","http":"http://127.0.0.1:9988"}
+    #proxy = {}
+    x = Virustotal("meizu.com",proxy)
     print x.run()

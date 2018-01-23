@@ -16,7 +16,7 @@ except:
 
 class search_so():
 
-    def __init__(self, word, limit, useragent, proxy):
+    def __init__(self, word, limit, useragent, proxy=None):
         self.engine_name = "360SO"
         self.word = word.replace(' ', '%20')
         self.results = "" #本页搜索结果

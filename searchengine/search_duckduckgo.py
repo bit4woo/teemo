@@ -7,6 +7,11 @@ from lib import myparser
 from lib.log import logger
 import time
 import random
+try:
+    import requests.packages.urllib3
+    requests.packages.urllib3.disable_warnings()
+except:
+    pass
 
 class search_duckduckgo:
 

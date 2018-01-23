@@ -41,7 +41,7 @@ def callsites_thread(engine,key_word, q, proxy=None,):
 if __name__ == "__main__":
     proxy = {
     "http": "http://127.0.0.1:9988/",
-    "https": "http://127.0.0.1:9988/",
+    "https": "https://127.0.0.1:9988/",
     }
     #print callsites("meizu.com",proxy="http://127.0.0.1:9999")
     Threadlist = []

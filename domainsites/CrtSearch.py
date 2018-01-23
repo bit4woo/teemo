@@ -3,14 +3,14 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
-import requests
 from lib.log import logger
 from lib.myparser import parser
-from lib.common import http_request_get
+import requests
+req = requests.Session()
 
 class CrtSearch():
     def __init__(self, domain, proxy=None):
-
+        self.proxy = proxy
         self.base_url = 'https://crt.sh/?q=%25.{domain}'
         #self.domain = urlparse.urlparse(domain).netloc
         self.resp = ""
@@ -33,7 +33,7 @@ class CrtSearch():
         url = self.base_url.format(domain=self.domain)
         #print url
         try:
-            self.resp = http_request_get(url).content
+            self.resp = req.get(url,proxies=self.proxy).content
             if self.resp:
                 self.subdomains = self.get_hostnames()
                 self.email = self.get_email()
@@ -53,5 +53,7 @@ class CrtSearch():
         return rawres.emails()
 
 if __name__ == "__main__":
-    x= CrtSearch("jd.com")
+    proxy = {"http":"http://127.0.0.1:9988"}
+    #proxy = {}
+    x= CrtSearch("jd.com",proxy)
     print x.run()

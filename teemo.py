@@ -141,6 +141,10 @@ def main():
 
         for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer,Virustotal]:
             #print callsites_thread(engine,domain,proxy)
+            if proxy_switch == 1 and engine in proxy_default_enabled:
+                pass
+            else:
+                proxy ={}
             t = threading.Thread(target=callsites_thread, args=(engine, args.domain, q_domains, q_emails, args.proxy))
             Threadlist.append(t)
 

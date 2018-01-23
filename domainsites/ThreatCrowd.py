@@ -5,12 +5,15 @@ __github__ = 'https://github.com/bit4woo'
 
 import requests
 from lib.log import logger
+import json
+req = requests.Session()
 
 class ThreatCrowd():
     def __init__(self, domain, proxy=None):
         self.base_url = 'https://www.threatcrowd.org/searchApi/v2/domain/report/?domain={domain}'
         #self.domain = urlparse.urlparse(domain).netloc
         self.domain = domain
+        self.proxy = proxy
         self.subdomains = []
         self.session = requests.Session()
         self.engine_name = "ThreatCrowd"
@@ -41,8 +44,9 @@ class ThreatCrowd():
         }
 
         try:
-            resp = self.session.get(url, headers=headers, timeout=self.timeout)
+            resp = req.get(url, headers=headers, timeout=self.timeout, proxies = self.proxy)
         except Exception as e:
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
             resp = None
 
         return self.get_response(resp)
@@ -63,12 +67,6 @@ class ThreatCrowd():
 
     def extract_domains(self, resp):
         try:
-            import json
-        except Exception as e:
-            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-            return
-
-        try:
             links = json.loads(resp)['subdomains']
             for link in links:
                 subdomain = link.strip()
@@ -79,14 +77,16 @@ class ThreatCrowd():
                         #print "%s%s: %s%s"%(R, self.engine_name, W, subdomain)
                     self.subdomains.append(subdomain.strip())
         except Exception as e:
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
             pass
 
 
 if __name__ == "__main__":
     proxy = {
-    "http": "http://127.0.0.1:9999/",
-    "https": "http://127.0.0.1:9999/",
+    "http": "http://127.0.0.1:9988/",
+    "https": "http://127.0.0.1:9988/",
     }
+    #proxy = {}
     #x = ThreatCrowd("meizu.com","https://127.0.0.1:9999")
     x = ThreatCrowd("meizu.com",proxy)  #2种传递proxy的方法在这都是可以的，但是第一种更适合大多场景，比如 requests.get中，第二种就不适用
     print x.run()

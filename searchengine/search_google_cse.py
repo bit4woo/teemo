@@ -13,7 +13,7 @@ import config
 #创建自定义的搜索引擎（CSE）https://cse.google.com/cse/all
 #申请API Key: https://developers.google.com/custom-search/json-api/v1/overview
 class search_google_cse:
-    def __init__(self, word, limit, useragent, proxy):
+    def __init__(self, word, limit, useragent, proxy=None):
         self.engine_name = "Google_CSE"
         self.word = word
         self.files = "pdf"

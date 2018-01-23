@@ -7,9 +7,11 @@ __github__ = 'https://github.com/bit4woo'
 from lib import myparser
 from lib.log import logger
 import requests
+req = requests.Session()
 
 class PassiveDNS():
     def __init__(self, domain, proxy=None):
+        self.proxy = proxy
         self.base_url = 'http://ptrarchive.com/tools/search.htm?label={domain}'
         self.domain = domain
         self.subdomains = []
@@ -44,7 +46,7 @@ class PassiveDNS():
         'Accept-Encoding': 'gzip, deflate',
         }
         try:
-            resp = requests.get(url, headers=headers, timeout=self.timeout)
+            resp = req.get(url, headers=headers, timeout=self.timeout, proxies = self.proxy)
             return resp.content
         except Exception as e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
@@ -60,5 +62,7 @@ class PassiveDNS():
         return rawres.hostnames()
 
 if __name__ == "__main__":
-    x = PassiveDNS("meizu.com","https://127.0.0.1:9999")
+    proxy = {"https":"https://127.0.0.1:9988","http":"http://127.0.0.1:9988"}
+    proxy = {}
+    x = PassiveDNS("meizu.com",proxy)
     print x.run()

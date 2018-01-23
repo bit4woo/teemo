@@ -6,21 +6,21 @@ __github__ = 'https://github.com/bit4woo'
 from config import *
 import subprocess
 import logging
-import requests as __requests__
-
-
-import requests.packages.urllib3
-requests.packages.urllib3.disable_warnings()
+import requests
+try:
+    import requests.packages.urllib3
+    requests.packages.urllib3.disable_warnings()
+except:
+    pass
 
 if allow_http_session:
     requests = requests.Session()
 
-def http_request_get(url, body_content_workflow=False, allow_redirects=allow_redirects, custom_cookie="",custom_referer="", proxies = None):
+def http_request_get(url, body_content_workflow=False, allow_redirects=allow_redirects, custom_cookie="", proxies = None):
     try:
         if custom_cookie:
-            headers['Cookie']= custom_cookie
-        if custom_referer:
-            headers['Referer'] = custom_referer
+            headers['Cookie']=custom_cookie
+
         result = requests.get(url,
             stream=body_content_workflow,
             headers=headers,
@@ -31,15 +31,13 @@ def http_request_get(url, body_content_workflow=False, allow_redirects=allow_red
         return result
     except Exception, e:
         # return empty requests object
-        return __requests__.models.Response()
+        return requests.models.Response()
 
-def http_request_post(url, payload, body_content_workflow=False, allow_redirects=allow_redirects, custom_cookie="", custom_referer="",proxies = None):
+def http_request_post(url, payload, body_content_workflow=False, allow_redirects=allow_redirects, custom_cookie="", proxies = None):
     """ payload = {'key1': 'value1', 'key2': 'value2'} """
     try:
         if custom_cookie:
-            headers['Cookie']= custom_cookie
-        if custom_referer:
-            headers['Referer'] = custom_referer
+            headers['Cookie']=custom_cookie
         result = requests.post(url,
             data=payload,
             headers=headers,
@@ -51,7 +49,11 @@ def http_request_post(url, payload, body_content_workflow=False, allow_redirects
         return result
     except Exception, e:
         # return empty requests object
-        return __requests__.models.Response()
+        return requests.models.Response()
+
+
+
+
 
 def curl_get_content(url):
     try:

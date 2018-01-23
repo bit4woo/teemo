@@ -11,7 +11,7 @@ import random
 
 class search_google():
 
-    def __init__(self, word, limit, useragent, proxy):
+    def __init__(self, word, limit, useragent, proxy=None):
         self.engine_name = "Google"
         self.word = word
         self.results = ""
@@ -48,16 +48,12 @@ class search_google():
     def do_search_profiles(self):
         try:
             urly="http://" + self.server + "/search?num=" + self.quantity + "&start=" + str(self.counter) + "&hl=en&meta=&q=site:www.google.com%20intitle:\"Google%20Profile\"%20\"Companies%20I%27ve%20worked%20for\"%20\"at%20" + self.word + "\""
+            r = requests.get(urly, proxies=self.proxies)
+            self.results = r.content
+            self.totalresults += self.results
         except Exception, e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-        try:
-            r=requests.get(urly, proxies=self.proxies)
-        except Exception,e:
-            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-        self.results = r.content
 
-        #'&hl=en&meta=&q=site:www.google.com%20intitle:"Google%20Profile"%20"Companies%20I%27ve%20worked%20for"%20"at%20' + self.word + '"')
-        self.totalresults += self.results
 
     def get_emails(self):
         rawres = myparser.parser(self.totalresults, self.word)
@@ -82,7 +78,6 @@ class search_google():
                 self.counter += 100
             else:
                 break
-
 
     def process_profiles(self):
         while self.counter < self.limit:

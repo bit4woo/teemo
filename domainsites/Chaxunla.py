@@ -2,22 +2,20 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-#wydomain
 
 import time
 import json
-
 from lib.captcha import Captcha
 from lib.common import is_domain
 from lib.log import logger
-
 import requests
 req = requests.Session()
+
+
 
 class Chaxunla(object):
     """docstring for Chaxunla"""
     def __init__(self, domain, proxy=None):
-        super(Chaxunla, self).__init__()
         self.domain = domain
         self.url = 'http://api.chaxun.la/toolsAPI/getDomain/'
         self.domain_name = []
@@ -25,6 +23,7 @@ class Chaxunla(object):
         self.email = []
         self.verify = ""
         self.engine_name= "Chaxunla"
+        self.proxy = proxy
         self.print_banner()
         return
 
@@ -37,7 +36,8 @@ class Chaxunla(object):
             timestemp = time.time()
             url = "{0}?0.{1}&callback=&k={2}&page=1&order=default&sort=desc&action=moreson&_={3}&verify={4}".format(
                 self.url, timestemp, self.domain, timestemp, self.verify)
-            result = json.loads(req.get(url).content)
+            response = req.get(url,proxies=self.proxy).content
+            result = json.loads(response)
             if result.get('status') == '1':
                 for item in result.get('data'):
                     if is_domain(item.get('domain')):
@@ -50,7 +50,7 @@ class Chaxunla(object):
                 # self.run()
             self.domain_name = list(set(self.domain_name))
         except Exception as e:
-            logger.info(str(e))
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
         finally:
             logger.info("{0} found {1} domains".format(self.engine_name, len(self.domain_name)))
             return self.domain_name,self.smiliar_domain_name,self.email
@@ -58,11 +58,12 @@ class Chaxunla(object):
 
     def download(self, url):
         try:
-            r = req.get(url)
+            r = req.get(url,proxies = self.proxy)
             with open("captcha.gif", "wb") as image:
                 image.write(r.content)
             return True
         except Exception, e:
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
             return False
 
     def verify_code(self):
@@ -75,5 +76,12 @@ class Chaxunla(object):
 
 
 if __name__ == "__main__":
-        x = Chaxunla("meizu.com",proxy="http://127.0.0.1:9999")
+        #proxy = {"http":"http://127.0.0.1:9988"}
+        proxy = {}
+        x = Chaxunla("meizu.com",proxy=proxy)
         print  x.run()
+
+
+'''
+no proxy needed for this class
+'''
