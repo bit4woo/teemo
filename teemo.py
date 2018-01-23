@@ -23,6 +23,7 @@ from domainsites.Pgpsearch import Pgpsearch
 from domainsites.Sitedossier import Sitedossier
 from domainsites.ThreatCrowd import ThreatCrowd
 from domainsites.Threatminer import Threatminer
+from domainsites.Virustotal import Virustotal
 from lib.common import *
 from lib.domain2ip import domains2ips,iprange
 from lib.colorlog import *
@@ -138,7 +139,7 @@ def main():
         useragent = random_useragent(allow_random_useragent)
 
 
-        for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer]:
+        for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer,Virustotal]:
             #print callsites_thread(engine,domain,proxy)
             t = threading.Thread(target=callsites_thread, args=(engine, args.domain, q_domains, q_emails, args.proxy))
             Threadlist.append(t)

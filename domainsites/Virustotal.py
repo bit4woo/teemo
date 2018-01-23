@@ -46,7 +46,7 @@ class Virustotal():
         try:
             resp = self.session.get(url, headers=headers, timeout=self.timeout)
         except Exception as e:
-            print e
+            logger.info(str(e))
             resp = None
 
         return self.get_response(resp)
@@ -78,9 +78,9 @@ class Virustotal():
                         #print "%s%s: %s%s"%(R, self.engine_name, W, subdomain)
                     self.subdomains.append(subdomain.strip())
         except Exception as e:
-            pass
+            logger.info(str(e))
 
 
 if __name__ == "__main__":
-    x = Virustotal("meizu.com","https://127.0.0.1:9999")
+    x = Virustotal("meizu.com","https://127.0.0.1:9988")
     print x.run()
