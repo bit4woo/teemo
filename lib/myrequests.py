@@ -24,13 +24,8 @@ except:
 if config.allow_http_session:
     requests = requests.Session()
 
-def get(url,
-        stream=False,
-        allow_redirects=config.allow_redirects,
-        headers=config.headers,
-        cookies = None,
-        timeout=config.timeout,
-        proxies = None,verify= config.allow_ssl_verify):
+def get(url,stream=False,allow_redirects=config.allow_redirects,headers=config.headers,
+        cookies = None,timeout=config.timeout,proxies = None,verify= config.allow_ssl_verify):
 
     try:
         result = requests.get(url,
@@ -49,7 +44,8 @@ def get(url,
         # return empty requests object
         #return __requests__.models.Response()
 
-def post(url, data, stream=False, allow_redirects=config.allow_redirects, headers=config.headers,cookies = None,timeout=config.timeout, proxies = None, verify =config.allow_ssl_verify):
+def post(url, data, stream=False, allow_redirects=config.allow_redirects, headers=config.headers,cookies = None,
+         timeout=config.timeout, proxies = None, verify =config.allow_ssl_verify):
     """ data = {'key1': 'value1', 'key2': 'value2'} """
     try:
         result = requests.post(url,
