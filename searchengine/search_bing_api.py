@@ -2,12 +2,13 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-import requests
+
 from lib.log import logger
 from lib import myparser
 import time
 import config
-
+from lib import myrequests
+req = myrequests
 
 #https://azure.microsoft.com/zh-cn/try/cognitive-services/my-apis/
 #https://api.cognitive.microsoft.com/bing/v5.0/search
@@ -20,13 +21,13 @@ import config
 
 class search_bing_api:
 
-    def __init__(self, word, limit, useragent, proxy=None):
+    def __init__(self, word, limit, proxy=None):
         self.engine_name = "BingAPI"
         self.word = word.replace(' ', '%20')
         self.results = ""
         self.totalresults = ""
         self.server = "api.cognitive.microsoft.com"
-        self.headers = {'User-Agent': useragent,"Ocp-Apim-Subscription-Key":config.Bing_API_Key,}
+        self.headers = {"Ocp-Apim-Subscription-Key":config.Bing_API_Key,}
         self.limit = int(limit)
         try:
             self.bingApikey = config.Bing_API_Key
@@ -45,7 +46,7 @@ class search_bing_api:
     def do_search(self):
         try:
             url = "http://api.cognitive.microsoft.com/bing/v7.0/search?q={0}&mkt=en-us".format(self.word,self.counter)# 这里的pn参数是条目数
-            r = requests.get(url, headers = self.headers, proxies = self.proxies)
+            r = req.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.totalresults += self.results
             return True
@@ -80,12 +81,6 @@ class search_bing_api:
         self.e = self.get_emails()
         logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name, len(self.d), len(self.e)))
         return self.d, self.e
-
-def bing_API(keyword, limit, useragent, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function
-    search = search_bing_api(keyword, limit, useragent, proxy)
-    search.process()
-    print search.get_emails()
-    return search.get_emails(), search.get_hostnames()
 
 if __name__ == "__main__":
         print "[-] Searching in Bing API:"

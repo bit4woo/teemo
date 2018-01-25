@@ -3,26 +3,27 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
-import requests
 from lib import myparser
 from lib.log import logger
-from lib.myrequests import http_request_get
 import re
 import time
 import random
-
+from lib import myrequests
+req = myrequests
 
 class search_exalead:
 
-    def __init__(self, word, limit,useragent,proxy=None):
+    def __init__(self, word, limit,proxy=None):
         self.engine_name = "Exalead"
         self.word = word
         self.files = "pdf"
         self.results = ""
         self.totalresults = ""
         self.server = "www.exalead.com"
-        self.userAgent = useragent
         self.referer = "http://{0}/search/web/results/?q={1}".format(self.server,self.word)
+        self.headers = {
+            'Referer': self.referer,
+        }
         self.limit = int(limit)
         self.counter = 0
         self.proxies = proxy
@@ -36,7 +37,7 @@ class search_exalead:
     def do_search(self):
         try:
             url = "http://{0}/search/web/results/?q={1}&elements_per_page=50&start_index={2}".format(self.server,self.word,self.counter)# 这里的pn参数是条目数
-            r = http_request_get(url, custom_referer=self.referer, proxies = self.proxies)
+            r = req.get(url, headers=self.headers, proxies = self.proxies)
             if "We are sorry, but your request has been blocked" in r.content:
                 logger.warning("Exalead blocked our request")
                 return False
@@ -51,13 +52,10 @@ class search_exalead:
     def do_search_files(self):
         try:
             url = "http://{0}/search/web/results/?q={1}filetype:{2}&elements_per_page=50&start_index={3}".format(self.server,self.word,self.files,self.counter)# 这里的pn参数是条目数
-        except Exception, e:
-            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
-        try:
-            r = requests.get(url, headers = self.headers, proxies = self.proxies)
+            r = req.get(url, headers = self.headers, proxies = self.proxies)
             self.results = r.content
             self.totalresults += self.results
-        except Exception,e:
+        except Exception, e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
 
     def check_next(self): #for search file

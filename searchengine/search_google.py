@@ -6,19 +6,19 @@ __github__ = 'https://github.com/bit4woo'
 from lib import myparser
 from lib.log import logger
 import time
-import requests
 import random
+from lib import myrequests
+req = myrequests
 
 class search_google():
 
-    def __init__(self, word, limit, useragent, proxy=None):
+    def __init__(self, word, limit, proxy=None):
         self.engine_name = "Google"
         self.word = word
         self.results = ""
         self.totalresults = ""
         self.files = "pdf"
         self.server = "www.google.com"
-        self.headers = {'User-agent':useragent}
         self.quantity = "100"
         self.limit = int(limit)
         self.counter = 0
@@ -32,8 +32,8 @@ class search_google():
 
     def do_search(self):
         try:
-            url = "http://{0}/search?num={1}&start={2}&hl=en&meta=&q={3}".format(self.server,self.quantity,self.counter,self.word)
-            r = requests.get(url, headers=self.headers, proxies=self.proxies)
+            url = "https://{0}/search?num={1}&start={2}&hl=en&meta=&q={3}".format(self.server,self.quantity,self.counter,self.word)
+            r = req.get(url, proxies=self.proxies)
             if "and not a robot" in r.content:
                 logger.warning("Google has blocked your visit")
                 return False
@@ -47,8 +47,8 @@ class search_google():
 
     def do_search_profiles(self):
         try:
-            urly="http://" + self.server + "/search?num=" + self.quantity + "&start=" + str(self.counter) + "&hl=en&meta=&q=site:www.google.com%20intitle:\"Google%20Profile\"%20\"Companies%20I%27ve%20worked%20for\"%20\"at%20" + self.word + "\""
-            r = requests.get(urly, proxies=self.proxies)
+            urly="https://" + self.server + "/search?num=" + self.quantity + "&start=" + str(self.counter) + "&hl=en&meta=&q=site:www.google.com%20intitle:\"Google%20Profile\"%20\"Companies%20I%27ve%20worked%20for\"%20\"at%20" + self.word + "\""
+            r = req.get(urly, proxies=self.proxies)
             self.results = r.content
             self.totalresults += self.results
         except Exception, e:
@@ -94,11 +94,7 @@ class search_google():
 
 if __name__ == "__main__":
         print "[-] Searching in Google:"
-        proxy = {"http":"http://127.0.0.1:9988"}
+        proxy = {"https":"https://127.0.0.1:9988"}
         useragent = "Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"  # 他会检查useragent，之前多了一个( 导致504
-        search = search_google("meizu.com", 100, useragent, proxy)
-        search.process()
-        all_emails = search.get_emails()
-        all_hosts = search.get_hostnames()
-        print all_emails
-        print all_hosts
+        search = search_google("meizu.com", 100, proxy)
+        print search.run()

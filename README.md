@@ -1,5 +1,7 @@
 ## About teemo 
 
+项目地址：https://github.com/bit4woo/teemo
+
 域名收集及枚举工具
 
 提莫(teemo)是个侦察兵，域名的收集如同渗透和漏洞挖掘的侦察，故命名为提莫（Teemo）！
@@ -120,6 +122,7 @@ Thanks for their sharing.
 
 - 优化DNS查询部分，抽象成一个函数
 - 模糊匹配，例如包含"qq"的所有域名，比如qqimg.com
+- 文件搜索
 
 
 ## 相关思维导图

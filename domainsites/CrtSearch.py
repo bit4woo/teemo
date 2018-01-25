@@ -5,8 +5,8 @@ __github__ = 'https://github.com/bit4woo'
 
 from lib.log import logger
 from lib.myparser import parser
-import requests
-req = requests.Session()
+from lib import myrequests
+req = myrequests
 
 class CrtSearch():
     def __init__(self, domain, proxy=None):
@@ -16,7 +16,6 @@ class CrtSearch():
         self.resp = ""
         self.domain = domain
         self.subdomains = []
-        self.session = requests.Session()
         self.engine_name = "crt.sh"
         self.domain_name = []
         self.smiliar_domain_name = []

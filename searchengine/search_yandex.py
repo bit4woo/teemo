@@ -2,25 +2,23 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-import httplib
+
 from lib import myparser
 from lib.log import logger
 import re
 import time
-import requests
 import random
+from lib import myrequests
+req = myrequests
 
 class search_yandex:
 
-    def __init__(self, word, limit, useragent, proxy=None):
+    def __init__(self, word, limit, proxy=None):
         self.engine_name = "Yandex"
         self.word = word
         self.results = ""
         self.totalresults = ""
         self.server = "yandex.com"
-        self.hostname = "yandex.com"
-        self.headers = {
-            'User-Agent': useragent}
         self.limit = int(limit)
         self.counter = 0
         self.proxies = proxy
@@ -34,7 +32,7 @@ class search_yandex:
     def do_search(self):
         try:
             url = "http://{0}/search?text={1}&numdoc=50&lr=10590&pn={2}".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
-            r = requests.get(url, headers=self.headers, proxies=self.proxies)
+            r = req.get(url, proxies=self.proxies)
             if "automated requests" in r.content:
                 logger.warning("Yandex blocked our request")
                 return False
@@ -47,15 +45,8 @@ class search_yandex:
             return False
 
     def do_search_files(self, files):  # TODO
-        h = httplib.HTTP(self.server)
-        h.putrequest('GET', "/search?text=%40" + self.word +
-                     "&numdoc=50&lr=" + str(self.counter))
-        h.putheader('Host', self.hostname)
-        h.putheader('User-agent', self.userAgent)
-        h.endheaders()
-        returncode, returnmsg, headers = h.getreply()
-        self.results = h.getfile().read()
-        self.totalresults += self.results
+        url = "http://{0}/search?text=%40{1}&numdoc=50&lr={2}".format(self.server,self.word,self.counter)
+        req.get(url)
 
     def check_next(self):
         renext = re.compile('topNextUrl')
@@ -105,7 +96,7 @@ if __name__ == "__main__":
         print "[-] Searching in Bing:"
         useragent = "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52"
         proxy = {"http": "http://127.0.0.1:9988"}
-        search = search_yandex("meizu.com", 500, useragent, proxy)
+        search = search_yandex("meizu.com", 500, proxy)
         search.process()
         all_emails = search.get_emails()
         all_hosts = search.get_hostnames()

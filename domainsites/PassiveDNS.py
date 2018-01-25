@@ -6,8 +6,8 @@ __github__ = 'https://github.com/bit4woo'
 #this can search email address ,but not returned
 from lib import myparser
 from lib.log import logger
-import requests
-req = requests.Session()
+from lib import myrequests
+req = myrequests
 
 class PassiveDNS():
     def __init__(self, domain, proxy=None):
@@ -15,7 +15,6 @@ class PassiveDNS():
         self.base_url = 'http://ptrarchive.com/tools/search.htm?label={domain}'
         self.domain = domain
         self.subdomains = []
-        self.session = requests.Session()
         self.engine_name = "PassiveDNS"
         self.domain_name = []
         self.smiliar_domain_name = []

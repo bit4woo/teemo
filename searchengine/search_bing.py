@@ -10,7 +10,7 @@ import requests
 
 class search_bing:
 
-    def __init__(self, word, limit, useragent, proxy=None):
+    def __init__(self, word, limit, proxy=None):
         self.engine_name = "Bing"
         self.word = word.replace(' ', '%20')
         self.results = ""
@@ -18,7 +18,7 @@ class search_bing:
         self.server = "cn.bing.com"
         self.limit = int(limit)
         self.counter = 0
-        self.headers = {"Cookie":"SRCHHPGUSR=ADLT=DEMOTE&NRSLT=50","Accept-Language":"'en-us,en","User-Agent":useragent}
+        self.headers = {"Cookie":"SRCHHPGUSR=ADLT=DEMOTE&NRSLT=50","Accept-Language":"'en-us,en"}
         self.proxies = proxy
         self.print_banner()
         return
@@ -80,12 +80,6 @@ class search_bing:
         self.e = self.get_emails()
         logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e)))
         return self.d, self.e
-
-def bing(keyword, limit, useragent, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function
-    search = search_bing(keyword, limit, useragent)
-    search.process()
-    print search.get_emails()
-    return search.get_emails(), search.get_hostnames()
 
 if __name__ == "__main__":
         print "[-] Searching in Bing:"

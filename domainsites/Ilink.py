@@ -5,8 +5,8 @@ __github__ = 'https://github.com/bit4woo'
 
 from lib.common import *
 from lib.log import logger
-import requests
-req = requests.Session()
+from lib import myrequests
+req = myrequests
 
 '''
 website offline
@@ -39,7 +39,7 @@ class Ilink():
                 'b4': 1,
                 'domain': self.domain
             }
-            r = req.get(self.url,data=payload,proxies=self.proxy).content
+            r = req.post(self.url,data=payload,proxies=self.proxy).content
             subs = re.compile(r'(?<=value\=\"http://).*?(?=\"><input)')
             for item in subs.findall(r):
                 if is_domain(item):

@@ -2,20 +2,17 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-import requests
+
 from lib import myparser
 from lib.log import logger
 import time
 import random
-try:
-    import requests.packages.urllib3
-    requests.packages.urllib3.disable_warnings()
-except:
-    pass
+from lib import myrequests
+req = myrequests
 
 class search_duckduckgo:
 
-    def __init__(self, word, limit, useragent, proxy=None):
+    def __init__(self, word, limit, proxy=None):
         self.engine_name = "DuckDuckGo"
         self.word = word
         self.total_results = ""
@@ -23,8 +20,6 @@ class search_duckduckgo:
         self.server = "duckduckgo.com" #must use https
         self.limit = int(limit)
         self.counter = 0
-        self.headers = {
-            'User-Agent': useragent}
         self.proxies = proxy
         self.print_banner()
         return
@@ -36,7 +31,7 @@ class search_duckduckgo:
     def do_search(self):
         try:
             url = "https://{0}/?q={1}".format(self.server,self.word)
-            r = requests.get(url, headers = self.headers, proxies = self.proxies,verify=False)
+            r = req.get(url, proxies = self.proxies,verify=False)
             self.results = r.content
             self.total_results += self.results
             return True

@@ -3,10 +3,10 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
-import requests
 from lib.log import logger
 import json
-req = requests.Session()
+from lib import myrequests
+req = myrequests
 
 class ThreatCrowd():
     def __init__(self, domain, proxy=None):
@@ -15,7 +15,6 @@ class ThreatCrowd():
         self.domain = domain
         self.proxy = proxy
         self.subdomains = []
-        self.session = requests.Session()
         self.engine_name = "ThreatCrowd"
         self.domain_name = []
         self.smiliar_domain_name = []

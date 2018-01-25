@@ -6,8 +6,8 @@ __github__ = 'https://github.com/bit4woo'
 from lib.captcha import *
 from lib.log import logger
 import re
-import requests
-req = requests.Session()
+from lib import myrequests
+req = myrequests
 
 class Sitedossier():
     def __init__(self, domain, proxy=None):
@@ -16,7 +16,6 @@ class Sitedossier():
         self.domain = domain
         self.url = 'http://www.sitedossier.com/parentdomain/{0}'.format(self.domain)
         self.subdomains = []
-        self.session = requests.Session()
         self.engine_name = "Sitedossier"
         self.domain_name = []
         self.smiliar_domain_name = []

@@ -12,9 +12,6 @@ import colorama
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
-if allow_http_session:
-    requests = requests.Session()
-
 def is_domain(domain):
     domain_regex = re.compile(
         r'(?:[A-Z0-9_](?:[A-Z0-9-_]{0,247}[A-Z0-9])?\.)+(?:[A-Z]{2,6}|[A-Z0-9-]{2,}(?<!-))\Z', 
@@ -63,7 +60,7 @@ def banner():
     B = colorama.Fore.BLUE  # blue
     R = colorama.Fore.RED  # red
     W = colorama.Fore.WHITE  # white
-    version = 'V 0.5'
+    version = 'V 0.6'
     waring = "[!] legal disclaimer: Usage of Teemo for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program\n"
 
     print """%s

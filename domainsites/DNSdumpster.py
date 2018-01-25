@@ -4,9 +4,9 @@ __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
 import re
-import requests
 from lib.log import logger
-req = requests.Session()
+from lib import myrequests
+req = myrequests
 
 
 class DNSdumpster():

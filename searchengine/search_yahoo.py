@@ -2,20 +2,21 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-import requests
+
 from lib import myparser
 from lib.log import logger
 import time
+from lib import myrequests
+req = myrequests
 
 class search_yahoo:
 
-    def __init__(self, word, limit, useragent, proxy=None):
+    def __init__(self, word, limit, proxy=None):
         self.engine_name = "Yahoo"
         self.word = word
         self.total_results = ""
         self.server = "search.yahoo.com"
         self.hostname = "search.yahoo.com"
-        self.headers = {'User-agent':useragent}
         self.limit = int(limit)
         self.proxies = proxy
         self.counter = 1
@@ -29,7 +30,7 @@ class search_yahoo:
     def do_search(self):
         try:
             url = "http://{0}/search?q={1}&b={2}&pz=10".format(self.server,self.word,self.counter) #  %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
-            r = requests.get(url, headers = self.headers, proxies = self.proxies)
+            r = req.get(url, proxies = self.proxies)
             self.results = r.content
             self.total_results += self.results
             return True
@@ -62,9 +63,5 @@ class search_yahoo:
 
 if __name__ == "__main__":
         useragent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
-        search = search_yahoo("meizu.com", '100', useragent)
-        search.process()
-        all_emails = search.get_emails()
-        all_hosts = search.get_hostnames()
-        print all_emails
-        print all_hosts  # test passed
+        search = search_yahoo("meizu.com", '100')
+        print search.run()

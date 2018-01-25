@@ -2,14 +2,16 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-import requests
+
 from lib import myparser
 from lib.log import logger
 import time
+from lib import myrequests
+req = myrequests
 
 class search_baidu:
 
-    def __init__(self, word, limit, useragent, proxy=None):
+    def __init__(self, word, limit, proxy=None):
         self.engine_name ="Baidu"
         self.word = word
         self.limit = int(limit)
@@ -17,7 +19,6 @@ class search_baidu:
         self.totalresults = ""
         self.proxies = proxy
         self.server = "www.baidu.com"
-        self.headers = {'User-Agent': useragent}
         self.counter = 0 #
         self.print_banner()
         return
@@ -29,7 +30,7 @@ class search_baidu:
     def do_search(self):
         try:
             url = "http://{0}/s?wd={1}&pn={2}".format(self.server,self.word,self.counter)# 这里的pn参数是条目数
-            r = requests.get(url, headers = self.headers, proxies = self.proxies)
+            r = req.get(url, proxies = self.proxies)
             self.results = r.content
             self.totalresults += self.results
             return True
@@ -63,15 +64,11 @@ class search_baidu:
         logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e)))
         return self.d, self.e
 
-def baidu(keyword, limit, useragent, proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function
-    search = search_baidu(keyword, limit, useragent)
-    search.process()
-    print search.get_emails()
-    return search.get_emails(), search.get_hostnames()
 
 if __name__ == "__main__":
         useragent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
-        search = search_baidu("meizu.com", '100', useragent)
+        proxy = {"http":"http://127.0.0.1:8080"}
+        search = search_baidu("meizu.com", '100',proxy)
         search.process()
         all_emails = search.get_emails()
         all_hosts = search.get_hostnames()

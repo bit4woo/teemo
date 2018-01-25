@@ -2,14 +2,16 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-import requests
+
 import base64
 import config
 from lib import myparser
 from lib.log import logger
+from lib import myrequests
+req = myrequests
 
 class search_fofa:
-    def __init__(self, word, limit,useragent,proxy=None):
+    def __init__(self, word, limit,proxy=None):
         self.engine_name = "Fofa"
         try:
             self.email = config.FOFA_USER_EMAIL
@@ -21,7 +23,6 @@ class search_fofa:
         self.results = ""
         self.totalresults = ""
         self.server = "fofa.so"
-        self.headers = {'User-agent':useragent}
         self.limit = int(limit)
         self.counter = 0 #useless
         self.proxies = proxy
@@ -34,11 +35,11 @@ class search_fofa:
     def do_search(self):
         try:
             auth_url = "https://fofa.so/api/v1/info/my?email={0}&key={1}".format(self.email, self.key)
-            auth = requests.get(auth_url)
+            auth = req.get(auth_url)
             query = base64.b64encode("domain="+self.word)
             url = "https://fofa.so/api/v1/search/all?email={0}&key={1}&qbase64={2}".format(self.email, self.key,
                                                                                            query)
-            r = requests.get(url, headers=self.headers, proxies=self.proxies)
+            r = req.get(url, proxies=self.proxies)
             self.results = r.content
             self.totalresults += self.results
             return True

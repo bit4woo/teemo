@@ -99,8 +99,8 @@ def adjust_args():
         logger.info("Caution! No valid proxy detected. No proxy will be used in this run.")
     return args
 
-def callengines_thread(engine, key_word, q_domains, q_emails, useragent, proxy=None,limit=1000):
-    x = engine(key_word, limit, useragent, proxy)
+def callengines_thread(engine, key_word, q_domains, q_emails, proxy=None,limit=1000):
+    x = engine(key_word, limit, proxy)
     domains,emails = x.run()
     if domains: # domains maybe None
         for domain in domains:
@@ -136,7 +136,6 @@ def main():
         Threadlist = []
         q_domains = Queue.Queue() #to recevie return values,use it to ensure thread safe.
         q_emails = Queue.Queue()
-        useragent = random_useragent(allow_random_useragent)
 
 
         for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer,Virustotal]:
@@ -154,7 +153,7 @@ def main():
                 pass
             else:
                 proxy ={}
-            t = threading.Thread(target=callengines_thread, args=(engine, args.domain, q_domains, q_emails, useragent, proxy, 500))
+            t = threading.Thread(target=callengines_thread, args=(engine, args.domain, q_domains, q_emails, proxy, 500))
             t.setDaemon(True) #变成守护进程，独立于主进程。这里好像不需要
             Threadlist.append(t)
 

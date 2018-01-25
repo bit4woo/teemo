@@ -5,8 +5,8 @@ __github__ = 'https://github.com/bit4woo'
 
 from lib.myparser import parser
 from lib.log import logger
-import requests
-req = requests.Session()
+from lib import myrequests
+req = myrequests
 
 class Alexa(object):
     """docstring for Alexa"""

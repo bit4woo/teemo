@@ -8,8 +8,8 @@ import json
 from lib.captcha import Captcha
 from lib.common import is_domain
 from lib.log import logger
-import requests
-req = requests.Session()
+from lib import myrequests
+req = myrequests
 
 
 
@@ -36,7 +36,9 @@ class Chaxunla(object):
             timestemp = time.time()
             url = "{0}?0.{1}&callback=&k={2}&page=1&order=default&sort=desc&action=moreson&_={3}&verify={4}".format(
                 self.url, timestemp, self.domain, timestemp, self.verify)
-            response = req.get(url,proxies=self.proxy).content
+            #response = req.get(url,proxies=self.proxy).content
+            # no proxy needed for this class
+            response = req.get(url).content
             result = json.loads(response)
             if result.get('status') == '1':
                 for item in result.get('data'):
@@ -76,8 +78,8 @@ class Chaxunla(object):
 
 
 if __name__ == "__main__":
-        #proxy = {"http":"http://127.0.0.1:9988"}
-        proxy = {}
+        proxy = {"http":"http://127.0.0.1:9988"}
+        #proxy = {}
         x = Chaxunla("meizu.com",proxy=proxy)
         print  x.run()
 

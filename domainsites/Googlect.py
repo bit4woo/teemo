@@ -9,8 +9,8 @@ import time
 from lib.myparser import parser
 from random import Random,uniform #googlect
 import ast
-import requests
-req = requests.Session()
+from lib import myrequests
+req = myrequests
 try:
     import requests.packages.urllib3
     requests.packages.urllib3.disable_warnings()

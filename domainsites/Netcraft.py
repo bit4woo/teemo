@@ -5,11 +5,11 @@ __github__ = 'https://github.com/bit4woo'
 
 import urlparse
 import urllib
-import requests
 import re
 import hashlib
 from lib.log import logger
-req = requests.Session()
+from lib import myrequests
+req = myrequests
 
 class Netcraft():
     def __init__(self, domain, proxy=None):
@@ -45,7 +45,7 @@ class Netcraft():
         'Accept-Encoding': 'gzip, deflate',
         }
         try:
-            resp = req.get(url, headers=headers, timeout=self.timeout,cookies=cookies,proxies = self.proxy)
+            resp = req.get(url, headers=headers, cookies = cookies,timeout=self.timeout,proxies = self.proxy)
         except Exception as e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
             resp = None

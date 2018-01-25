@@ -3,10 +3,10 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
-import requests
 import re
 from lib.log import logger
-req = requests.Session()
+from lib import myrequests
+req = myrequests
 
 class Virustotal():
     def __init__(self, domain, proxy=None):

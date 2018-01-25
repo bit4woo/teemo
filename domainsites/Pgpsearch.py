@@ -6,8 +6,8 @@ __github__ = 'https://github.com/bit4woo'
 import httplib
 from lib import myparser
 from lib.log import logger
-import requests
-req = requests.Session()
+from lib import myrequests
+req = myrequests
 # to do :return emails
 
 class Pgpsearch:

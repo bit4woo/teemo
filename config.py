@@ -46,11 +46,13 @@ allow_ssl_verify =False
 # 是否允许继承http Request类的Session支持，在发出的所有请求之间保持cookies。
 allow_http_session = True
 
+
+###########################http header的配置########################
 # 是否允许随机User-Agent
 allow_random_useragent = True
 
 # 是否允许随机X-Forwarded-For
-allow_random_x_forward = True
+allow_random_x_forward = False
 
 # 随机HTTP头
 USER_AGENTS = [
