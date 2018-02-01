@@ -192,6 +192,7 @@ def main():
 
             subdomains.extend(brute_domains)
             subdomains = sorted(list(set(subdomains)))
+            subdomain_number = len(subdomains)
 
             lines.extend(brute_lines)
             lines = list(set(lines))
@@ -210,11 +211,11 @@ def main():
             fp.writelines("\n".join(subdomains).encode("utf-8"))
 
 
-        print "[+] {0} domains found in total".format(len(subdomains))
+        print "[+] {0} domains found in total".format(subdomain_number)
         print "[+] {0} emails found in total".format(len(emails))
         print "[+] Results saved to {0}".format(args.output)
     except KeyboardInterrupt as e:
-        logger.info("exit. due to KeyboardInterrupt")
+        logger.info("Exit. Due To KeyboardInterrupt")
 
 
 if __name__=="__main__":
