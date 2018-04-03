@@ -16,6 +16,7 @@ from domainsites.Chaxunla import Chaxunla
 from domainsites.CrtSearch import CrtSearch
 from domainsites.DNSdumpster import DNSdumpster
 from domainsites.Googlect import Googlect
+from domainsites.Hackertarget import Hackertarget
 from domainsites.Ilink import Ilink
 from domainsites.Netcraft import Netcraft
 from domainsites.PassiveDNS import PassiveDNS
@@ -138,7 +139,7 @@ def main():
         q_emails = Queue.Queue()
 
 
-        for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer,Virustotal]:
+        for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Hackertarget, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer,Virustotal]:
             #print callsites_thread(engine,domain,proxy)
             if proxy_switch == 1 and engine in proxy_default_enabled:
                 pass
@@ -191,6 +192,7 @@ def main():
             IPrange_list = iprange(IP_list)
 
             subdomains.extend(brute_domains)
+            subdomains = tolower_list(subdomains)
             subdomains = sorted(list(set(subdomains)))
             subdomain_number = len(subdomains)
 

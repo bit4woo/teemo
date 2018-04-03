@@ -89,3 +89,13 @@ def strip_list(inputlist):
         return resultlist
     else:
         print "The input should be a list"
+
+def tolower_list(inputlist):
+    if isinstance(inputlist,list):
+        resultlist=[]
+        for x in inputlist:
+            x= x.lower()
+            resultlist.append(x)
+        return resultlist
+    else:
+        print "The input should be a list"
