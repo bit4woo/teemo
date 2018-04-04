@@ -20,6 +20,7 @@ class Chaxunla(object):
         self.url = 'http://api.chaxun.la/toolsAPI/getDomain/'
         self.domain_name = []
         self.smiliar_domain_name = []
+        self.related_domain_name = []
         self.email = []
         self.verify = ""
         self.engine_name= "Chaxunla"
@@ -55,7 +56,7 @@ class Chaxunla(object):
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
         finally:
             logger.info("{0} found {1} domains".format(self.engine_name, len(self.domain_name)))
-            return self.domain_name,self.smiliar_domain_name,self.email
+            return self.domain_name,self.smiliar_domain_name,self.related_domain_name,self.email
 
 
     def download(self, url):

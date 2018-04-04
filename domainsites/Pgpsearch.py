@@ -22,6 +22,7 @@ class Pgpsearch:
         self.engine_name = "PGP"
         self.domain_name = []
         self.smiliar_domain_name = []
+        self.related_domain_name = []
         self.email = []
         self.timeout = 25
         self.print_banner()
@@ -49,7 +50,7 @@ class Pgpsearch:
         self.domain_name = self.get_hostnames() # how to receive emails.
         self.email = self.get_emails()
         logger.info("{0} found {1} domains and {2} emails".format(self.engine_name, len(self.domain_name), len(self.email)))
-        return self.domain_name,self.smiliar_domain_name,self.email
+        return self.domain_name,self.smiliar_domain_name,self.related_domain_name,self.email
 
 if __name__ == "__main__":
     proxy = {"https":"https://127.0.0.1:9988","http":"http://127.0.0.1:9988"}

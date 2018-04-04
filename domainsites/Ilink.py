@@ -22,6 +22,7 @@ class Ilink():
         self.engine_name = "Ilinks"
         self.domain_name = []
         self.smiliar_domain_name = []
+        self.related_domain_name = []
         self.email = []
         self.timeout = 25
         self.print_banner()
@@ -50,7 +51,7 @@ class Ilink():
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
         finally:
             logger.info("{0} found {1} domains".format(self.engine_name, len(self.domain_name)))
-            return self.domain_name,self.smiliar_domain_name,self.email
+            return self.domain_name,self.smiliar_domain_name,self.related_domain_name,self.email
 
 if __name__ == "__main__":
     proxy = {"https":"https://127.0.0.1:9988","http":"http://127.0.0.1:9988"}

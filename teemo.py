@@ -110,15 +110,18 @@ def callengines_thread(engine, key_word, q_domains, q_emails, proxy=None,limit=1
         for email in emails:
             q_emails.put(email)
 
-def callsites_thread(engine, key_word, q_domains, q_emails, proxy=None):
+def callsites_thread(engine, key_word, q_domains, q_similiar_domains, q_related_domains, q_emails, proxy=None):
     enum = engine(key_word,proxy)
-    domains,similar_domains,emails = enum.run()
+    domains,similar_domains,related_domains,emails = enum.run()
     if domains:
         for domain in domains:
             q_domains.put(domain)
     if similar_domains:
         for item in  similar_domains:
-            q_domains.put(item) #put both domain and similar in domain set
+            q_similiar_domains.put(item) #put both domain and similar in domain set
+    if related_domains: #domains that found by cert
+        for item in related_domains:
+            q_related_domains.put(item)
     if emails:
         for item in emails:
             q_emails.put(item)
@@ -136,6 +139,8 @@ def main():
 
         Threadlist = []
         q_domains = Queue.Queue() #to recevie return values,use it to ensure thread safe.
+        q_similar_domains = Queue.Queue()
+        q_related_domains = Queue.Queue()
         q_emails = Queue.Queue()
 
 
@@ -145,7 +150,7 @@ def main():
                 pass
             else:
                 proxy ={}
-            t = threading.Thread(target=callsites_thread, args=(engine, args.domain, q_domains, q_emails, args.proxy))
+            t = threading.Thread(target=callsites_thread, args=(engine, args.domain, q_domains, q_similar_domains, q_related_domains, q_emails, args.proxy))
             Threadlist.append(t)
 
         for engine in [search_ask,search_baidu,search_bing,search_bing_api,search_dogpile,search_duckduckgo,search_exalead,search_fofa,search_google,search_google_cse,

@@ -5,6 +5,7 @@ import sys
 sys.dont_write_bytecode = True
 
 ##########各种key #############
+#这里的都是例子，正确的需要自己申请哟~
 Google_CSE_API_Key = "AIzaSyCFyYfbMZwNeObc_wswczgOUbRB0-c2wA0"
 Google_CSE_ID = "teemo-1487466194614"
 
@@ -14,6 +15,9 @@ FOFA_USER_EMAIL = "bit4woo@163.com"
 FOFA_API_KEY = "4c428ccbf09eeb05590ab842f24c45dd"
 
 SHODAN_API_KEY = "mvqpLKKMMlkyYHUnzVviD0M0C158UV5L"
+
+Censys_API_UID = "fae24d14-fe2a-4e7f-79xx-82f123095908" #just a example
+Censys_API_SECRET = "n2MjIKS0RIxdEDQAHRutXz6WDz2yBWBQ"
 
 
 #############proxy##################

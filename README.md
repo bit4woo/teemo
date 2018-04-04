@@ -9,6 +9,12 @@
 ![logo_Teemo](doc/logo_Teemo.jpg)
 
 
+特色：具有相关域名搜集能力，即会收集当前域名所在组织的其他域名。原理是通过证书中"Subject Alternative Name"的内容。
+
+相信这部分功能和 [domain_hunter](https://github.com/bit4woo/domain_hunter) 中类似域名的收集一样有用！
+
+
+
 该工具主要有三大模块：
 
 
@@ -45,6 +51,7 @@
 11. ThreatCrowd
 12. Threatminer
 13. Virustotal
+14. HackerTarget
 
 
 利用枚举
@@ -116,7 +123,8 @@ Thanks for their sharing.
 
 2017-08-17 : Update "domainsite" part, use logging to output; fix some bug.
 2017-09-08 : Remove port scan function,leave it to nmap, add IP and Network analysis.
-
+2018-04-03 : Add HackerTarget API
+2018-04-04 : Add Censys API; Add function that to get "Related Domains" which base on Censys,Crt.sh and GoogleCert.
 
 ## To Do
 

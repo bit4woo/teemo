@@ -18,6 +18,7 @@ class PassiveDNS():
         self.engine_name = "PassiveDNS"
         self.domain_name = []
         self.smiliar_domain_name = []
+        self.related_domain_name = []
         self.email = []
         self.timeout = 25
         self.print_banner()
@@ -32,7 +33,7 @@ class PassiveDNS():
             else:
                 self.domain_name.append(domain)
         logger.info("{0} found {1} domains".format(self.engine_name, len(self.domain_name)))
-        return self.domain_name,self.smiliar_domain_name,self.email
+        return self.domain_name,self.smiliar_domain_name,self.related_domain_name,self.email
 
     def print_banner(self):
         logger.info("Searching now in {0}..".format(self.engine_name))
