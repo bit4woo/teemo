@@ -120,10 +120,14 @@ class Googlect():
         if self.hash_codes > 0:
             for hash in self.hash_codes:
                 url = self.detail_url.format(hash)
-                if req.get(url,timeout=self.timeout, proxies=self.proxy, verify=False):
-                    formated_string = (self.result[6:-1]).replace("\n", "")
-                    tmplist = ast.literal_eval(formated_string) #把list格式的string转换成list
-                    self.related_domain_name.extend(tmplist[0][1][-1])
+                try:
+                    if req.get(url,timeout=self.timeout, proxies=self.proxy, verify=False):
+                        formated_string = (self.result[6:-1]).replace("\n", "")
+                        tmplist = ast.literal_eval(formated_string) #把list格式的string转换成list
+                        self.related_domain_name.extend(tmplist[0][1][-1])
+                except Exception,e:
+                    logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
+                    return
 
         for domain in self.related_domain_name:
             domain = domain.lower()

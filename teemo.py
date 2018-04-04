@@ -131,11 +131,12 @@ def main():
     try:
         banner()
         args = adjust_args()
-        subdomains = []
+
         print "[-] Enumerating subdomains now for %s" % args.domain
 
         #doing zone transfer checking
         zonetransfer(args.domain).check()
+
 
         Threadlist = []
         q_domains = Queue.Queue() #to recevie return values,use it to ensure thread safe.
@@ -170,11 +171,16 @@ def main():
         for t in Threadlist: #为什么需要2次循环，不能在一次循环中完成？
             t.join() #主线程将等待这个线程，直到这个线程运行结束
 
+
+        subdomains = []
         while not q_domains.empty():
             subdomains.append(q_domains.get())
         emails = []
         while not q_emails.empty():
             emails.append(q_emails.get())
+        related_domains =[]
+        while not q_related_domains.empty():
+            related_domains.append(q_related_domains.get())
 
 
         if args.bruteforce:
@@ -190,24 +196,29 @@ def main():
             brute_domains = []
 
 
+
+        ##########print to console and write to file#########################
         if subdomains is not None: #prepaire output
             IP_list, lines = domains2ips(subdomains) #query domains that got from website and search engine
 
             IP_list.extend(brute_ips)
-            IPrange_list = iprange(IP_list)
+            IPrange_list = iprange(IP_list) #1. IP段
 
             subdomains.extend(brute_domains)
             subdomains = tolower_list(subdomains)
-            subdomains = sorted(list(set(subdomains)))
-            subdomain_number = len(subdomains)
+            subdomains = sorted(list(set(subdomains)))#2. 子域名,包括爆破所得
+            subdomain_number = len(subdomains)#子域名数量
 
             lines.extend(brute_lines)
-            lines = list(set(lines))
+            lines = list(set(lines)) #3. 域名和IP对
 
-            emails = sorted(list(set(emails)))
+            emails = sorted(list(set(emails))) #4. 邮箱
+
+            related_domains = sorted(list(set(related_domains))) # 5. 相关域名
 
             subdomains.extend(emails) #this function return value is NoneType ,can't use in function directly
-            subdomains.extend(IPrange_list)
+            subdomains.extend(IPrange_list) #子域名+邮箱+网段
+            subdomains.extend(related_domains) ##子域名+邮箱+网段+相关域名
             #print type(subdomains)
             for subdomain in subdomains:
                 print G+subdomain+W
@@ -219,6 +230,7 @@ def main():
 
 
         print "[+] {0} domains found in total".format(subdomain_number)
+        print "[+] {0} related domains found in total".format(len(related_domains))
         print "[+] {0} emails found in total".format(len(emails))
         print "[+] Results saved to {0}".format(args.output)
     except KeyboardInterrupt as e:
