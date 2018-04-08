@@ -53,6 +53,13 @@
 13. Virustotal
 14. HackerTarget
 
+whois查询及反向查询(接口需付费,暂未加入到主功能当中)：
+
+1. https://www.whoxy.com/
+2. DOMAINTOOLS
+3. WHOISXMLAPI
+4. ROBOWHOIS
+5. ZIPWHOIS
 
 利用枚举
 

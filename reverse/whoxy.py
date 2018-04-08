@@ -12,6 +12,9 @@ req = myrequests
 '''
 this api need fee, pause to add to main function
 
+其他相似付费接口
+WHOXY	DOMAINTOOLS	WHOISXMLAPI	ROBOWHOIS	ZIPWHOIS
+
 '''
 
 class whoxy(object):
