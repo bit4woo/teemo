@@ -19,6 +19,13 @@ SHODAN_API_KEY = "mvqpLKKMMlkyYHUnzVviD0M0C158UV5L"
 Censys_API_UID = "fae24d14-fe2a-4e7f-79xx-82f123095908" #just a example
 Censys_API_SECRET = "n2MjIKS0RIxdEDQAHRutXz6WDz2yBWBQ"
 
+Whoxy_API_KEY = "43cayya89cb2c3xxxr3d125e2d80de322"
+
+#############reverse lookup option#####################
+#域名反查是否交互确认每个联系人和邮箱
+Reverse_Email_Confirm = False
+Reverse_Company_Name_Confirm = False
+
 
 #############proxy##################
 proxy_switch = 1
