@@ -31,7 +31,7 @@ class search_ask():
 
     def do_search(self):
         try:
-            url = "http://{0}/web?q={1}&pu=100&page={2}".format(self.server, self.word,self.counter)  # %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
+            url = "http://{0}/web?q=site:{1}&pu=100&page={2}".format(self.server, self.word,self.counter)  # %40=@ 搜索内容如：@meizu.com;在关键词前加@有何效果呢？，测试未发现不同
             r = req.get(url, proxies = self.proxies)
             #如果不指定header， agent的值将如下 ：  User-Agent: python-requests/2.18.1  这对有请求限制的搜索引擎很关键，比如google
             #采用随机user agent的话，
@@ -85,8 +85,4 @@ if __name__ == "__main__":
     proxy = {"http":"http://127.0.0.1:9988"}
     useragent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
     search = search_ask("meizu.com", '1000')
-    search.process()
-    emails = search.get_emails()
-    hosts = search.get_hostnames()
-    print emails
-    print hosts #test successed
+    print search.run()

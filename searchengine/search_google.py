@@ -18,7 +18,7 @@ class search_google():
         self.results = ""
         self.totalresults = ""
         self.files = "pdf"
-        self.server = "www.google.com"
+        self.url = "https://www.google.com/search"
         self.quantity = "100"
         self.limit = int(limit)
         self.counter = 0
@@ -32,7 +32,7 @@ class search_google():
 
     def do_search(self):
         try:
-            url = "https://{0}/search?num={1}&start={2}&hl=en&meta=&q={3}".format(self.server,self.quantity,self.counter,self.word)
+            url = "{0}?num={1}&start={2}&hl=en&meta=&q=site:{3}".format(self.url,self.quantity,self.counter,self.word)
             r = req.get(url, proxies=self.proxies)
             if "and not a robot" in r.content:
                 logger.warning("Google has blocked your visit")
@@ -47,7 +47,7 @@ class search_google():
 
     def do_search_profiles(self):
         try:
-            urly="https://" + self.server + "/search?num=" + self.quantity + "&start=" + str(self.counter) + "&hl=en&meta=&q=site:www.google.com%20intitle:\"Google%20Profile\"%20\"Companies%20I%27ve%20worked%20for\"%20\"at%20" + self.word + "\""
+            urly="https://" + self.url + "/search?num=" + self.quantity + "&start=" + str(self.counter) + "&hl=en&meta=&q=site:www.google.com%20intitle:\"Google%20Profile\"%20\"Companies%20I%27ve%20worked%20for\"%20\"at%20" + self.word + "\""
             r = req.get(urly, proxies=self.proxies)
             self.results = r.content
             self.totalresults += self.results
@@ -94,7 +94,7 @@ class search_google():
 
 if __name__ == "__main__":
         print "[-] Searching in Google:"
-        proxy = {"https":"https://127.0.0.1:9988"}
+        proxy = {"https":"https://127.0.0.1:9988","http":"http://127.0.0.1:9988"}
         useragent = "Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"  # 他会检查useragent，之前多了一个( 导致504
         search = search_google("meizu.com", 100, proxy)
         print search.run()

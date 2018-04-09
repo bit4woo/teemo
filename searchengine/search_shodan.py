@@ -62,8 +62,4 @@ if __name__ == "__main__":
     proxy = {"http": "http://127.0.0.1:8080"}
     useragent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
     search = search_shodan("meizu.com",100, useragent)
-    search.process()
-    emails = search.get_emails()
-    hosts = search.get_hostnames()
-    print emails
-    print hosts  # test successed
+    print search.run()

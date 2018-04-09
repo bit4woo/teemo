@@ -69,8 +69,4 @@ if __name__ == "__main__":
         useragent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
         proxy = {"http":"http://127.0.0.1:8080"}
         search = search_baidu("meizu.com", '100',proxy)
-        search.process()
-        all_emails = search.get_emails()
-        all_hosts = search.get_hostnames()
-        print all_hosts
-        print all_emails#test successed
+        print search.run()

@@ -2,20 +2,22 @@
 # -*- coding:utf-8 -*-
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
-import httplib
+
+
 from lib import myparser
 from lib.log import logger
 import time
-import requests
+from lib import myrequests
+req = myrequests
 
 class search_bing:
 
-    def __init__(self, word, limit, proxy=None):
+    def __init__(self, domain, limit, proxy=None):
         self.engine_name = "Bing"
-        self.word = word.replace(' ', '%20')
+        self.domain = domain.replace(' ', '%20')
         self.results = ""
         self.totalresults = ""
-        self.server = "cn.bing.com"
+        self.url = "https://cn.bing.com/search"
         self.limit = int(limit)
         self.counter = 0
         self.headers = {"Cookie":"SRCHHPGUSR=ADLT=DEMOTE&NRSLT=50","Accept-Language":"'en-us,en"}
@@ -28,41 +30,30 @@ class search_bing:
         return
 
     def do_search(self):
+        url = "{0}?q=site:{1}&count=50&first={2}".format(self.url, self.domain, self.counter)  # 这里的pn参数是条目数
+        r = req.get(url, headers = self.headers, proxies = self.proxies)
+        self.results = r.content
+        self.totalresults += self.results
         try:
-            url = "http://{0}/search?q={1}&count=50&first={2}".format(self.server,self.word,self.counter)# 这里的pn参数是条目数
-            r = requests.get(url, headers = self.headers, proxies = self.proxies)
-            self.results = r.content
-            self.totalresults += self.results
+
             return True
         except Exception, e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
             return False
 
     def do_search_vhost(self):
-        h = httplib.HTTP(self.server)
-        h.putrequest('GET', "/search?q=ip:" + self.word +
-                     "&go=&count=50&FORM=QBHL&qs=n&first=" + str(self.counter))
-        h.putheader('Host', self.hostname)
-        h.putheader(
-            'Cookie', 'mkt=en-US;ui=en-US;SRCHHPGUSR=NEWWND=0&ADLT=DEMOTE&NRSLT=50')
-        h.putheader('Accept-Language', 'en-us,en')
-        h.putheader('User-agent', self.userAgent)
-        h.endheaders()
-        returncode, returnmsg, headers = h.getreply()
-        self.results = h.getfile().read()
-        #print self.results
-        self.totalresults += self.results
+        url = "{0}q=ip:{1}&go=&count=50&FORM=QBHL&qs=n&first={2}".format(self.url,self.ip,self.counter)
 
     def get_emails(self):
-        rawres = myparser.parser(self.totalresults, self.word)
+        rawres = myparser.parser(self.totalresults, self.domain)
         return rawres.emails()
 
     def get_hostnames(self):
-        rawres = myparser.parser(self.totalresults, self.word)
+        rawres = myparser.parser(self.totalresults, self.domain)
         return rawres.hostnames()
 
     def get_allhostnames(self):
-        rawres = myparser.parser(self.totalresults, self.word)
+        rawres = myparser.parser(self.totalresults, self.domain)
         return rawres.hostnames_all()
 
     def process(self):
@@ -83,10 +74,5 @@ class search_bing:
 
 if __name__ == "__main__":
         print "[-] Searching in Bing:"
-        useragent = "(Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6"
-        search = search_bing("meizu.com", '10', useragent)
-        search.process()
-        all_emails = search.get_emails()
-        all_hosts = search.get_hostnames()
-        print all_emails
-        print all_hosts # test pass
+        search = search_bing("meizu.com", '10')
+        print search.run()

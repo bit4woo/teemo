@@ -97,8 +97,4 @@ if __name__ == "__main__":
         useragent = "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52"
         proxy = {"http": "http://127.0.0.1:9988"}
         search = search_yandex("meizu.com", 500, proxy)
-        search.process()
-        all_emails = search.get_emails()
-        all_hosts = search.get_hostnames()
-        print all_emails
-        print all_hosts
+        print search.run()
