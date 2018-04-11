@@ -8,9 +8,13 @@ from lib.log import logger
 from lib import myrequests
 import censys.certificates
 import config
+import tldextract #https://github.com/john-kurkowski/tldextract 获取一个域名的主域名 比如 pingan.com pingan.com.cn
 req = myrequests
+
+
 '''
-related domains : get by cert
+related domains : get by cert SANs
+提取相关域名的核心方法之一
 '''
 
 class Censys(object):
@@ -49,13 +53,17 @@ class Censys(object):
     def search(self):
         temp_domains = []
         try:
+            main_of_domain = tldextract.extract(self.domain).domain
             c = censys.certificates.CensysCertificates(api_id=self.api_id, api_secret=self.api_secret)
 
             # iterate over certificates that match a search
             fields = ["parsed.subject_dn", "parsed.fingerprint_sha256"] #parsed.issuer_dn
             for cert in c.search("{0}".format(self.domain), fields=fields):
                 #print cert["parsed.subject_dn"]
-                if self.domain in cert["parsed.subject_dn"]:
+                cn_domain= cert["parsed.subject_dn"].split(",")[-1].split("=")[-1]#cn一定是在最后吗
+                main_of_cn_domain =tldextract.extract(cn_domain).domain
+
+                if main_of_domain in main_of_cn_domain:
                     detail = c.view(cert["parsed.fingerprint_sha256"]) #print c.view("a762bf68f167f6fbdf2ab00fdefeb8b96f91335ad6b483b482dfd42c179be076")
                     #print detail
                     #print detail["parsed"]["names"]
@@ -74,9 +82,9 @@ class Censys(object):
                 self.related_domain_name.append(domain)
 
 if __name__ == "__main__":
-        proxy = {"http":"http://127.0.0.1:9988"}
+        proxy = {"http":"http://127.0.0.1:9988","https":"https://127.0.0.1:9988"}
         #proxy = {}
-        x = Censys("meizu.com",proxy=proxy)
+        x = Censys("jd.hk",proxy=proxy)
         print  x.run()
 
 

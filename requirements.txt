@@ -7,3 +7,4 @@ colorama
 netaddr
 gevent
 censys
+tldextract

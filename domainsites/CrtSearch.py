@@ -10,6 +10,7 @@ from lib.log import logger
 from lib.myparser import parser
 from lib import myrequests
 import re
+import tldextract
 req = myrequests
 
 class CrtSearch():
@@ -59,15 +60,30 @@ class CrtSearch():
         return rawres.emails()
     def get_related_domains(self):
         result = []
-        reg_urls = re.compile('<A href="(.*?)"')#<A href="?id=312991737">
+        main_of_domain = tldextract.extract(self.domain).domain
+
+        reg_urls = re.compile('<A href="\?id=(.*?)"')#<A href="?id=312991737">
         urls = reg_urls.findall(self.resp)
 
+
         reg_domains = re.compile('DNS:(.*?)<BR>') #DNS:*.jdpay.com<BR>
+
         for item in urls:
-            url = "https://crt.sh/{0}".format(item)
+            url = "https://crt.sh/?id={0}".format(item)
             resp = req.get(url, proxies=self.proxy).content
-            tmp = reg_domains.findall(resp)
-            result.extend(tmp)
+
+            reg_common_name = re.compile("Subject:<BR>(.*?)<BR>")
+            common_name = reg_common_name.findall(resp)
+            if len(common_name) !=0:
+                common_name = common_name[0].replace("&nbsp;", "").split("=")[-1]
+                main_of_cn_domain = tldextract.extract(common_name).domain
+
+                if main_of_domain in main_of_cn_domain: #只有当subject:commonname的值中的主域名和当前查找的主域名很相似的时候，才提取其中的SANs
+                    #如果不是，很可能会遇到cdn厂商的证书，颁发给很多企业。
+                    #当然也可能漏掉部分相关域名，比如，YouTube，它的subject common name就是google，当我从YouTube入手的时候，就不会获取到google的域名。
+                    #至于如何最大限度获取目标的域名，可以尝试getSANs.py脚本
+                    tmp = reg_domains.findall(resp)
+                    result.extend(tmp)
 
         for domain in result:
             domain = domain.lower()

@@ -3,6 +3,22 @@
 __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
+def install_package():
+    try:
+        import pip
+        installed_packages = pip.get_installed_distributions()
+        flat_installed_packages = [package.project_name for package in installed_packages]
+        requirements = open("requirements.txt","r").readlines()
+        for require in requirements:
+            if require.strip() in flat_installed_packages:
+                pass
+            else:
+                pip.main(['install', require])
+    except Exception,e:
+        print("Install {0} failed, Please check.")
+
+install_package()
+
 import argparse
 import datetime
 import os
@@ -47,7 +63,6 @@ from searchengine.search_yandex import search_yandex
 reload(sys)
 sys.setdefaultencoding('utf-8')
 sys.dont_write_bytecode = True
-
 
 #In case you cannot install some of the required development packages, there's also an option to disable the SSL warning:
 try:

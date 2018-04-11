@@ -18,6 +18,7 @@ import time
 from lib.myparser import parser
 from random import Random,uniform #googlect
 import ast
+import tldextract
 from lib import myrequests
 req = myrequests
 try:
@@ -118,13 +119,24 @@ class Googlect():
 
     def get_related_domains(self):
         if self.hash_codes > 0:
+            main_of_domain = tldextract.extract(self.domain).domain
             for hash in self.hash_codes:
-                url = self.detail_url.format(hash)
                 try:
-                    if req.get(url,timeout=self.timeout, proxies=self.proxy, verify=False):
+                    url = self.detail_url.format(hash)
+                    resp = req.get(url, timeout=self.timeout, proxies=self.proxy, verify=False)
+                    if resp:
                         formated_string = (self.result[6:-1]).replace("\n", "")
                         tmplist = ast.literal_eval(formated_string) #把list格式的string转换成list
-                        self.related_domain_name.extend(tmplist[0][1][-1])
+
+                        main_of_cn_domain = tmplist[0][1][1].split(",")[-1]
+
+                        if "CN\u003d" in main_of_cn_domain:#有可能响应的内容为空，判断一下
+                            main_of_cn_domain = main_of_cn_domain.replace("CN\u003d","")
+                            main_of_cn_domain = tldextract.extract(main_of_cn_domain).domain
+                            if main_of_domain in main_of_cn_domain: #判断cn中的域名是否和要查询的域名相似
+                                self.related_domain_name.extend(tmplist[0][1][-1])
+                        else:
+                            continue
                 except Exception,e:
                     logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
                     return

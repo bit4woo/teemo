@@ -98,4 +98,4 @@ if __name__ == '__main__':
     for _ in ["ns1.as6453.net"]:
         z= axfr_check("bf",_)
     '''
-    zonetransfer("meizu.com").check()
+    zonetransfer("insecuredns.com").check()
