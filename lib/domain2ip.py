@@ -7,6 +7,10 @@ import dns.resolver
 import dns.query
 from netaddr import IPAddress,IPNetwork
 import netaddr
+import sys,os
+import datetime
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from lib.common import strip_list
 
 def query(domain, record_type='A',server=None):
@@ -108,11 +112,22 @@ def smaller_network():
     x = netaddr.spanning_cidr(list)
     print x
 
+def main(domainfile,outputfile=None):
+    if outputfile ==None:
+        now = datetime.datetime.now()
+        timestr = now.strftime("-%Y-%m-%d-%H-%M")
+        outputfile = "domain2ip" + timestr + ".txt"
+        outputfile= os.path.join(os.path.dirname(__file__), "..","output", outputfile)
+    if  os.path.exists(domainfile):
+        domains = open(domainfile,"r").readlines()
+        x, lines = domains2ips(domains)
+        lines.extend(x)
+        open(outputfile,"w").writelines("\n".join(lines))
+    else:
+        print("file not found")
 
 if __name__ == "__main__":
-    domains = open("C:\Users\jax\Desktop\hrpc (2).txt").readlines()
-
-    x,lines= domains2ips(domains,"172.30.35.35")
-    #print x
-    #print smaller_network()
-    print iprange(x)# problem
+    if len(sys.argv) == 1:
+        print "{0} domain file".format(sys.argv[0])
+    else:
+        main(sys.argv[1])
