@@ -7,6 +7,7 @@ import urlparse
 import os,sys
 import ssl,socket
 import datetime
+import argparse
 
 '''
 pip install pysocks
@@ -58,8 +59,23 @@ def main(domainfile,outputfile=None):
     else:
         print("file not found")
 
+
+def parser_error(errmsg):
+    print ("Usage: python "+sys.argv[0]+" [Options] use -h for help")
+    sys.exit()
+
+def parse_args(): #optparse模块从2.7开始废弃，建议使用argparse
+    parser = argparse.ArgumentParser(epilog = "\tExample: \r\npython {0} -d baidu.com\r\npython {0} -f domain.txt".format(sys.argv[0]))
+    parser.error = parser_error #or a function name
+    parser._optionals.title = "OPTIONS"
+    parser.add_argument('-d', '--domain', help="Domain name", required=True)
+    parser.add_argument('-f', '--file', help='file that contains domain list')
+    return parser.parse_args()
+
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        print "{0} domain file".format(sys.argv[0])
-    else:
-        main(sys.argv[1])
+    args = parse_args()
+    if args.domain:
+        domains =  getSANs(domain=args.domain)
+        print ("\r\n".join(domains))
+    elif args.file:
+        main(args.file)
