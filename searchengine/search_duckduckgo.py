@@ -63,16 +63,9 @@ class search_duckduckgo:
         logger.info("{0} found {1} domain(s) and {2} email(s)".format(self.engine_name,len(self.d),len(self.e)))
         return self.d, self.e
 
-def dogpile(keyword, limit, useragent,proxy): #define this function to use in threading.Thread(),becuase the arg need to be a function
-    search = search_duckduckgo(keyword, limit,useragent,proxy)
-    search.process()
-    print search.get_emails()
-    return search.get_emails(), search.get_hostnames()
-
 
 if __name__ == "__main__":
-        print "[-] Searching in duckduckgo:"
-        useragent = "Mozilla/5.0 (Windows; U; Windows NT 6.0;en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6" #他会检查useragent，之前多了一个( 导致504
+        #他会检查useragent，之前多了一个( 导致504
         proxy = {"https": "https://127.0.0.1:9988"}
-        search = search_duckduckgo("meizu.com", '100',useragent)
+        search = search_duckduckgo("meizu.com", '100')
         print search.run()

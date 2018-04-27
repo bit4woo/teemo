@@ -82,17 +82,20 @@ class Netcraft():
         return cookies
 
     def enumerate(self):
-        start_url = self.base_url.format(domain='example.com')
-        resp = self.req(start_url)
-        cookies = self.get_cookies(resp.headers)
-        url = self.base_url.format(domain=self.domain)
-        while True:
-            resp = self.get_response(self.req(url,cookies))
-            self.extract_domains(resp)
-            if not 'Next page' in resp:
-                return self.subdomains
-                break
-            url = self.get_next(resp)
+        try:
+            start_url = self.base_url.format(domain='example.com')
+            resp = self.req(start_url)
+            cookies = self.get_cookies(resp.headers)
+            url = self.base_url.format(domain=self.domain)
+            while True:
+                resp = self.get_response(self.req(url,cookies))
+                self.extract_domains(resp)
+                if not 'Next page' in resp:
+                    return self.subdomains
+                url = self.get_next(resp)
+        except Exception as e:
+            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
+            resp = None
 
     def extract_domains(self, resp):
         link_regx = re.compile('<a href="http://toolbar.netcraft.com/site_report\?url=(.*)">')

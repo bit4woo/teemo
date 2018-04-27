@@ -48,7 +48,7 @@ class search_bing_api:
         try:
             url = "http://api.cognitive.microsoft.com/bing/v7.0/search?q={0}&mkt=en-us".format(self.word,self.counter)# 这里的pn参数是条目数
             r = req.get(url, headers = self.headers, proxies = self.proxies)
-            print r.content
+            #print r.content
             self.results = r.content
             self.totalresults += self.results
             return True

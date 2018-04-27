@@ -4,7 +4,7 @@ __author__ = 'bit4'
 __github__ = 'https://github.com/bit4woo'
 
 def install_package():
-    try:
+    try: #not always working in different pip version,eg. pip 10.0.1
         import pip
         installed_packages = pip.get_installed_distributions()
         flat_installed_packages = [package.project_name for package in installed_packages]
@@ -17,7 +17,7 @@ def install_package():
     except Exception,e:
         print("Install {0} failed, Please check.")
 
-install_package()
+#install_package()
 
 import argparse
 import datetime
@@ -162,17 +162,18 @@ def main():
 
         for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Hackertarget, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer,Virustotal]:
             #print callsites_thread(engine,domain,proxy)
-            if proxy_switch == 1 and engine in proxy_default_enabled:
-                pass
+            #print engine.__name__
+            if proxy_switch == 1 and engine.__name__ in proxy_default_enabled:
+                proxy = args.proxy #通过配置或者参数获取到的proxy
             else:
-                proxy ={}
-            t = threading.Thread(target=callsites_thread, args=(engine, args.domain, q_domains, q_similar_domains, q_related_domains, q_emails, args.proxy))
+                proxy ={} #不使用proxy
+            t = threading.Thread(target=callsites_thread, args=(engine, args.domain, q_domains, q_similar_domains, q_related_domains, q_emails, proxy))
             Threadlist.append(t)
 
         for engine in [search_ask,search_baidu,search_bing,search_bing_api,search_dogpile,search_duckduckgo,search_exalead,search_fofa,search_google,search_google_cse,
                        search_shodan,search_so,search_yahoo,search_yandex]:
-            if proxy_switch == 1 and engine in proxy_default_enabled:
-                pass
+            if proxy_switch == 1 and engine.__name__ in proxy_default_enabled:
+                proxy = args.proxy
             else:
                 proxy ={}
             t = threading.Thread(target=callengines_thread, args=(engine, args.domain, q_domains, q_emails, proxy, 500))

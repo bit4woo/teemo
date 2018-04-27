@@ -37,7 +37,7 @@ default_proxies = {
     "https": "https://127.0.0.1:9988",
 }
 proxy_default_enabled = [#默认启用代理的搜索引擎
-    'search_ask','search_google','search_google_cse','search_duckduckgo','Googlect','ThreatCrowd' #类名
+    'search_ask','search_google','search_google_cse','search_duckduckgo','Googlect','ThreatCrowd','DNSdumpster' #类名
     ]
 
 
@@ -46,7 +46,7 @@ proxy_default_enabled = [#默认启用代理的搜索引擎
 # -------------------------------------------------
 
 # 超时时间
-timeout = 15
+timeout = 50
 
 # 是否允许URL重定向
 allow_redirects = True

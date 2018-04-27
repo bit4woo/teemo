@@ -89,7 +89,9 @@ class CrtSearch():
             domain = domain.lower()
             if domain.startswith("*."):
                 domain = domain.replace("*.","")
-            if domain.endswith(".{0}".format(self.domain)):
+            if domain == self.domain:
+                self.domain_name.append(domain)
+            elif domain.endswith(".{0}".format(self.domain)):
                 self.domain_name.append(domain)
             else:
                 self.related_domain_name.append(domain)
