@@ -17,6 +17,20 @@ def install_package():
     except Exception,e:
         print("Install {0} failed, Please check.")
 
+def install_package():
+    try: #not always working in different pip version,eg. pip 10.0.1
+        import os
+        installed_packages = os.popen("pip freeze").readlines()
+        installed_packages = map(str.strip,install_package())
+        requirements = open("requirements.txt","r").readlines()
+        requirements = map(str.strip,requirements)
+        for require in requirements:
+            if require.strip() in installed_packages:
+                pass
+            else:
+                os.popen("pip install {0}".format(require))
+    except Exception,e:
+        print("Install {0} failed, Please check.")
 #install_package()
 
 import argparse

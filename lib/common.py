@@ -9,9 +9,6 @@ import colorama
 
 # from tldextract import extract, TLDExtract
 
-import requests.packages.urllib3
-requests.packages.urllib3.disable_warnings()
-
 def is_domain(domain):
     domain_regex = re.compile(
         r'(?:[A-Z0-9_](?:[A-Z0-9-_]{0,247}[A-Z0-9])?\.)+(?:[A-Z]{2,6}|[A-Z0-9-]{2,}(?<!-))\Z', 
