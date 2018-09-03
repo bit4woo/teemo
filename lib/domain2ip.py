@@ -58,16 +58,17 @@ def query(domain, record_type='A',server=None):
 def domains2ips(domain_list,server=None):
     IP_list =[]
     lines = []
-    domain_list = strip_list(domain_list)
-    for domain in set(domain_list):
-        try:
-            ips,line = query(domain,record_type='A',server=server)
-            IP_list.extend(ips)
-            lines.append(line)
-        except Exception,e:
-            print e
-            #print domain
-    IP_list = list(set(IP_list))
+    if domain_list.__len__()>0:
+        domain_list = strip_list(domain_list)
+        for domain in set(domain_list):
+            try:
+                ips,line = query(domain,record_type='A',server=server)
+                IP_list.extend(ips)
+                lines.append(line)
+            except Exception,e:
+                print e
+                #print domain
+        IP_list = list(set(IP_list))
     return IP_list,lines
 
 def iprange(ip_str_list):

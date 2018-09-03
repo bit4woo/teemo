@@ -78,10 +78,9 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 sys.dont_write_bytecode = True
 
-#In case you cannot install some of the required development packages, there's also an option to disable the SSL warning:
 try:
-    import requests.packages.urllib3
-    requests.packages.urllib3.disable_warnings()
+    import urllib3
+    urllib3.disable_warnings()
 except:
     pass
 
@@ -166,7 +165,19 @@ def main():
         #doing zone transfer checking
         zonetransfer(args.domain).check()
 
+        #all possible result parameters
+        Result_Sub_Domains = []
+        Result_Similar_Domains =[]
+        Result_Related_Domains =[]
+        Result_Emails = []
+        Result_Subnets =[]
 
+        Temp_IP_List =[]
+        Domain_IP_Records =[]
+
+
+
+        ################using search engine and web api to query subdomains and related domains#####################
         Threadlist = []
         q_domains = Queue.Queue() #to recevie return values,use it to ensure thread safe.
         q_similar_domains = Queue.Queue()
@@ -201,67 +212,49 @@ def main():
         for t in Threadlist: #为什么需要2次循环，不能在一次循环中完成？
             t.join() #主线程将等待这个线程，直到这个线程运行结束
 
-
-        subdomains = []
         while not q_domains.empty():
-            subdomains.append(q_domains.get())
-        emails = []
+            Result_Sub_Domains.append(q_domains.get())
         while not q_emails.empty():
-            emails.append(q_emails.get())
-        related_domains =[]
+            Result_Emails.append(q_emails.get())
         while not q_related_domains.empty():
-            related_domains.append(q_related_domains.get())
+            Result_Related_Domains.append(q_related_domains.get())
 
-
+        ################using subDomainsBrute to get more subdomains#####################
         if args.bruteforce:
             print G+"[-] Starting bruteforce using subDomainsBrute.."+W
             d = SubNameBrute(target=args.domain)
             d.run()
-            brute_lines = d.result_lines
-            brute_domains = d.result_domains
-            brute_ips = d.result_ips
-        else:
-            brute_ips = []
-            brute_lines = []
-            brute_domains = []
+            Domain_IP_Records.extend(d.result_lines)
+            Result_Sub_Domains.extend(d.result_domains)
+            Temp_IP_List.extend(d.result_ips)
 
 
 
-        ##########print to console and write to file#########################
-        if subdomains is not None: #prepaire output
-            IP_list, lines = domains2ips(subdomains) #query domains that got from website and search engine
-
-            IP_list.extend(brute_ips)
-            IPrange_list = iprange(IP_list) #1. IP段
-
-            subdomains.extend(brute_domains)
-            subdomains = tolower_list(subdomains)
-            subdomains = sorted(list(set(subdomains)))#2. 子域名,包括爆破所得
-            subdomain_number = len(subdomains)#子域名数量
-
-            lines.extend(brute_lines)
-            lines = list(set(lines)) #3. 域名和IP对
-
-            emails = sorted(list(set(emails))) #4. 邮箱
-
-            related_domains = sorted(list(set(related_domains))) # 5. 相关域名
-
-            subdomains.extend(emails) #this function return value is NoneType ,can't use in function directly
-            subdomains.extend(IPrange_list) #子域名+邮箱+网段
-            subdomains.extend(related_domains) ##子域名+邮箱+网段+相关域名
-            #print type(subdomains)
-            for subdomain in subdomains:
-                print G+subdomain+W
-
-            subdomains.extend(lines)
-            fp = open(args.output,"wb")
-            #fp.writelines("\n".join(subdomains).decode("utf-8"))
-            fp.writelines("\n".join(subdomains).encode("utf-8"))
+        #############do some deal#############
+        ips, lines = domains2ips(Result_Sub_Domains)
+        Temp_IP_List.extend(ips)
+        Domain_IP_Records.extend(lines)
 
 
-        print "[+] {0} domains found in total".format(subdomain_number)
-        print "[+] {0} related domains found in total".format(len(related_domains))
-        print "[+] {0} emails found in total".format(len(emails))
+        Result_Subnets.extend(iprange(Temp_IP_List)) #1. IP段
+        Result_Sub_Domains = sorted(list(set(tolower_list(Result_Sub_Domains))))#2. 子域名,包括爆破所得
+        Domain_IP_Records = list(set(Domain_IP_Records)) #3. 域名和IP的解析记录
+        Result_Emails = sorted(list(set(Result_Emails))) #4. 邮箱
+        Result_Related_Domains = sorted(list(set(Result_Related_Domains))) # 5. 相关域名
+
+        ToPrint = Result_Sub_Domains#this function return value is NoneType ,can't use in function directly
+        ToPrint.extend(Result_Emails)
+        ToPrint.extend(Result_Subnets)
+        ToPrint.extend(Result_Related_Domains)
+        for item in ToPrint:
+            print G+item+W
+
+        fp = open(args.output,"wb")
+        fp.writelines("\n".join(ToPrint).encode("utf-8"))
+
+        print "[+] {0} sub domains found in total".format(len(Result_Sub_Domains))
+        print "[+] {0} related domains found in total".format(len(Result_Related_Domains))
+        print "[+] {0} emails found in total".format(len(Result_Emails))
         print "[+] Results saved to {0}".format(args.output)
     except KeyboardInterrupt as e:
         logger.info("Exit. Due To KeyboardInterrupt")
