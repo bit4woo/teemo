@@ -11,8 +11,8 @@ import requests as __requests__
 
 requests.adapters.DEFAULT_RETRIES = 2 #设置失败时的重新请求次数
 try:
-    import requests.packages.urllib3
-    requests.packages.urllib3.disable_warnings()
+    import urllib3
+    urllib3.disable_warnings()
 except:
     pass
 '''
