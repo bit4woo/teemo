@@ -56,7 +56,7 @@ from domainsites.ThreatCrowd import ThreatCrowd
 from domainsites.Threatminer import Threatminer
 from domainsites.Virustotal import Virustotal
 from lib.common import *
-from lib.domain2ip import domains2ips,iprange
+from lib.domain2ip import *
 from lib.colorlog import *
 from lib.zonetransfer import zonetransfer
 from searchengine.search_ask import search_ask
@@ -97,6 +97,7 @@ def parse_args(): #optparse模块从2.7开始废弃，建议使用argparse
     parser._optionals.title = "OPTIONS"
     parser.add_argument('-d', '--domain', help="Domain name to enumrate it's subdomains", required=True)
     parser.add_argument('-b', '--bruteforce', help='Enable the subbrute bruteforce module',nargs='?', default=False)
+    parser.add_argument('-t', '--title', help='Get the title of all possible domains and IPs', nargs='?', default=False)
     parser.add_argument('-o', '--output', help='Save the results to text file')
     parser.add_argument('-x', '--proxy', help='The http proxy to visit google,eg: http://127.0.0.1:8080 ')
     return parser.parse_args()
@@ -171,9 +172,7 @@ def main():
         Result_Related_Domains =[]
         Result_Emails = []
         Result_Subnets =[]
-
-        Temp_IP_List =[]
-        Domain_IP_Records =[]
+        Line_Records =[]
 
 
 
@@ -224,23 +223,26 @@ def main():
             print G+"[-] Starting bruteforce using subDomainsBrute.."+W
             d = SubNameBrute(target=args.domain)
             d.run()
-            Domain_IP_Records.extend(d.result_lines)
             Result_Sub_Domains.extend(d.result_domains)
-            Temp_IP_List.extend(d.result_ips)
-
-
 
         #############do some deal#############
-        ips, lines = domains2ips(Result_Sub_Domains)
-        Temp_IP_List.extend(ips)
-        Domain_IP_Records.extend(lines)
+        if args.title:#to get title
+            ips, lines = targets2lines(Result_Sub_Domains)
+            iplist = set(iprange2iplist(iprange(ips))) - set(ips)
+            ips1, lines1 = targets2lines(iplist)
+            lines.extend(lines1)
+        else:
+            ips, lines = domains2ips(Result_Sub_Domains)
 
-
-        Result_Subnets.extend(iprange(Temp_IP_List)) #1. IP段
+        Result_Subnets.extend(iprange(ips)) #1. IP段
         Result_Sub_Domains = sorted(list(set(tolower_list(Result_Sub_Domains))))#2. 子域名,包括爆破所得
-        Domain_IP_Records = list(set(Domain_IP_Records)) #3. 域名和IP的解析记录
+        Line_Records = list(set(lines)) #3. 域名和IP的解析记录
         Result_Emails = sorted(list(set(Result_Emails))) #4. 邮箱
         Result_Related_Domains = sorted(list(set(Result_Related_Domains))) # 5. 相关域名
+
+        fp = open("{0}-{1}".format(args.output.replace(".txt",""),"lines.csv"),"wb")
+        fp.writelines("\n".join(Line_Records))
+        fp.close()
 
         ToPrint = Result_Sub_Domains#this function return value is NoneType ,can't use in function directly
         ToPrint.extend(Result_Emails)
@@ -251,6 +253,7 @@ def main():
 
         fp = open(args.output,"wb")
         fp.writelines("\n".join(ToPrint).encode("utf-8"))
+        fp.close()
 
         print "[+] {0} sub domains found in total".format(len(Result_Sub_Domains))
         print "[+] {0} related domains found in total".format(len(Result_Related_Domains))
