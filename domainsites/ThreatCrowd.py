@@ -66,25 +66,26 @@ class ThreatCrowd():
         return self.subdomains
 
     def extract_domains(self, resp):
-        try:
-            links = json.loads(resp)['subdomains']
-            for link in links:
-                subdomain = link.strip()
-                if not subdomain.endswith(self.domain):
-                    continue
-                if subdomain not in self.subdomains and subdomain != self.domain:
-                    #if verbose:
-                        #print "%s%s: %s%s"%(R, self.engine_name, W, subdomain)
-                    self.subdomains.append(subdomain.strip())
-        except Exception as e:
-            logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
-            pass
+        if resp is not None:
+            try:
+                links = json.loads(resp)['subdomains']
+                for link in links:
+                    subdomain = link.strip()
+                    if not subdomain.endswith(self.domain):
+                        continue
+                    if subdomain not in self.subdomains and subdomain != self.domain:
+                        #if verbose:
+                            #print "%s%s: %s%s"%(R, self.engine_name, W, subdomain)
+                        self.subdomains.append(subdomain.strip())
+            except Exception as e:
+                logger.error("Error in {0}: {1}".format(__file__.split('/')[-1], e))
+                pass
 
 
 if __name__ == "__main__":
     proxy = {
-    "http": "http://127.0.0.1:9988/",
-    "https": "http://127.0.0.1:9988/",
+    "http": "http://127.0.0.1:8888/",
+    "https": "http://127.0.0.1:8888/",
     }
     #proxy = {}
     #x = ThreatCrowd("meizu.com","https://127.0.0.1:9999")

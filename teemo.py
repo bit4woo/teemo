@@ -226,6 +226,7 @@ def main():
             Result_Sub_Domains.extend(d.result_domains)
 
         #############do some deal#############
+        print G + "[-] Starting do DNS query ..." + W
         if args.title:#to get title
             ips, lines = targets2lines(Result_Sub_Domains)
             iplist = set(iprange2iplist(iprange(ips))) - set(ips)
