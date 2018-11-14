@@ -21,7 +21,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from lib.common import strip_list
 
 def query(domain, record_type='A',server=None):
-    domain = domain.strip()
     resolver = dns.resolver.Resolver()
     if server != None:
         resolver.nameservers = [server]
@@ -42,7 +41,7 @@ def query(domain, record_type='A',server=None):
             line ="{0}\t{1}\t{2}".format(domain.ljust(30),", ".join(tmpcname),", ".join(tmpip))
             if tmpip != None: #only collect IPs that don't use CDN （cname）
                 ips.extend(tmpip)
-            #print line
+            print line
             return ips,line
 
         # If we don't receive an answer from our current resolver let's
@@ -56,12 +55,11 @@ def query(domain, record_type='A',server=None):
             ]
             resolver.nameservers = ns
             return query(resolver, domain, record_type)
-        #print domain
+        print domain
         return [],domain
     except (dns.resolver.NXDOMAIN, dns.resolver.NoNameservers, dns.exception.Timeout):
-        #print domain
+        print domain
         return [],domain
-
 
 def isIPAddress(str):
     try:
@@ -70,124 +68,114 @@ def isIPAddress(str):
     except:
         return False
 
+def domain2ip(domain,ips_Queue,lines_Queue):
+    try:
+        ips,line = query(domain,record_type='A')
+        for ip in ips:
+            ips_Queue.put(ip)
+        lines_Queue.put(line)
+    except Exception,e:
+        print e
 
 def domains2ips(domain_list):
-    input_Queue = Queue.Queue()
-    for item in domain_list:
-        input_Queue.put(item)
+    ips_Queue = Queue.Queue()
+    lines_Queue = Queue.Queue()
+    threadpool =[]
 
+    if domain_list.__len__() > 0:
+        for domain in set(domain_list):
+            #print domain
+            t = threading.Thread(target=domain2ip, args=(domain,ips_Queue,lines_Queue), name=domain)
+            #print t.getName()
+            t.setDaemon(True)  # 设置为后台线程，这里默认是False，设置为True之后则主线程不用等待子线程
+            threadpool.append(t)
 
-    outout_ips_Queue = Queue.Queue()
-    outout_lines_Queue = Queue.Queue()
-
-
-    class customers(threading.Thread):
-        def __init__(self):
-            threading.Thread.__init__(self)
-
-        def run(self):
-            while True:
-                if input_Queue.empty():
-                    break
-                domain = input_Queue.get(1)
-                #input_Queue.task_done() #no need in this program
-                domain = domain.strip()
-                try:
-                    ips, line = query(domain, record_type='A')
-                    print line
-                    for ip in ips:
-                        outout_ips_Queue.put(ip)
-                    outout_lines_Queue.put(line)
-                except Exception, e:
-                    print e
-                #
-                # # signals to queue job is done
-                # outout_ips_Queue.task_done()
-                # outout_lines_Queue.task_done()
-
-    for i in range(10):
-        dt = customers()
-        dt.setDaemon(True)
-        dt.start()
-        dt.join()#use this instead Queue.join()，Queue.join() will lead to thread always running!!
-
-    # wait on the queue until everything has been processed
-    # input_Queue.join()
-    # outout_ips_Queue.join()
-    # outout_lines_Queue.join()
+    for t in threadpool:
+        t.start()
+        while True:
+            #判断正在运行的线程数量,如果小于5则退出while循环,
+            #进入for循环启动新的进程.否则就一直在while循环进入死循环
+            if(len(threading.enumerate()) < 10):
+                break
+    for t in threading.enumerate():
+        if t.name == "MainThread":
+            pass
+        else:
+            t.join(30)
 
     iplist =[]
     linelist = []
-    while not outout_ips_Queue.empty():
-        iplist.append(outout_ips_Queue.get(timeout=0.1))
-    while not outout_lines_Queue.empty():
-        linelist.append(outout_lines_Queue.get(timeout=0.1))
+    while not ips_Queue.empty():
+        iplist.append(ips_Queue.get(timeout=0.1))
+    while not lines_Queue.empty():
+        linelist.append(lines_Queue.get(timeout=0.1))
+
     return iplist,linelist
 
+
+def target2line(target,ips_Queue,lines_Queue):
+    target = target.strip()
+    http = "http://{0}".format(target)
+    https = "https://{0}".format(target)
+    lastURL1, code1, title1 = getTitle(http)
+    lastURL2, code2, title2 = getTitle(https)
+
+    titlelist = []
+    if code1!=503 and title1!=None:
+        titlelist.append(title1)
+    if code2!=503 and title2!=None and title2!=title1:
+        titlelist.append(title2)
+    title = " || ".join(titlelist)
+
+
+    if isIPAddress(target):
+        ips = [target]
+        if title == "":
+            line = ""
+        else:
+            line = "\t\t{0}\t{1}".format(target, title)
+            print line
+    else:
+        ips,line = query(target)
+        if title == "":
+            line = ""
+        else:
+            line = "{0}\t{1}".format(line,title)
+            print line
+
+    for ip in ips:
+        ips_Queue.put(ip)
+
+    if line != "":
+        lines_Queue.put(line)
+
+    return line
+
+
 def targets2lines(target_list):
-    input_Queue = Queue.Queue()
-    for target in target_list:
-        input_Queue.put(target)
     ips_Queue = Queue.Queue()
     lines_Queue = Queue.Queue()
+    threadpool = []
 
-    class customers(threading.Thread):
-        def __init__(self):
-            threading.Thread.__init__(self)
+    if target_list.__len__() > 0:
+        for target in set(target_list):
+            t = threading.Thread(target=target2line, args=(target,ips_Queue,lines_Queue), name=target)
+            # print t.getName()
+            t.setDaemon(True)  # 设置为后台线程，这里默认是False，设置为True之后则主线程不用等待子线程
+            threadpool.append(t)
 
-        def run(self):
-            while True:
-                if input_Queue.empty():
-                    break
-                target = input_Queue.get(1)
-                # input_Queue.task_done() #no need in this program
-                target = target.strip()
-                http = "http://{0}".format(target)
-                https = "https://{0}".format(target)
-                lastURL1, code1, title1 = getTitle(http)
-                lastURL2, code2, title2 = getTitle(https)
-
-                titlelist = []
-                if code1 != 503 and title1 != None:
-                    titlelist.append(title1)
-                if code2 != 503 and title2 != None and title2 != title1:
-                    titlelist.append(title2)
-                title = " || ".join(titlelist)
-
-                if isIPAddress(target):
-                    ips = [target]
-                    if title == "":
-                        line = ""
-                    else:
-                        line = "\t\t{0}\t{1}".format(target, title)
-                        print line
-                else:
-                    ips, line = query(target)
-                    if title == "":
-                        line = ""
-                    else:
-                        line = "{0}\t{1}".format(line, title)
-                        print line
-
-                for ip in ips:
-                    ips_Queue.put(ip)
-
-                if line != "":
-                    lines_Queue.put(line)
-
-                # # signals to queue job is done
-                # ips_Queue.task_done()
-                # lines_Queue.task_done()
-
-    for i in range(10):
-        dt = customers()
-        dt.setDaemon(True)
-        dt.start()
-        dt.join() #use this instead Queue.join()
-
-    # input_Queue.join()
-    # ips_Queue.join()
-    # lines_Queue.join()
+    # for i in (threadpool.__len__()-1, -1, -1):
+    #     threadpool[i].start()
+    #     threadpool.remove(threadpool[i]) #尝试减少内存占用
+    for i in threadpool:
+        i.start()
+        while True:
+            # 判断正在运行的线程数量,如果小于10则退出while循环,
+            # 进入for循环启动新的进程.否则就一直在while循环进入死循环
+            if (threading.activeCount() < 20):
+                break
+    for t in threadpool:
+        t.join()  # 主线程将等待这个线程，直到这个线程运行结束
 
     iplist = []
     linelist = []
@@ -303,7 +291,4 @@ def test(switch,Domains):
     print(lines)
 
 if __name__ == "__main__":
-    targetlist = open("D:\github\\all-seeing-eye\input\jd.com","r").readlines()
-    #targets2lines(targetlist)
-    domains2ips(targetlist)
-
+    targets2lines(["www.baidu.com"])
