@@ -62,24 +62,13 @@ def query(domain, record_type='A',server=None):
         #print domain
         return [],domain
 
-
-def isIPAddress(str):
-    try:
-        IPAddress(str)
-        return True
-    except:
-        return False
-
-
 def domains2ips(domain_list):
     input_Queue = Queue.Queue()
     for item in domain_list:
         input_Queue.put(item)
 
-
     outout_ips_Queue = Queue.Queue()
     outout_lines_Queue = Queue.Queue()
-
 
     class customers(threading.Thread):
         def __init__(self):
@@ -198,7 +187,6 @@ def targets2lines(target_list):
 
     return iplist,linelist
 
-
 def getTitle(url):
     try:
         response= req.get(url)
@@ -218,6 +206,7 @@ def getTitle(url):
     return lastURL, code, result_title
 
 ###########subnet / iplist convertion #########
+
 def iprange(ip_str_list):
     ip_str_list = list(set(ip_str_list))
     ip_str_list= strip_list(ip_str_list)
@@ -273,7 +262,12 @@ def iprange2iplist(subnet_str_list):
             iplist.append(ip.__str__())
     return iplist
 
-
+def isIPAddress(str):
+    try:
+        IPAddress(str)
+        return True
+    except:
+        return False
 
 
 def main(domainfile,outputfile=None):
