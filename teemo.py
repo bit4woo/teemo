@@ -227,6 +227,7 @@ def main():
 
         #############do some deal#############
         print G + "[-] Starting do DNS query ..." + W
+        Result_Sub_Domains = sorted(list(set(tolower_list(Result_Sub_Domains))))  # 2. 子域名,包括爆破所得
         if args.title:#to get title
             ips, lines = targets2lines(Result_Sub_Domains)
             iplist = set(iprange2iplist(iprange(ips))) - set(ips)
@@ -236,7 +237,8 @@ def main():
             ips, lines = domains2ips(Result_Sub_Domains)
 
         Result_Subnets.extend(iprange(ips)) #1. IP段
-        Result_Sub_Domains = sorted(list(set(tolower_list(Result_Sub_Domains))))#2. 子域名,包括爆破所得
+        #Result_Sub_Domains = sorted(list(set(tolower_list(Result_Sub_Domains))))#2. 子域名,包括爆破所得
+
         Line_Records = list(set(lines)) #3. 域名和IP的解析记录
         Result_Emails = sorted(list(set(Result_Emails))) #4. 邮箱
         Result_Related_Domains = sorted(list(set(Result_Related_Domains))) # 5. 相关域名
