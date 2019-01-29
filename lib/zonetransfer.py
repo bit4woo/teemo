@@ -70,22 +70,27 @@ class zonetransfer:
             self.get_ns_server_nslookup()
         except Exception as e:
             logger.error("Error in {0}: {1}".format(__file__.split('/')[-1],e))
+            return False
 
         if len(self.nsservers) == 0:
             logger.info("None NS Server found for {0}.".format(self.domain))
+            return False
         else:
             for _ in self.nsservers:
                 has_zone_transfer = self.axfr_check(self.domain, _)
 
             if has_zone_transfer != 0 and len(self.results) != 0:
                 logger.info("Zone Transfer Detected for {0}".format(self.domain))
-                fp = open("..\\output\\{0}_zone_transfer.txt".format(self.domain), "wb")
+                #__file__  current file,the file contains current code.
+                fp = open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "output", "{0}_zone_transfer.txt".format(self.domain)), "wb")
                 fp.writelines(self.results)
                 fp.close()
                 for item in self.results:
                     print item
+                return True
             if has_zone_transfer == 0 or len(self.results) == 0:
                 logger.info("Zone Transfer False")
+                return False
 
 
 if __name__ == '__main__':

@@ -164,7 +164,10 @@ def main():
         print "[-] Enumerating subdomains now for %s" % args.domain
 
         #doing zone transfer checking
-        zonetransfer(args.domain).check()
+        issuccess = zonetransfer(args.domain).check()
+        if issuccess:
+            print "[+] Zone Transfer Results saved to output directory"
+            exit()
 
         #all possible result parameters
         Result_Sub_Domains = []
@@ -208,7 +211,7 @@ def main():
         #    print t
         for t in Threadlist: # use start() not run()
             t.start()
-        for t in Threadlist: #为什么需要2次循环，不能在一次循环中完成？
+        for t in Threadlist: #为什么需要2次循环，不能在一次循环中完成？如果只在一个循环中，线程会在启动后马上加入到当前的执行流程，不会有并发的效果
             t.join() #主线程将等待这个线程，直到这个线程运行结束
 
         while not q_domains.empty():
