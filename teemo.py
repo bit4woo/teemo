@@ -73,6 +73,7 @@ from searchengine.search_shodan import search_shodan
 from searchengine.search_so import search_so
 from searchengine.search_yahoo import search_yahoo
 from searchengine.search_yandex import search_yandex
+from searchengine.search_sogou import search_sogou
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -198,7 +199,7 @@ def main():
             Threadlist.append(t)
 
         for engine in [search_ask,search_baidu,search_bing,search_bing_api,search_dogpile,search_duckduckgo,search_exalead,search_fofa,search_google,search_google_cse,
-                       search_shodan,search_so,search_yahoo,search_yandex]:
+                       search_shodan,search_so,search_sogou,search_yahoo,search_yandex]:
             if proxy_switch == 1 and engine.__name__ in proxy_default_enabled:
                 proxy = args.proxy
             else:
