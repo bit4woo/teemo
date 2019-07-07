@@ -217,7 +217,14 @@ def main():
             t.join() #主线程将等待这个线程，直到这个线程运行结束
 
         while not q_domains.empty():
-            Result_Sub_Domains.append(q_domains.get())
+            tmpdomain = q_domains.get()
+            tmpdomainList = set(tmpdomain.split("."+args.domain))
+            tmpdomainList.remove("")
+            if tmpdomainList.__len__()>=2:
+                for item in tmpdomainList:
+                    Result_Sub_Domains.append(item+"."+args.domain)
+            else:
+                Result_Sub_Domains.append(tmpdomain)
         while not q_emails.empty():
             Result_Emails.append(q_emails.get())
         while not q_related_domains.empty():
