@@ -42,6 +42,7 @@ import Queue
 from brute.subDomainsBrute import SubNameBrute
 
 from domainsites.Alexa import Alexa
+from domainsites.Censys import Censys
 from domainsites.Chaxunla import Chaxunla
 from domainsites.CrtSearch import CrtSearch
 from domainsites.DNSdumpster import DNSdumpster
@@ -188,7 +189,7 @@ def main():
         q_emails = Queue.Queue()
 
 
-        for engine in [Alexa, Chaxunla, CrtSearch, DNSdumpster, Googlect, Hackertarget, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer,Virustotal]:
+        for engine in [Alexa, Censys, Chaxunla, CrtSearch, DNSdumpster, Googlect, Hackertarget, Ilink, Netcraft, PassiveDNS, Pgpsearch, Sitedossier, ThreatCrowd, Threatminer,Virustotal]:
             #print callsites_thread(engine,domain,proxy)
             #print engine.__name__
             if proxy_switch == 1 and engine.__name__ in proxy_default_enabled:

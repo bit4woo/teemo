@@ -86,7 +86,7 @@ class Censys(object):
 if __name__ == "__main__":
         proxy = {"http":"http://127.0.0.1:9988","https":"https://127.0.0.1:9988"}
         #proxy = {}
-        x = Censys("jd.hk",proxy=proxy)
+        x = Censys("jd.hk")
         print  x.run()
 
 
