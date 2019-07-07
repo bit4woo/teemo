@@ -98,8 +98,8 @@ def parse_args(): #optparse模块从2.7开始废弃，建议使用argparse
     parser.error = parser_error
     parser._optionals.title = "OPTIONS"
     parser.add_argument('-d', '--domain', help="Domain name to enumrate it's subdomains", required=True)
-    parser.add_argument('-b', '--bruteforce', help='Enable the subbrute bruteforce module',nargs='?', default=False)
-    parser.add_argument('-t', '--title', help='Get the title of all possible domains and IPs', nargs='?', default=False)
+    parser.add_argument('-b', '--bruteforce', help='Enable the subbrute bruteforce module',action='store_true',default=False)
+    parser.add_argument('-t', '--title', help='Get the title of all possible domains and IPs',action='store_true',default=False)
     parser.add_argument('-o', '--output', help='Save the results to text file')
     parser.add_argument('-x', '--proxy', help='The http proxy to visit google,eg: http://127.0.0.1:8080 ')
     return parser.parse_args()
