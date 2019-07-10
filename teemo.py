@@ -219,7 +219,8 @@ def main():
         while not q_domains.empty():
             tmpdomain = q_domains.get()
             tmpdomainList = set(tmpdomain.split("."+args.domain))
-            tmpdomainList.remove("")
+            if "" in tmpdomainList:
+                tmpdomainList.remove("")
             if tmpdomainList.__len__()>=2:
                 for item in tmpdomainList:
                     Result_Sub_Domains.append(item+"."+args.domain)
