@@ -110,7 +110,7 @@ headers = {
 
 
 #################subdomainbrute options#############################
-subnamefile = "subnames.txt"   #subnames_full.txt
+subnamefile = "subnames_from_layer.txt"   #subnames_full.txt
 ignore_intranet = False
 threads = 100
 full_scan = True
