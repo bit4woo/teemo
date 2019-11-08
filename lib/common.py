@@ -77,11 +77,11 @@ def banner():
 %s
   """ % (G, W, Y, version, waring) #must inport colorama to ensure G、W、Y works fine
 
-def strip_list(inputlist):
+def strip_list(inputlist,charToStrip=None):
     if isinstance(inputlist,list):
         resultlist =[]
         for x in inputlist:
-            x = x.strip()
+            x = x.strip(charToStrip)
             resultlist.append(x)
         return resultlist
     else:
