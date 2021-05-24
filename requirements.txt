@@ -6,5 +6,5 @@ win_unicode_console
 colorama
 netaddr
 gevent
-censys
+censys==0.0.8
 tldextract
