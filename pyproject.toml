@@ -1,0 +1,87 @@
+[tool.poetry]
+name = "teemo"
+version = "0.1.0"
+description = "A domain subdomain enumeration tool"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "brute"}, {include = "domainsites"}, {include = "lib"}, {include = "reverse"}, {include = "searchengine"}, {include = "thirdparty"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+dnspython = "*"
+requests = "*"
+shodan = "*"
+win-unicode-console = "*"
+colorama = "*"
+netaddr = "*"
+gevent = "*"
+censys = "0.0.8"
+tldextract = "*"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.11.1"
+
+[tool.poetry.scripts]
+test = "pytest:main"
+tests = "pytest:main"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py", "tests.py"]
+python_classes = ["Test*", "*Tests"]
+python_functions = ["test_*"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=brute",
+    "--cov=domainsites",
+    "--cov=lib",
+    "--cov=reverse",
+    "--cov=searchengine",
+    "--cov-branch",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-report=html:htmlcov",
+    "--cov-report=xml:coverage.xml",
+    "--cov-fail-under=0",
+]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "slow: Slow running tests",
+]
+
+[tool.coverage.run]
+source = ["brute", "domainsites", "lib", "reverse", "searchengine"]
+omit = [
+    "*/tests/*",
+    "*/__init__.py",
+    "*/thirdparty/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if __name__ == .__main__.:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if False:",
+]
+show_missing = true
+precision = 2
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
