@@ -1,4 +1,55 @@
 
+# IDE
 .idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
 *.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+*.cover
+.hypothesis/
+.tox/
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# Project specific
 config.mine.py
+output/
+
+# Claude settings
+.claude/*
+
+# OS
+.DS_Store
+Thumbs.db
