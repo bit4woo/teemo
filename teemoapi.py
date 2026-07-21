@@ -109,7 +109,7 @@ def callengines_thread(engine, key_word, q_domains, q_emails, proxy=None,limit=1
         for email in emails:
             q_emails.put(email)
 
-def callsites_thread(engine, key_word, q_domains, q_similiar_domains, q_related_domains, q_emails, proxy=None):
+def callsites_thread(engine, key_word, q_domains, q_similar_domains, q_related_domains, q_emails, proxy=None):
     enum = engine(key_word,proxy)
     domains,similar_domains,related_domains,emails = enum.run()
     if domains:
@@ -117,7 +117,7 @@ def callsites_thread(engine, key_word, q_domains, q_similiar_domains, q_related_
             q_domains.put(domain)
     if similar_domains:
         for item in  similar_domains:
-            q_similiar_domains.put(item) #put both domain and similar in domain set
+            q_similar_domains.put(item) #put both domain and similar in domain set
     if related_domains: #domains that found by cert
         for item in related_domains:
             q_related_domains.put(item)
